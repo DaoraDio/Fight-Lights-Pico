@@ -24,8 +24,8 @@ colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orang
 led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
 brightness_mod = 1 #brightness 0.2 = darkest, 1.0 = brightest
-sleep_after = 0 #time when leds go from default to sleep mode (in seconds)
-brightness_steps = 0.5 #steps at which the brightness changes per press
+sleep_after = 30 #time when leds go from default to sleep mode (in seconds)
+brightness_steps = 0.2 #steps at which the brightness changes per press
 background_color = white #set the background color, set to blank if you want it turned off
 mode = 2 #controls which sleepmode is displayed (currently 1 and 2 available)
 
