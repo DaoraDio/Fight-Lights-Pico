@@ -24,14 +24,20 @@ colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orang
 #general config
 led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
+
 brightness_mod = 1 #brightness, 0.2 = darkest, 1.0 = brightest
-sleep_after = 30 #time when leds go from default to sleep mode (in seconds)
 brightness_steps = 0.20 #steps at which the brightness changes per press
-background_color = blue #set the background color, set to blank or (0,0,0) if you want it turned off
+
+sleep_after = 30 #time when leds go from default to sleep mode (in seconds)
 mode = 1 #controls which sleepmode is displayed (currently 1 and 2 available)
+
+background_color = blue #set the background color, set to blank or (0,0,0) if you want it turned off
+background_brightness = 0.02 #sets the brightness of the background color
+clear_background_on_press = False #controls if the background gets temporarely turned off while a button is being pressed
+
 fade_speed = 7 #fade speed, higher = faster
-clear_background_on_press = True #controls if the background gets temporarely turned off while a button is being pressed
-background_brightness = 0.02 #sets the brightness of the background color 
+
+
 
 
 
