@@ -3,11 +3,9 @@ import config
 import array, time
 import random
 import io
+import math
+import button
 from machine import Timer
-############################################
-# Functions for RGB Coloring
-############################################
-#
 
 frequency = 60 #frequency in hz at which the timer interrups happen
 timer_counter_setback = -5 #value to which the timer counter gets reset after a button press,
@@ -29,7 +27,11 @@ def tick(timer):
     #print(timer_counter)
     timer_counter = timer_counter + 1
     
-    
+#interrupt routine to set all leds to blank(off) on button press
+#also sets the timer_counter to 0 which wakes the leds up from 'sleep mode'
+def clear_led(pin):
+    global timer_counter, background
+    timer_counter = timer_counter_setback    
     
 #frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
 #freq=1 = 1hz = 1 interrupt every second
@@ -48,6 +50,13 @@ def pixels_show(brightness_input):
 
 def pixels_set(i, color):
     statemachine.ar[i] = (color[1]<<16) + (color[0]<<8) + color[2] # set 24-bit color
+
+#sets a color at pos i, takes HSV color as value
+def pixels_setHSV(i,color):
+    #print(color)
+    rgbcolor = HSVtoRGB(color)
+    pixels_set(i, rgbcolor)
+    
         
 # Input a value 0 to 255 to get a color value.
 # The colours are a transition r - g - b - back to r.
@@ -72,6 +81,7 @@ def shuffle_array(arr):
         arr[rand_index] = temp
         last_index -= 1
 
+#breathin light sleep mode
 #all credits for the breathing light goes to Joshua Hrisko, Maker Portal LLC (c) 2021
 def sleep_mode1(): #breathin LED
     if config.sleep_after == 0:
@@ -120,18 +130,28 @@ def sleep_mode2(): #Color Palette
             pixels_show(config.brightness_mod)
             time.sleep(speed)
             
-
+#sets all leds to color in RGB
 def pixels_fill(color):
     for i in range(len(statemachine.ar)):
         pixels_set(i, color)
         
-#interrupt routine to set all leds to blank(off) on button release
-#also sets the timer_counter to 0 which wakes the leds up from breathing
-def clear_led(pin):
-    global timer_counter, background
-    pixels_fill((0,0,0))
-    timer_counter = timer_counter_setback
+#sets all leds to color in HSV      
+def pixels_fillHSV(colorHSV):
+    colorRGB = HSVtoRGB(colorHSV)
+    pixels_fill(colorRGB)
     
+
+def inverse_ledlist(ledlist):
+    leds = []
+    for i in range(config.led_count):
+        leds.append(i)
+        
+    for i in range(len(ledlist)):
+        leds.remove(ledlist[i])
+                
+
+    
+    return leds
     
     
 #interrupt routine to change the overall brightness
@@ -167,7 +187,7 @@ def sleep_after():
         ticks = 1/(1/frequency)
         return ticks * config.sleep_after
     
-#reutnr the id of a pin
+#returns the id of a pin
 def get_id(*args, **kwargs):
     output = io.StringIO()
     print(*args, file=output, **kwargs)
@@ -177,33 +197,143 @@ def get_id(*args, **kwargs):
     return myid
 
 
-def fade_in(pin_num, color):
-    speed = 50
-    breath_amps = [ii for ii in range(0,255,speed)]
-    for i in range(10):
-        pixels_set(pin_num, color)
-        pixels_show((i/255) * config.brightness_mod)
+    
+#converts HSV to RGB, the RGB values go from 0-255
+#the HSV Values go between:
+#H between 0 and 359 (0° - 359°)
+#S between 0 and 100 (0% - 100%)
+#V between 0 and 100 (0% - 100%)
+#might give error if Hs is undefined
+#takes a HSV color as a tupel as argument (H,S,V)
+#returns RGB as a tupel (R,G,B)
+def HSVtoRGB(hsvcolor):
+    H = hsvcolor[0]
+    S = hsvcolor[1]
+    V = hsvcolor[2]
+    
+    if H > 359:
+        print("ERROR H can only take values from 0-359")
+    if S > 100:
+        print("ERROR S can only take values from 0-100")
+    if V > 100:
+        print("ERROR V can only take values from 0-100")
+    
+    S = S / 100
+    V = V / 100
+    
+    C = V * S
+    Hs = H / 60
+    det = (Hs%2) - 1
+  
+    if det < 0:
+        det = det * (-1)
+    
+    X = C * (1-det)
+    if Hs >= 0 and Hs < 1:
+        R = C
+        G = X
+        B = 0
+    if Hs >= 1 and Hs < 2:
+        R = X
+        G = C
+        B = 0
+    if Hs >= 2 and Hs < 3:
+        R = 0
+        G = C
+        B = X
+    if Hs >= 3 and Hs < 4:
+        R = 0
+        G = X
+        B = C
+    if Hs >=4 and Hs < 5:
+        R = X
+        G = 0
+        B = C
+    if Hs >= 5 and Hs < 6:
+        R = C
+        G = 0
+        B = X
+    
+    m = V-C
+    
+    R = (R+m)*255
+    G = (G+m)*255
+    B = (B+m)*255
+    return (math.ceil(R), math.ceil(G), math.ceil(B))
+
+
+#converts RGB Colors in range of 0-255 to HSV colors (0-359,0-100,0-100)
+#takes an RGB tupel (R,G,B) as input, returns a HSV tupel (H,S,V)
+def RGBtoHSV(rgbcolor):
+    R = rgbcolor[0]/255
+    G = rgbcolor[1]/255
+    B = rgbcolor[2]/255
+    Cmax = max(R,G)
+    Cmax = max(Cmax, B)
+    
+    Cmin = min(R,G)
+    Cmin = min(Cmin,B)
+    
+    delta = Cmax-Cmin
+    
+    
+    if delta == 0:
+        H = 0 
+    elif Cmax == R:
+        modulus = ((G-B)/delta)
+        H = 60*(modulus%6)
+    elif Cmax == G:
+        H = 60*(((B-R)/delta)+2)
+    elif Cmax == B:
+        H = 60*(((R-G)/delta)+4)
         
-def color_chase(color, wait):
-    for i in range(config.led_count):
-        pixels_set(i, color)
-        time.sleep(wait)
-        pixels_show(config.brightness_mod)
-    time.sleep(0.2)    
-
-def fade_led(pin_num, color):
-    brightness = config.brightness_mod
     
-    while brightness > 0:
-        time.sleep(0.01)
-        brightness -= (config.brightness_mod / 10)
-        pixels_set(pin_num, color)
-        pixels_show(brightness)
+    if Cmax == 0:
+        S = 0
+    else:
+        S = delta/Cmax
+    
+    V = Cmax
+    
+    H = math.ceil(H)
+    S = math.ceil(S*100)
+    V = math.ceil(V*100)
+    
+    if H > 359:
+        H = 359
+    if S > 100:
+        S = 100
+    if V > 100:
+        V = 100
+    
+    return (H,S,V)
 
-    pixels_set(pin_num, config.blank)
-    pixels_show(brightness)
-    return
+#helper function that helps with LED fade
+#gets a value (usually the V of a HSV color)
+#decreses the value defined by config.fed_speed and returns it
+#if the value becomes negative it sets the value to 0
+def fade_val(color_val):
+    if color_val >= 0:
+        color_val -= config.fade_speed
+        if (color_val-config.fade_speed) < 0:
+            color_val = 0
+    return color_val
+
+#helper function
+#return true if no button is pressed at the moment
+#returns false when a button is currently pressed
+def no_buttons_pressed():
+    for j in range(len(button.button_list)):
+        if button.button_list[j].is_pressed == True:
+            return False
+    
+    return True
+    
+    
+    
     
 
+    
+    
     
     

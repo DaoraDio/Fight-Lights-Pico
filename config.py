@@ -1,5 +1,6 @@
 from machine import Pin
-# color specifications
+import button
+# color specifications in (R,G,B)
 blank = (0,0,0) #blank = not turned on
 
 red = (255,0,0)
@@ -23,29 +24,41 @@ colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orang
 #general config
 led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
-brightness_mod = 1 #brightness 0.2 = darkest, 1.0 = brightest
+brightness_mod = 1 #brightness, 0.2 = darkest, 1.0 = brightest
 sleep_after = 30 #time when leds go from default to sleep mode (in seconds)
-brightness_steps = 0.2 #steps at which the brightness changes per press
-background_color = white #set the background color, set to blank if you want it turned off
-mode = 2 #controls which sleepmode is displayed (currently 1 and 2 available)
+brightness_steps = 0.20 #steps at which the brightness changes per press
+background_color = blue #set the background color, set to blank or (0,0,0) if you want it turned off
+mode = 1 #controls which sleepmode is displayed (currently 1 and 2 available)
+fade_speed = 7 #fade speed, higher = faster
+clear_background_on_press = True #controls if the background gets temporarely turned off while a button is being pressed
+background_brightness = 0.02 #sets the brightness of the background color 
 
-#positions of the buttons and the corresponding LED in the LED-chain
-#and color of the buttons, choose 'random' if you want that button to display random colors on press
-up = (14, red)
-down = (13, blue)
-right = (12, orange)
-left = (11, lime)
-select = (10, violet)
-ps = (9, white)
-start = (8, green)
 
-square = (4, 'random')
-triangle = (5, 'random')
-r1 = (7, 'random')
-l1 = (6, 'random')
-circle = (2, 'random')
-x = (3, 'random')
-l2 = (1, 'random')
-r2 = (0, yellow)
+
+#((list of leds), color, fade)
+#positions of the buttons and the corresponding LEDs in the LED-chain and colors the leds take on press,
+#choose 'random' if you want that button to display random colors on press
+#set to -1 if the button is unused and the led position is not defined
+#control if the button has fade or not
+up = button.up.set_config((5,6), red, False)#5
+down = button.down.set_config((1,2), red, False)#3
+right = button.right.set_config((0,7), red, False)#2
+left = button.left.set_config((3,4), red, False)#4
+select = button.select.set_config((0,1,2,3,4,5,6,7), turqoise, False)
+ps = button.ps.set_config((-1,), white, False)
+start = button.start.set_config((0,1,2,3,4,5,6,7), white, False)
+
+square = button.square.set_config((4,), 'random', True)
+triangle = button.triangle.set_config((5,), 'random', True)
+r1 = button.r1.set_config((7,), 'random', True)
+l1 = button.l1.set_config((6,), 'random', True)
+circle = button.circle.set_config((2,), 'random', True)
+x = button.x.set_config((3,), 'random', True)
+l2 = button.l2.set_config((1,), 'random', True)
+r2 = button.r2.set_config((0,), 'random', True)
+
+brightness = button.brightness.set_config((-1,), 'random', False)
+
+
 
 
