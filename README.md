@@ -1,5 +1,5 @@
-#Fight Light Pico
-Fight Light Pico is a LED-Driver for the Raspberry Pi Pico that gives Arcade Stick modders the neccessary software to implement beautiful RGB LEDs for their projects
+# Fight Lights Pico
+Fight Lights Pico is a LED-Driver for the Raspberry Pi Pico that gives Arcade Stick modders the neccessary software to implement beautiful RGB LEDs for their projects
 
 # What does it do?
 
