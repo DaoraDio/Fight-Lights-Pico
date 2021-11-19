@@ -7,6 +7,7 @@ import statemachine
 import config
 import functions
 import button
+import math
 
 #--------------------------main program-------------------------------------------------------
 #lights up the onborad led to have an indication of wether the board is running or not
@@ -17,12 +18,17 @@ onboard_led.value(True)
 background_color_HSV = functions.RGBtoHSV(config.background_color)
 background_color_HSV = (background_color_HSV[0],background_color_HSV[1],background_color_HSV[2]*config.background_brightness)
 #main loop
+leniency_counter = 0
 i = 0
+
 while True:
     no_buttons_pressed = functions.no_buttons_pressed()
 
     #chooses a "random" number from the color array 'colors' in config.py
-    i = i + 1
+    leniency_counter = leniency_counter + 1
+    if leniency_counter == config.leniency:    
+        i = i + 1
+        leniency_counter = 0
     random_color_id = i % len(config.colors)
     
     #goes into sleep mode after seconds defined in the variable 'sleep_after' has been exceeded
@@ -43,6 +49,7 @@ while True:
             functions.pixels_fill((0,0,0))
     
     #calls the run function for each button
+    
     button.up.run(random_color_id)
     button.down.run(random_color_id)
     button.right.run(random_color_id)

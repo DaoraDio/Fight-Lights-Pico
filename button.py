@@ -1,7 +1,7 @@
 from machine import Pin
 import config
 import functions
-
+import time
 
 #button class
 class MyButton:

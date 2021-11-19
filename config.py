@@ -25,18 +25,19 @@ colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orang
 led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
 
+leniency = 4 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
+
 brightness_mod = 1 #brightness, 0.2 = darkest, 1.0 = brightest
 brightness_steps = 0.20 #steps at which the brightness changes per press
 
 sleep_after = 30 #time when leds go from default to sleep mode (in seconds)
 mode = 1 #controls which sleepmode is displayed (currently 1 and 2 available)
 
-background_color = blue #set the background color, set to blank or (0,0,0) if you want it turned off
+background_color = light_blue #set the background color, set to blank or (0,0,0) if you want it turned off
 background_brightness = 0.02 #sets the brightness of the background color
 clear_background_on_press = False #controls if the background gets temporarely turned off while a button is being pressed
 
-fade_speed = 7 #fade speed, higher = faster
-
+fade_speed = 6 #fade speed, higher = faster
 
 
 
@@ -46,13 +47,13 @@ fade_speed = 7 #fade speed, higher = faster
 #choose 'random' if you want that button to display random colors on press
 #set to -1 if the button is unused and the led position is not defined
 #control if the button has fade or not
-up = button.up.set_config((5,6), red, False)#5
-down = button.down.set_config((1,2), red, False)#3
-right = button.right.set_config((0,7), red, False)#2
-left = button.left.set_config((3,4), red, False)#4
-select = button.select.set_config((0,1,2,3,4,5,6,7), turqoise, False)
+up = button.up.set_config((-1,), green, True)
+down = button.down.set_config((-1,), green, True)
+right = button.right.set_config((-1,), green, True)
+left = button.left.set_config((-1,), green, True)
+select = button.select.set_config((0,1,2,3,4,5,6,7), violet, False)
 ps = button.ps.set_config((-1,), white, False)
-start = button.start.set_config((0,1,2,3,4,5,6,7), white, False)
+start = button.start.set_config((0,1,2,3,4,5,6,7), red, False)
 
 square = button.square.set_config((4,), 'random', True)
 triangle = button.triangle.set_config((5,), 'random', True)
@@ -64,6 +65,7 @@ l2 = button.l2.set_config((1,), 'random', True)
 r2 = button.r2.set_config((0,), 'random', True)
 
 brightness = button.brightness.set_config((-1,), 'random', False)
+
 
 
 
