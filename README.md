@@ -8,6 +8,13 @@ The code is easily customizable to help you build the Arcade stick of your dream
 This code is not limited to Arcade stick projects though, it can be used for any project that needs to light up LEDs when pressing something.
 
 
+# How does it look?
+
+I have made a short video showcasing some of the features to give you an idea on how it may look in the end:
+https://www.youtube.com/watch?v=nG0_0xVvnjk
+
+Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.reddit.com/r/fightsticks/comments/qhtwi9/qanba_obsidian_led_mod/
+
 # Requirement
 
 If you want to use this you will need a Raspberry Pi Pico and a LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
@@ -23,9 +30,3 @@ very easy for begginers to follow and realize.
 So as long as you can send the signals of your buttons to the pico, by whatever means you like, directly or through a different pcb,
 and have a way to power the Pico and the LEDs, a brook board is not required.
 
-# How does it look?
-
-I have made a short video showcasing some of the features to give you an idea on how it may look in the end:
-https://www.youtube.com/watch?v=nG0_0xVvnjk
-
-Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.reddit.com/r/fightsticks/comments/qhtwi9/qanba_obsidian_led_mod/
