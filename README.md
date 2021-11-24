@@ -17,7 +17,7 @@ Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you
 
 # Requirement
 
-If you want to use this you will need a Raspberry Pi Pico and a LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
+If you want to use this you will need a Raspberry Pi Pico and a RGB LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
 
 # Guide
 
