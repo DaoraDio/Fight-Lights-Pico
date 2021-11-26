@@ -30,6 +30,10 @@ very easy for begginers to follow and realize.
 So as long as you can send the signals of your buttons to the pico, by whatever means you like, directly or through a different pcb,
 and have a way to power the Pico and the LEDs, a brook board is not required.
 
+# Contact
+
+There is a Discord Server for all your questions: https://discord.gg/AyYfbYQt
+
 # License
 
 MIT License
