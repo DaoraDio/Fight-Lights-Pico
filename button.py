@@ -2,6 +2,7 @@ from machine import Pin
 import config
 import functions
 import time
+import init
 
 #button class
 class MyButton:
@@ -9,8 +10,10 @@ class MyButton:
     colorHSV = (0,0,0) #the color on press in HSV
     VAL = 0 #the value of the HSV color
     led_list = [] #holds the same list as config[0]
+    counter = 0
+    was_pressed = False
     is_pressed = False #flag to track if the button is currently pressed
-    was_pressed = False #flag to track if the button has been pressed
+    was_released = False #flag to track if the button has been pressed
     pin_num = 0 #the pin number of the button
     fade = False #flag for fade
     config = ((-1,), (0,0,0), False) #(list of leds, color, Fade on or off): gets its values from config.py
@@ -31,27 +34,41 @@ class MyButton:
     #gets permanently called from the main loop
     def run(self, random_color_id):
         if self.config[0][0] > -1: #do nothing if the button is set to -1 in config.py
-            ######################when the button is pressed###########################
             if not self.pin.value():
-                for i in range(len(self.led_list)): #loops through all numbers defined in led_list
-                    functions.pixels_set(self.led_list[i], self.colorRGB)#sets all pixel at the pos i to the color of colorRGB
+                self.counter = self.counter +1
+                ######################when the button was just pressed###########################
+                if self.counter == 1:
+                    self.was_pressed = True
+                    
+                    
+                ######################when the button is pressed###########################
+                if self.config[0][0] > 0:
+                    for i in range(len(self.led_list)): #loops through all numbers defined in led_list
+                        functions.pixels_set(self.led_list[i]-1, self.colorRGB)#sets all pixel at the pos i to the color of colorRGB
                 self.colorHSV = functions.RGBtoHSV(self.colorRGB)#converts the color from RGB to HSV and stores it in variable colorHSV
                 self.VAL = self.colorHSV[2]#gives self.VAL the value(V) of the HSV color
                 self.is_pressed = True
-                self.was_pressed = True
-                functions.timer_counter = functions.timer_counter_setback #set back the timer counter, so sleep mode doesn't trigger during a press
+                self.was_released = True
+                init.sleep_counter = init.setback_value #sets back the sleep counter, so sleep mode doesn't trigger during a press
+                
+                
+                
+                
             else:
                 #############when the button was just released#########################
-                if self.was_pressed == True:
-                    self.was_pressed = False
-                    #code here, has no use currently
+                if self.was_released == True:
+                    self.counter = 0
+                    self.was_released = False
+                    #self.was_pressed = False
+                   
                 
                 ################when the button is currently not pressed###############
                 if self.fade == True: #when fade for that button is enabled
                     if self.VAL > 0:
                         self.VAL = functions.fade_val(self.VAL) #decrases VAL through the function fade_val
-                        for i in range(len(self.led_list)): #loops through led_list
-                            functions.pixels_setHSV(self.led_list[i], (self.colorHSV[0],self.colorHSV[1], self.VAL))#sets all the colors with decreases VAL for fade effect
+                        if self.config[0][0] > 0: #when led position is not defined but button active
+                            for i in range(len(self.led_list)): #loops through led_list
+                                functions.pixels_setHSV(self.led_list[i]-1, (self.colorHSV[0],self.colorHSV[1], self.VAL))#sets all the colors with decreases VAL for fade effect
                 self.is_pressed = False
                 if self.config[1] == 'random': #gives the button a random color if second variable of config of a button is 'random'
                     self.colorRGB = config.colors[random_color_id]
@@ -77,14 +94,12 @@ l1 = MyButton(11, functions.debounce_clear_led)
 circle = MyButton(12, functions.debounce_clear_led)
 x = MyButton(13, functions.debounce_clear_led)
 
-
-
 brightness = MyButton(16, functions.debounce_brightness) 
 
 #array for all the buttons, if you add a new button make sure to add it to the array aswell
 button_list = [r2,l2,square,triangle,r1,l1,circle,x,up,down,right,left,select,ps,start,brightness]
-
         
      
+
 
 

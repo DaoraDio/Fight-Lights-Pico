@@ -5,38 +5,36 @@ import random
 import io
 import math
 import button
-from machine import Timer
-
-frequency = 60 #frequency in hz at which the timer interrups happen
-timer_counter_setback = -5 #value to which the timer counter gets reset after a button press,
-                            #ideally it should be 0, but if the frequency is too high and the setback value is too high as well (aka 0 or >-5) the interrupt
-                            #timer interrupt overrides the value too fast for other functions to register properly
-
-#do not change (except you know what you are doing)
-timer_counter = 0
-tim = Timer()
-timer = Timer()
-timer2 = Timer()
-
-
+import init
+import machine
 
 #timer interrupt function
 #increases timer counter for every timer interrupt
 def tick(timer):
-    global timer_counter
-    #print(timer_counter)
-    timer_counter = timer_counter + 1
+    state = machine.disable_irq()
+    init.sleep_counter += 1
+    init.timer_counter += 1
+    machine.enable_irq(state)
     
-#interrupt routine to set all leds to blank(off) on button press
-#also sets the timer_counter to 0 which wakes the leds up from 'sleep mode'
+#sets the sleep_counter to the setback value which wakes the leds up from 'sleep mode'
 def clear_led(pin):
-    global timer_counter, background
-    timer_counter = timer_counter_setback    
+    init.sleep_counter = init.setback_value
     
 #frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
 #freq=1 = 1hz = 1 interrupt every second
 #fre=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
-tim.init(freq=frequency, mode=Timer.PERIODIC, callback=tick)
+init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
+
+#interrupt routine to debounce the brightness button
+#all credits to Kaspars Dambis @ https://kaspars.net/blog/micropython-button-debounce
+def debounce_brightness(pin):
+    # Start or replace a timer for 200ms, and trigger change_brightness.
+    init.timer2.init(mode=machine.Timer.ONE_SHOT, period=200, callback=change_brightness)
+    
+#interrupt routine to debounce buttons, calls the clear_led method
+def debounce_clear_led(pin):
+    #print(get_id(pin))
+    init.timer3.init(mode=machine.Timer.ONE_SHOT, period=50, callback=clear_led)
 
 def pixels_show(brightness_input):
     dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
@@ -81,7 +79,7 @@ def shuffle_array(arr):
         arr[rand_index] = temp
         last_index -= 1
 
-#breathin light sleep mode
+#breathing light sleep mode
 #all credits for the breathing light goes to Joshua Hrisko, Maker Portal LLC (c) 2021
 def sleep_mode1(): #breathin LED
     if config.sleep_after == 0:
@@ -95,13 +93,13 @@ def sleep_mode1(): #breathin LED
     breath_amps = [ii for ii in range(0,255,speed)]
     breath_amps.extend([ii for ii in range(255,-1,-speed)])
     for color in config.colors: # emulate breathing LED
-        if timer_counter < config.sleep_after:
+        if init.sleep_counter < config.sleep_after:
                 return
         for ii in breath_amps:
-            if timer_counter < config.sleep_after:
+            if init.sleep_counter < config.sleep_after:
                     return
             for jj in range(len(statemachine.ar)):
-                if timer_counter < config.sleep_after:
+                if init.sleep_counter < config.sleep_after:
                     return
                 pixels_set(jj, color) # show all colors
             pixels_show((ii/255) * config.brightness_mod)
@@ -110,25 +108,21 @@ def sleep_mode1(): #breathin LED
 
 #https://core-electronics.com.au/tutorials/how-to-use-ws2812b-rgb-leds-with-raspberry-pi-pico.html
 def sleep_mode2(): #Color Palette
-    if config.sleep_after == 0:
-        pixels_fill((0,0,0))
-        pixels_show(config.brightness_mod)
+    pixels_fill((0,0,0))
+    pixels_show(config.brightness_mod)
         
-    
-    speed = 0
     while True:
-        if timer_counter <= sleep_after():
+        if init.sleep_counter <= sleep_after():
             return
         for j in range(255):
-            if timer_counter <= sleep_after():
+            if init.sleep_counter <= sleep_after():
                 return
             for i in range(config.led_count):
-                if timer_counter <= sleep_after():
+                if init.sleep_counter <= sleep_after():
                     return
                 rc_index = (i * 256 // config.led_count) + j
                 pixels_set(i, wheel(rc_index & 255))
             pixels_show(config.brightness_mod)
-            time.sleep(speed)
             
 #sets all leds to color in RGB
 def pixels_fill(color):
@@ -149,8 +143,6 @@ def inverse_ledlist(ledlist):
     for i in range(len(ledlist)):
         leds.remove(ledlist[i])
                 
-
-    
     return leds
     
     
@@ -164,17 +156,6 @@ def change_brightness(pin):
     else:
         config.brightness_mod = config.brightness_mod + config.brightness_steps
         print("brightness_mod =", config.brightness_mod)
-
-#interrupt routine to debounce the brightness button
-#all credits to Kaspars Dambis @ https://kaspars.net/blog/micropython-button-debounce
-def debounce_brightness(pin):
-    # Start or replace a timer for 200ms, and trigger change_brightness.
-    timer.init(mode=Timer.ONE_SHOT, period=200, callback=change_brightness)
-    
-#interrupt routine to debounce buttons, calls the clear_led method
-def debounce_clear_led(pin):
-    #print(get_id(pin))
-    timer2.init(mode=Timer.ONE_SHOT, period=50, callback=clear_led)
     
 
 #converts the value of the sleep_after variable in config.py to ticks of the timer interrupt
@@ -183,8 +164,7 @@ def sleep_after():
     if config.sleep_after == 0:
         return 0
     else:
-        global frequency
-        ticks = 1/(1/frequency)
+        ticks = 1/(1/init.frequency)
         return ticks * config.sleep_after
     
 #returns the id of a pin
@@ -328,6 +308,38 @@ def no_buttons_pressed():
             return False
     
     return True
+    
+
+def set_background():
+    if isinstance(config.background_color[0], int):
+        background_color_HSV = RGBtoHSV(config.background_color)
+        background_color_HSV = (background_color_HSV[0],background_color_HSV[1],background_color_HSV[2]*config.background_brightness)
+        
+        pixels_fillHSV(background_color_HSV)
+    else:
+        different_tuple = len(config.background_color) 
+    
+        ranges = []
+        colors = []
+    
+        #converts the tuple of different background colors into a list and save it in ranges
+        if different_tuple > 1:
+            for i in range(different_tuple):
+                ranges.append(list(config.background_color[i]))
+
+        for i in range(different_tuple):
+            hsv_col = list(RGBtoHSV(ranges[i][0]))
+            hsv_col[2] = hsv_col[2] * config.background_brightness
+            colors.append(hsv_col)
+        
+            ranges[i].pop(0)
+        
+        for i in range(len(ranges)):
+            for j in range(len(ranges[i])):
+                pixels_setHSV(ranges[i][j]-1,colors[i])
+    
+    
+    
     
     
     
