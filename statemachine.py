@@ -1,8 +1,11 @@
+print("statemachine")
 import rp2
 import sys
 import config
 import array
 from machine import Pin
+
+
 
 PIN_NUM = config.PIN_NUM
 led_count = config.led_count
@@ -34,4 +37,3 @@ sm.active(1)
 
 # Range of LEDs stored in an array
 ar = array.array("I", [0 for _ in range(led_count)])
-#

@@ -1,8 +1,12 @@
+print("config")
 #Fight Lights Pico
 #Version 1.0.5
-
+#changes added priority for button presses
 from machine import Pin
 import button
+
+
+
 # color specifications in (R,G,B)
 blank = (0,0,0) #blank = not turned on
 
@@ -42,8 +46,8 @@ mode = 1 #controls which sleepmode is displayed (currently 1 and 2 available), 0
 #set to any color if you want all LEDs to have the same background color e.g => background_color = red
 #give it a list of lists if you want different LEDs to have different background colors e.g => background_color = ((red,3),(green,4,5), (light_blue,5,1), (yellow,6), (white,2,7,8)) 
 #first parameter is the color, the rest are the LEDs to light up with that color
-background_color = ((red,3),(green,4), (light_blue,5), (yellow,6), (white,1,2,7,8))                                                                           
-
+background_color = ((red,3),(green,4), (light_blue,5), (yellow,6), (blank,1,2,7,8))
+ 
 
 background_brightness = 0.02 #sets the brightness of the background color
 clear_background_on_press = False #controls if the background gets temporarely turned off while a button is being pressed

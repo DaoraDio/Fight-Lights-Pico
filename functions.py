@@ -1,3 +1,5 @@
+print("functions")
+
 import statemachine
 import config
 import array, time
@@ -7,6 +9,8 @@ import math
 import button
 import init
 import machine
+
+
 
 #timer interrupt function
 #increases timer counter for every timer interrupt
@@ -312,32 +316,41 @@ def no_buttons_pressed():
 
 def set_background():
     if isinstance(config.background_color[0], int):
-        background_color_HSV = RGBtoHSV(config.background_color)
-        background_color_HSV = (background_color_HSV[0],background_color_HSV[1],background_color_HSV[2]*config.background_brightness)
+        if init.bg_initialized == False:
+            init.background_color_HSV = RGBtoHSV(config.background_color)
+            init.background_color_HSV = (init.background_color_HSV[0],init.background_color_HSV[1],init.background_color_HSV[2]*config.background_brightness)
+            init.bg_initialized = True
         
-        pixels_fillHSV(background_color_HSV)
+        pixels_fillHSV(init.background_color_HSV)
     else:
-        different_tuple = len(config.background_color) 
-    
-        ranges = []
-        colors = []
-    
-        #converts the tuple of different background colors into a list and save it in ranges
-        if different_tuple > 1:
+        #initialize the background colors
+        if init.bg_initialized == False:
+            different_tuple = len(config.background_color)
+        
+            #appends all the different tuple into ranges
+            if different_tuple > 1:
+                for i in range(different_tuple):
+                    #print("tuple ",config.background_color[i])
+                    init.ranges.append(list(config.background_color[i]))
+                    
             for i in range(different_tuple):
-                ranges.append(list(config.background_color[i]))
-
-        for i in range(different_tuple):
-            hsv_col = list(RGBtoHSV(ranges[i][0]))
-            hsv_col[2] = hsv_col[2] * config.background_brightness
-            colors.append(hsv_col)
+                hsv_col = list(RGBtoHSV(init.ranges[i][0]))
+                hsv_col[2] = hsv_col[2] * config.background_brightness
+                
+                init.colors.append(hsv_col)
+                init.ranges[i].pop(0)
+                
+            init.bg_initialized = True
         
-            ranges[i].pop(0)
-        
-        for i in range(len(ranges)):
-            for j in range(len(ranges[i])):
-                pixels_setHSV(ranges[i][j]-1,colors[i])
+        #display the background colors
+        for i in range(len(init.ranges)):
+            for j in range(len(init.ranges[i])):
+                pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
     
+
+    
+    
+
     
     
     

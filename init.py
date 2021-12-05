@@ -1,7 +1,16 @@
+print("init")
 import machine
-leniency_counter = 0
-string_counter = 0
-i = 0 #increases every iteration of the main loop
+#import button
+import config
+
+
+
+leniency_counter = 0 #increases every iteration of the main loop
+string_counter = 0 #unused currently
+i = 0 #increases every time the leniency_counter hits the value defines in config.py leniency
+
+#variable that keeps track of the position in the array button_list in button.py of the latest button which has been pressed
+start_pos = 0
 
 #global counter that increases at the rate of frequency
 timer_counter = 0
@@ -21,3 +30,10 @@ frequency = 60
 timer1 = machine.Timer() #timer for timer the interrupts
 timer2 = machine.Timer() #debounce timer for brightness
 timer3 = machine.Timer() #debounce timer for clear_led
+
+
+##initializations for background color
+bg_initialized = False
+ranges = []
+colors = []
+background_color_HSV = (0,0,0)

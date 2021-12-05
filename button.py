@@ -1,3 +1,4 @@
+print("button")
 from machine import Pin
 import config
 import functions
@@ -12,6 +13,7 @@ class MyButton:
     led_list = [] #holds the same list as config[0]
     counter = 0
     was_pressed = False
+    highest_prio = False
     is_pressed = False #flag to track if the button is currently pressed
     was_released = False #flag to track if the button has been pressed
     pin_num = 0 #the pin number of the button
@@ -38,6 +40,9 @@ class MyButton:
                 self.counter = self.counter +1
                 ######################when the button was just pressed###########################
                 if self.counter == 1:
+                    for i in range(len(button_list)):
+                        button_list[i].highest_prio = False
+                    self.highest_prio = True
                     self.was_pressed = True
                     
                     
@@ -59,7 +64,7 @@ class MyButton:
                 if self.was_released == True:
                     self.counter = 0
                     self.was_released = False
-                    #self.was_pressed = False
+                    self.was_pressed = False
                    
                 
                 ################when the button is currently not pressed###############
@@ -99,7 +104,7 @@ brightness = MyButton(16, functions.debounce_brightness)
 #array for all the buttons, if you add a new button make sure to add it to the array aswell
 button_list = [r2,l2,square,triangle,r1,l1,circle,x,up,down,right,left,select,ps,start,brightness]
         
-     
+
 
 
 

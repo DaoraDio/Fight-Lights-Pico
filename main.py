@@ -1,11 +1,13 @@
+print("main")
 import time
 from machine import Pin
 import statemachine
+import button
 import config
 import functions
-import button
 import init
 import random
+
 
 #--------------------------main program-------------------------------------------------------
 #lights up the onborad led to have an indication of wether the board is running or not
@@ -47,17 +49,29 @@ while True:
             functions.set_background()
         else:
             functions.pixels_fill((0,0,0))
+            
+
+    
+    #get button pos with the highest priority and save the pos in start_pos
+    for i in range(len(button.button_list)):
+        if button.button_list[i].highest_prio == True:
+            init.start_pos = i+1
+            if init.start_pos == len(button.button_list):
+                init.start_post = 0
+            break
     
     
-    #calls the run function for each button from button.py, gives the color id as a parameter
+    #calls run function for every button
     if config.leniency >= 1:
-        for i in range(len(button.button_list)):
+        for i in range(init.start_pos, len(button.button_list)+init.start_pos):
+            i = i % len(button.button_list)
             button.button_list[i].run(random_color_id)
     else:
-        for i in range(len(button.button_list)):
+        for i in range(init.start_pos, len(button.button_list)+init.start_pos):
+            i = i % len(button.button_list)
             button.button_list[i].run((time.ticks_cpu()) % len(config.colors))
-        
-    
+
+
     #displays the led colors
     functions.pixels_show(config.brightness_mod)
 

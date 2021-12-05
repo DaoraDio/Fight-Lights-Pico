@@ -17,7 +17,7 @@ Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you
 
 # Requirement
 
-If you want to use this you will need a Raspberry Pi Pico and a RGB LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
+If you want to use this you will need a Raspberry Pi Pico and a LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
 
 # Guide
 
@@ -29,11 +29,6 @@ with a brook fighting board in mind, since it is a very common fighting board, w
 very easy for begginers to follow and realize.
 So as long as you can send the signals of your buttons to the pico, by whatever means you like, directly or through a different pcb,
 and have a way to power the Pico and the LEDs, a brook board is not required.
-
-# Contact
-
-![alt text](https://www.swe-chumbucket.com/index.php/s/gsq7pN8Loo236Qk/preview) 
-There is a Discord server for all your questions: https://discord.gg/XqU7RCVwhw
 
 # License
 
