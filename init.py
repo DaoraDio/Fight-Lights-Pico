@@ -18,7 +18,7 @@ timer_counter = 0
 #value to which the timer counter gets reset after a button press,
 #ideally it should be 0, but if the frequency is too high and the setback value is too high as well (aka 0 or >-5)...
 #...the timer interrupt overrides the value too fast for other functions to register properly
-setback_value = -5 
+setback_value = -10
 
 #counter for sleep mode, gets set to setback_value on button press
 sleep_counter = 0

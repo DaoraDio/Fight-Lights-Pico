@@ -20,16 +20,19 @@ while True:
     no_buttons_pressed = functions.no_buttons_pressed()
     
     init.leniency_counter += 1
-    init.string_counter += 1
     
     
     if init.leniency_counter == config.leniency:    
         init.i = init.i + 1
         init.leniency_counter = 0
         
+        
+        
+    #print(init.sleep_counter)    
     #chooses a "random" color from the color array 'colors' in config.py depending on the value of i
     random_color_id = init.i % len(config.colors)
-      
+    
+    
     
     #goes into sleep mode after seconds defined in the variable 'sleep_after' has been exceeded
     if init.sleep_counter > functions.sleep_after():
@@ -39,8 +42,9 @@ while True:
             functions.sleep_mode1()
         if config.mode == 2:
             functions.sleep_mode2()
-    
-    
+     
+     
+     
     #sets the background colors
     if config.clear_background_on_press == False:
         functions.set_background()
@@ -57,7 +61,7 @@ while True:
         if button.button_list[i].highest_prio == True:
             init.start_pos = i+1
             if init.start_pos == len(button.button_list):
-                init.start_post = 0
+                init.start_pos = 0
             break
     
     

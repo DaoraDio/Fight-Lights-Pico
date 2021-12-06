@@ -1,11 +1,9 @@
 print("config")
 #Fight Lights Pico
-#Version 1.0.5
-#changes added priority for button presses
+#Version 1.0.7
+
 from machine import Pin
 import button
-
-
 
 # color specifications in (R,G,B)
 blank = (0,0,0) #blank = not turned on
@@ -33,7 +31,7 @@ colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orang
 led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
 
-leniency = 2 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
+leniency = 1 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
              #set to 0 to disable
 
 brightness_mod = 1 #brightness, 0 = darkest, 1.0 = brightest
