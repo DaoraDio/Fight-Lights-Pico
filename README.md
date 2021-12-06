@@ -33,7 +33,7 @@ and have a way to power the Pico and the LEDs, a brook board is not required.
 # Contact
 
 ![alt text](https://www.swe-chumbucket.com/index.php/s/gsq7pN8Loo236Qk/preview) 
-There is a Discord server for all your questions: https://discord.gg/XqU7RCVwhw
+There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 
 # License
 
