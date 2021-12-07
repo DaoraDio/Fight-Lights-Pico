@@ -13,7 +13,7 @@ This code is not limited to Arcade stick projects though, it can be used for any
 I have made a short video showcasing some of the features to give you an idea on how it may look in the end:
 https://www.youtube.com/watch?v=nG0_0xVvnjk
 
-Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.reddit.com/r/fightsticks/comments/qhtwi9/qanba_obsidian_led_mod/
+Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.youtube.com/watch?v=yL6-1daim48
 
 # Requirement
 
