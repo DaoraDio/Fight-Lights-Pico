@@ -3,9 +3,9 @@ Fight Lights Pico is a LED-Driver for the Raspberry Pi Pico that gives Arcade St
 
 # What does it do?
 
-This project is aimed for Arcade stick modders to add custom RGB LEDs to Arcade sticks. The LEDs react to button presses and display custom colors and animations.
-The code is easily customizable to help you build the Arcade stick of your dreams.
-This code is not limited to Arcade stick projects though, it can be used for any project that needs to light up LEDs when pressing something.
+This project is primarily aimed for Arcade stick modders to add custom RGB LEDs to Arcade sticks. The LEDs react to button presses and display custom colors and animations on press or when idle.
+
+I try to keep the code as versatile as possible, so it is not only limited to Arcade sticks, you could also use this for your big Arcade cabinet aswell or any project that needs to display LEDs when something is pressed.
 
 
 # How does it look?
