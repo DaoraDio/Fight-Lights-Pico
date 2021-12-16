@@ -3,9 +3,9 @@ Fight Lights Pico is a LED-Driver for the Raspberry Pi Pico that gives Arcade St
 
 # What does it do?
 
-This project is aimed for Arcade stick modders to add custom RGB LEDs to Arcade sticks. The LEDs react to button presses and display custom colors and animations.
-The code is easily customizable to help you build the Arcade stick of your dreams.
-This code is not limited to Arcade stick projects though, it can be used for any project that needs to light up LEDs when pressing something.
+This project is primarily aimed for Arcade stick modders to add custom RGB LEDs to Arcade sticks. The LEDs react to button presses and display custom colors and animations on press or when idle.
+
+I try to keep the code as versatile as possible, so it is not only limited to Arcade sticks, you could also use this for your big Arcade cabinet aswell or any project that needs to display LEDs when something is pressed.
 
 
 # How does it look?
@@ -13,13 +13,13 @@ This code is not limited to Arcade stick projects though, it can be used for any
 I have made a short video showcasing some of the features to give you an idea on how it may look in the end:
 https://www.youtube.com/watch?v=nG0_0xVvnjk
 
-Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.reddit.com/r/fightsticks/comments/qhtwi9/qanba_obsidian_led_mod/
+Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.youtube.com/watch?v=yL6-1daim48
 
 # Requirement
 
 If you want to use this you will need a Raspberry Pi Pico and a RGB LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
 
-# Guide
+# Guides
 
 I have written a complete guide for assembly and installation here: https://docs.google.com/document/d/1qY4HESYdRyFT8OaB5leyHsWm4kfqoA74zqSLAdihuvo/edit?usp=sharing
 
@@ -30,10 +30,13 @@ very easy for begginers to follow and realize.
 So as long as you can send the signals of your buttons to the pico, by whatever means you like, directly or through a different pcb,
 and have a way to power the Pico and the LEDs, a brook board is not required.
 
+Qanba Obsidian Wiring guide: https://drive.google.com/file/d/1-cKfSiCJdcfAH5P0MAaEu_BFiHHO-TIr/view?usp=sharing
+(I take no responsibility for damaged parts or voided warranty)
+
 # Contact
 
 ![alt text](https://www.swe-chumbucket.com/index.php/s/gsq7pN8Loo236Qk/preview) 
-There is a Discord server for all your questions: https://discord.gg/XqU7RCVwhw
+There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 
 # License
 
