@@ -82,22 +82,22 @@ class MyButton:
                     
                 
 #######instances of class MyButton for all buttons##########
-up = MyButton(1, functions.debounce_clear_led)
-down = MyButton(2, functions.debounce_clear_led)
-right = MyButton(3, functions.debounce_clear_led)
-left = MyButton(4, functions.debounce_clear_led)
-select = MyButton(5, functions.debounce_clear_led)
-ps = MyButton(6, functions.debounce_clear_led)
-start = MyButton(7, functions.debounce_clear_led)                   
+up = MyButton(1, functions.clear_led)
+down = MyButton(2, functions.clear_led)
+right = MyButton(3, functions.clear_led)
+left = MyButton(4, functions.clear_led)
+select = MyButton(5, functions.clear_led)
+ps = MyButton(6, functions.clear_led)
+start = MyButton(7, functions.clear_led)                   
                     
-r2 = MyButton(15, functions.debounce_clear_led)
-l2 = MyButton(14, functions.debounce_clear_led)
-square = MyButton(8, functions.debounce_clear_led)
-triangle = MyButton(9, functions.debounce_clear_led)
-r1 = MyButton(10, functions.debounce_clear_led)
-l1 = MyButton(11, functions.debounce_clear_led)
-circle = MyButton(12, functions.debounce_clear_led)
-x = MyButton(13, functions.debounce_clear_led)
+r2 = MyButton(15, functions.clear_led)
+l2 = MyButton(14, functions.clear_led)
+square = MyButton(8, functions.clear_led)
+triangle = MyButton(9, functions.clear_led)
+r1 = MyButton(10, functions.clear_led)
+l1 = MyButton(11, functions.clear_led)
+circle = MyButton(12, functions.clear_led)
+x = MyButton(13, functions.clear_led)
 
 brightness = MyButton(16, functions.debounce_brightness) 
 

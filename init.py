@@ -1,9 +1,6 @@
 print("init")
 import machine
-#import button
 import config
-
-
 
 leniency_counter = 0 #increases every iteration of the main loop
 string_counter = 0 #unused currently
@@ -29,7 +26,6 @@ frequency = 60
 #do not change (except you know what you are doing)
 timer1 = machine.Timer() #timer for timer the interrupts
 timer2 = machine.Timer() #debounce timer for brightness
-timer3 = machine.Timer() #debounce timer for clear_led
 
 
 ##initializations for background color

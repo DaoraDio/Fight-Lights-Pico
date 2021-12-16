@@ -16,6 +16,16 @@ onboard_led.value(True)
 
 #main loop
 while True:
+    #goes into sleep mode after seconds defined in the variable 'sleep_after' has been exceeded
+    if init.sleep_counter > functions.sleep_after():
+        if config.mode == 0:
+                pass
+        if config.mode == 1:
+            functions.sleep_mode1()
+        if config.mode == 2:
+            functions.sleep_mode2()
+    
+    
     #checks if no buttons are pressed
     no_buttons_pressed = functions.no_buttons_pressed()
     
@@ -26,24 +36,10 @@ while True:
         init.i = init.i + 1
         init.leniency_counter = 0
         
-        
-        
-    #print(init.sleep_counter)    
+
     #chooses a "random" color from the color array 'colors' in config.py depending on the value of i
     random_color_id = init.i % len(config.colors)
     
-    
-    
-    #goes into sleep mode after seconds defined in the variable 'sleep_after' has been exceeded
-    if init.sleep_counter > functions.sleep_after():
-        if config.mode == 0:
-                pass
-        if config.mode == 1:
-            functions.sleep_mode1()
-        if config.mode == 2:
-            functions.sleep_mode2()
-     
-     
      
     #sets the background colors
     if config.clear_background_on_press == False:
@@ -78,5 +74,4 @@ while True:
 
     #displays the led colors
     functions.pixels_show(config.brightness_mod)
-
-
+    

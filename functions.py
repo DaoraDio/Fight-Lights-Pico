@@ -10,15 +10,12 @@ import button
 import init
 import machine
 
-
-
 #timer interrupt function
 #increases timer counter for every timer interrupt
 def tick(timer):
-    state = machine.disable_irq()
     init.sleep_counter += 1
     init.timer_counter += 1
-    machine.enable_irq(state)
+
     
 #sets the sleep_counter to the setback value which wakes the leds up from 'sleep mode'
 def clear_led(pin):
@@ -36,9 +33,8 @@ def debounce_brightness(pin):
     init.timer2.init(mode=machine.Timer.ONE_SHOT, period=200, callback=change_brightness)
     
 #interrupt routine to debounce buttons, calls the clear_led method
-def debounce_clear_led(pin):
-    #print(get_id(pin))
-    init.timer3.init(mode=machine.Timer.ONE_SHOT, period=50, callback=clear_led)
+#def debounce_clear_led(pin):
+#    init.timer3.init(mode=machine.Timer.ONE_SHOT, period=50, callback=clear_led)
 
 def pixels_show(brightness_input):
     dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
@@ -55,7 +51,6 @@ def pixels_set(i, color):
 
 #sets a color at pos i, takes HSV color as value
 def pixels_setHSV(i,color):
-    #print(color)
     rgbcolor = HSVtoRGB(color)
     pixels_set(i, rgbcolor)
     
@@ -90,10 +85,9 @@ def sleep_mode1(): #breathin LED
         pixels_fill((0,0,0))
         pixels_show(config.brightness_mod)
     
-    
     shuffle_array(config.colors)
     
-    speed = 5 
+    speed = 5
     breath_amps = [ii for ii in range(0,255,speed)]
     breath_amps.extend([ii for ii in range(255,-1,-speed)])
     for color in config.colors: # emulate breathing LED
