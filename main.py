@@ -16,14 +16,16 @@ onboard_led.value(True)
 
 #main loop
 while True:
-    #goes into sleep mode after seconds defined in the variable 'sleep_after' has been exceeded
-    if init.sleep_counter > functions.sleep_after():
-        if config.mode == 0:
+    init.main_cnt += 1
+    
+    #goes into idle mode after seconds defined in the variable 'idle_after' has been exceeded
+    if init.idle_counter > functions.idle_after():
+        if config.idle_mode == 0:
                 pass
-        if config.mode == 1:
-            functions.sleep_mode1()
-        if config.mode == 2:
-            functions.sleep_mode2()
+        if config.idle_mode == 1:
+            functions.idle_mode1()
+        if config.idle_mode == 2:
+            functions.idle_mode2()
     
     
     #checks if no buttons are pressed
@@ -43,6 +45,7 @@ while True:
      
     #sets the background colors
     if config.clear_background_on_press == False:
+        functions.pixels_fill((0,0,0))
         functions.set_background()
     else:
         if no_buttons_pressed == True:
@@ -61,7 +64,7 @@ while True:
             break
     
     
-    #calls run function for every button
+    #calls run function for every button starting from start_pos
     if config.leniency >= 1:
         for i in range(init.start_pos, len(button.button_list)+init.start_pos):
             i = i % len(button.button_list)
@@ -71,7 +74,7 @@ while True:
             i = i % len(button.button_list)
             button.button_list[i].run((time.ticks_cpu()) % len(config.colors))
 
-
+        
     #displays the led colors
     functions.pixels_show(config.brightness_mod)
     

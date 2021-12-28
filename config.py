@@ -1,9 +1,6 @@
 print("config")
 #Fight Lights Pico
-#Version 1.0.8
-
-from machine import Pin
-import button
+#Version 1.1.3
 
 from machine import Pin
 import button
@@ -29,25 +26,36 @@ white = (255,255,255)
 #if you add a new color make sure you add it to the array as well
 colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orange,violet,pink,white]
 
+
 led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
 
 leniency = 1 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
              #set to 0 to disable
 
+
+profile_color = green
+
+
 brightness_mod = 1 #brightness, 0 = darkest, 1.0 = brightest
-brightness_steps = 0.20 #steps at which the brightness changes per press
+brightness_steps = 0.2 #steps at which the brightness changes per press
 
-sleep_after = 30 #time when leds go from default to sleep mode (in seconds)
-mode = 1 #controls which sleepmode is displayed (currently 1 and 2 available), 0 to disable sleepmode
+idle_after = 30 #time when LEDs go from default to idle mode (in seconds)
+idle_mode = 1 #controls which idlemode is displayed (currently 1 and 2 available), 0 to disable idlemode
 
-#set the background color, set to blank or (0,0,0) if you want it turned off
-#set to any color if you want all LEDs to have the same background color e.g => background_color = red
-#give it a list of lists if you want different LEDs to have different background colors e.g => background_color = ((red,3),(green,4,5), (light_blue,5,1), (yellow,6), (white,2,7,8)) 
-#first parameter is the color, the rest are the LEDs to light up with that color
-background_color = ((red,3),(green,4), (light_blue,5), (yellow,6), (blank,1,2,7,8))
+##set the background color and brightness##
+#--set to blank or (0,0,0) if you want it turned off, example: background = blank
+#--set to any color if you want all LEDs to have the same background color with 100% brightness, example: background = red
+#--give it a list if you want to specify the brightness and the LEDs, example: background = (0.3, green, 1,2,3,4,5)
+#---first parameter is the brighness, values between 0.0 and 1.0 (0.0 = 0%, 1.0 = 100%), has to be a floating point number
+#---second parameter is the color, the rest are the LED numbers which are set to that color and brightness
+#--give it a list of lists if you want different LEDs to have different background colors and different brightnesses
+#---example: background = ((0.02,red,1),(0.02,green,2), (0.02,light_blue,3), (0.02,yellow,4), (0.0,white,5,6,7,8))
+#write 'rainbow' instead of a color for a rainbow effect. Can look choppy if brightness is set too low
+#background = ((0.02,red,5,6),(0.02,green,7,8), (0.02,light_blue,9,10), (0.02,yellow,11,12), (0.02,white,1,2,3,4,13,14,15,16))
+background = ((0.02,red,3),(0.02,green,4), (0.02,light_blue,5), (0.02,yellow,6), (0.02,white,1,2,7,8))
 
-background_brightness = 0.02 #sets the brightness of the background color
+
 clear_background_on_press = False #controls if the background gets temporarely turned off while a button is being pressed
 
 fade_speed = 6 #fade speed, higher = faster
@@ -59,12 +67,12 @@ fade_speed = 6 #fade speed, higher = faster
 #set to -1 to deactivate the button
 #set to 0 if led position is not defined
 #control if the button has fade or not
-up = button.up.set_config((7,8), cyan, False)
-down = button.down.set_config((1,2), cyan, False)
-right = button.right.set_config((1,8), cyan, False)
-left = button.left.set_config((2,7), cyan, False)
-select = button.select.set_config((1,2,3,4,5,6,7,8), violet, False)
-ps = button.ps.set_config((-1,), white, False)
+up = button.up.set_config((0,), cyan, False)
+down = button.down.set_config((0,), cyan, False)
+right = button.right.set_config((0,), cyan, False)
+left = button.left.set_config((0,), cyan, False)
+select = button.select.set_config((1,2,3,4,5,6,7,8), violet, False)#
+ps = button.ps.set_config((-1,), red, False)
 start = button.start.set_config((1,2,3,4,5,6,7,8), red, False)
 
 square = button.square.set_config((5,), 'random', True)
@@ -76,8 +84,4 @@ x = button.x.set_config((4,), 'random', True)
 l2 = button.l2.set_config((2,), 'random', True)
 r2 = button.r2.set_config((1,), 'random', True)
 
-brightness = button.brightness.set_config((-1,), 'random', False)
-
-
-
-
+led_options = button.led_options.set_config((0,), 'random', False)

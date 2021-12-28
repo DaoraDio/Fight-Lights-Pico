@@ -2,8 +2,9 @@ print("init")
 import machine
 import config
 
-leniency_counter = 0 #increases every iteration of the main loop
-string_counter = 0 #unused currently
+leniency_counter = 0 #increases every iteration of the main loop, resets when value reaches config.leniency
+string_leniency = 0 #unused currently
+main_cnt = 0 # increases every iteration of the main loop
 i = 0 #increases every time the leniency_counter hits the value defines in config.py leniency
 
 #variable that keeps track of the position in the array button_list in button.py of the latest button which has been pressed
@@ -17,8 +18,8 @@ timer_counter = 0
 #...the timer interrupt overrides the value too fast for other functions to register properly
 setback_value = -10
 
-#counter for sleep mode, gets set to setback_value on button press
-sleep_counter = 0
+#counter for idle mode, gets set to setback_value on button press
+idle_counter = 0
 
 #frequency in hz at which the timer interrups happen
 frequency = 60
@@ -27,9 +28,15 @@ frequency = 60
 timer1 = machine.Timer() #timer for timer the interrupts
 timer2 = machine.Timer() #debounce timer for brightness
 
+mode_selector = 0 #should not be reset on mode select
 
-##initializations for background color
+##initializations for background color and brightness
 bg_initialized = False
+single_tuple = False
 ranges = []
 colors = []
+brightness_values = []
 background_color_HSV = (0,0,0)
+
+
+
