@@ -28,7 +28,7 @@ white = (255,255,255)
 colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orange,violet,pink,white]
 
 
-led_count = 16 #number of LEDs in the Chain
+led_count = 8 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
 
 leniency = 1 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
