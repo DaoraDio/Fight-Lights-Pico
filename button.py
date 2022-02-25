@@ -104,10 +104,14 @@ l1 = MyButton(11,'l1', functions.clear_led)
 circle = MyButton(12,'4', functions.clear_led)
 x = MyButton(13,'3', functions.clear_led)
 
-led_options = MyButton(16,'brightness', functions.debounce_brightness) 
+led_option = MyButton(16,'brightness', functions.clear_led)
+
 
 #array for all the buttons, if you add a new button make sure to add it to the array aswell
-button_list = [r2,l2,square,triangle,r1,l1,circle,x,up,down,right,left,select,ps,start]
+button_list = [r2,l2,square,triangle,r1,l1,circle,x,up,down,right,left,select,ps,start,led_option]
+
+#sets the button list length in init.py
+init.button_list_length = len(button_list)
         
 
 

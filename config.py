@@ -1,6 +1,7 @@
 print("config")
 #Fight Lights Pico
-#Version 1.1.3
+#Version 1.1.6
+
 
 from machine import Pin
 import button
@@ -27,18 +28,16 @@ white = (255,255,255)
 colors = [blue,yellow,cyan,red,green,orange,light_blue,lime,turqoise,light_orange,violet,pink,white]
 
 
-led_count = 8 #number of LEDs in the Chain
+led_count = 16 #number of LEDs in the Chain
 PIN_NUM = 0 #pin connected to LED-Chain
 
 leniency = 1 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
              #set to 0 to disable
 
-
-profile_color = green
-
+profile_color = red #the profile color
 
 brightness_mod = 1 #brightness, 0 = darkest, 1.0 = brightest
-brightness_steps = 0.2 #steps at which the brightness changes per press
+brightness_steps = 0.1 #steps at which the brightness changes per press
 
 idle_after = 30 #time when LEDs go from default to idle mode (in seconds)
 idle_mode = 1 #controls which idlemode is displayed (currently 1 and 2 available), 0 to disable idlemode
@@ -52,13 +51,13 @@ idle_mode = 1 #controls which idlemode is displayed (currently 1 and 2 available
 #--give it a list of lists if you want different LEDs to have different background colors and different brightnesses
 #---example: background = ((0.02,red,1),(0.02,green,2), (0.02,light_blue,3), (0.02,yellow,4), (0.0,white,5,6,7,8))
 #write 'rainbow' instead of a color for a rainbow effect. Can look choppy if brightness is set too low
-#background = ((0.02,red,5,6),(0.02,green,7,8), (0.02,light_blue,9,10), (0.02,yellow,11,12), (0.02,white,1,2,3,4,13,14,15,16))
 background = ((0.02,red,3),(0.02,green,4), (0.02,light_blue,5), (0.02,yellow,6), (0.02,white,1,2,7,8))
+
 
 
 clear_background_on_press = False #controls if the background gets temporarely turned off while a button is being pressed
 
-fade_speed = 6 #fade speed, higher = faster
+fade_speed = 4 #fade speed, higher = faster
 
 
 #((list of leds), color, fade)
@@ -84,4 +83,11 @@ x = button.x.set_config((4,), 'random', True)
 l2 = button.l2.set_config((2,), 'random', True)
 r2 = button.r2.set_config((1,), 'random', True)
 
-led_options = button.led_options.set_config((0,), 'random', False)
+led_option = button.led_option.set_config((0,), 'random', False)
+
+
+
+
+
+
+

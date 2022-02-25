@@ -44,13 +44,13 @@ def debounce_brightness(pin):
 #def debounce_clear_led(pin):
 #    init.timer3.init(mode=machine.Timer.ONE_SHOT, period=50, callback=clear_led)
 
-#interrupt routine to change the overall brightness
-#goes from values between 0 and 1, wraps around after 1
+
 def increase_brightness():
     if config.brightness_mod >= 1:
         config.brightness_mod = 1
     else:
         config.brightness_mod += config.brightness_steps
+
 def decrease_brightness():
     epsilon = 0.0001
     if config.brightness_mod <= epsilon:
@@ -66,7 +66,7 @@ def pixels_show(brightness_input):
         b = int((cc & 0xFF) * brightness_input) # 8-bit blue dimmed to brightness
         dimmer_ar[ii] = (g<<16) + (r<<8) + b # 24-bit color dimmed to brightness
     statemachine.sm.put(dimmer_ar, 8) # update the state machine with new colors
-    time.sleep_ms(10)
+    #time.sleep_ms(10)
 
 def pixels_set(i, color):
     statemachine.ar[i] = (color[1]<<16) + (color[0]<<8) + color[2] # set 24-bit color
@@ -104,7 +104,18 @@ def wheel(pos):
     pos -= 170
     return (pos * 3, 0, 255 - pos * 3)
 
+def alt_wheel(pos):
+    if pos < 85:
+        return (pos * 3, 255 - pos * 3, 0)
+    elif pos < 170:
+        pos -= 85
+        return (255 - pos * 3, 0, pos * 3)
+    else:
+        pos -= 170
+        return (0, pos * 3, 255 - pos * 3)
+
 #returns the color in rgb of a LED
+#not fully implemented yet
 def get_pixelcolor(pos):
     r = int(((statemachine.ar[pos] >> 8) & 0xFF))
     g = int(((statemachine.ar[pos] >> 16) & 0xFF))
@@ -120,51 +131,7 @@ def shuffle_array(arr):
         arr[last_index] = arr[rand_index]
         arr[rand_index] = temp
         last_index -= 1
-
-#breathing light idle mode
-#all credits for the breathing light goes to Joshua Hrisko, Maker Portal LLC (c) 2021
-def idle_mode1(): #breathin LED
-    if config.idle_after == 0:
-        pixels_fill((0,0,0))
-        pixels_show(config.brightness_mod)
-    
-    shuffle_array(config.colors)
-    
-    speed = 5
-    breath_amps = [ii for ii in range(0,255,speed)]
-    breath_amps.extend([ii for ii in range(255,-1,-speed)])
-    for color in config.colors: # emulate breathing LED
-        if init.idle_counter < idle_after():
-                return
-        for ii in breath_amps:
-            if init.idle_counter < idle_after():
-                    return
-            for jj in range(len(statemachine.ar)):
-                if init.idle_counter < idle_after():
-                    return
-                pixels_set(jj, color) # show all colors
-            pixels_show((ii/255) * config.brightness_mod)
-            time.sleep(0.02)            
-        
-
-#https://core-electronics.com.au/tutorials/how-to-use-ws2812b-rgb-leds-with-raspberry-pi-pico.html
-def idle_mode2(): #Color Palette
-    pixels_fill((0,0,0))
-    pixels_show(config.brightness_mod)
-        
-    while True:
-        if init.idle_counter <= idle_after():
-            return
-        for j in range(255):
-            if init.idle_counter <= idle_after():
-                return
-            for i in range(config.led_count):
-                if init.idle_counter <= idle_after():
-                    return
-                rc_index = (i * 256 // config.led_count) + j
-                pixels_set(i, wheel(rc_index & 255))
-            pixels_show(config.brightness_mod)
-            
+ 
 
 def inverse_ledlist(ledlist):
     leds = []
@@ -185,6 +152,11 @@ def idle_after():
     else:
         ticks = 1/(1/init.frequency)
         return ticks * config.idle_after
+    
+def get_seconds(input):
+    ticks = 1/(1/init.frequency)
+    return ticks * input
+    
     
 #returns the id of a pin
 def get_id(*args, **kwargs):
@@ -322,8 +294,8 @@ def fade_val(color_val):
 #return true if no button is pressed at the moment
 #returns false when a button is currently pressed
 def no_buttons_pressed():
-    for j in range(len(button.button_list)):
-        if button.button_list[j].is_pressed == True:
+    for but in button.button_list:
+        if but.is_pressed == True:
             return False
     
     return True
@@ -396,73 +368,6 @@ def set_background():
                         pixels_setHSV(init.ranges[i][j]-1,hsv_col)
                     else:
                         pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
-    
-def mode_select(pin):
-    button.up.was_pressed = False
-    button.down.was_pressed = False
-    button.left.was_pressed = False
-    button.right.was_pressed = False
-    button.led_options.was_pressed = False
-    init.mode_selector = 0
-    config_name = 'config.py'
-    while True:
-        if config_name == 'config0.py':
-            config_name = 'config.py'
-        pixels_fill((255,255,255))
-        profile_color = get_profile_color(config_name)
-        pixels_set(init.mode_selector, profile_color)
-        if config.brightness_mod > 0.0:
-            pixels_show(config.brightness_mod)
-        else:
-            pixels_show(0.004)
-        button.led_options.run(0) #change to mode
-        button.up.run(0) 
-        button.down.run(0) 
-        button.left.run(0) 
-        button.right.run(0)
-
-        if button.up.was_pressed:
-            increase_brightness()
-
-        if button.down.was_pressed:
-            decrease_brightness()
-
-        if button.right.was_pressed:
-            init.mode_selector -= 1
-            if init.mode_selector <= 0:
-                init.mode_selector = 0
-                config_name = "config.py"
-            else:
-                config_name = "config" + str(init.mode_selector) + ".py"
-                
-            try:
-                f = open(config_name, "r")
-                f.close()
-            except OSError:
-                init.mode_selector -= 1
-                
-
-        if button.left.was_pressed:
-            init.mode_selector += 1
-            config_name = "config" + str(init.mode_selector) + ".py"
-            
-            try:
-                f = open(config_name, "r")
-                f.close()
-                
-            except OSError:
-                init.mode_selector -= 1
-                config_name = "config" + str(init.mode_selector) + ".py"
-                
-        if button.led_options.released:
-            if init.mode_selector == 0:
-                config_name = 'config.py'
-                return
-            else:
-                path = os.rename(config_name, 'configtmp.py')
-                path = os.rename('config.py', config_name)
-                path = os.rename('configtmp.py', 'config.py')
-                machine.reset()
 
 #reset every neccessary value in init
 def reset_init():
@@ -537,8 +442,69 @@ def list_to_string(list):
     return my_string
     
     
-    
+def mode_select():
+    init.mode_selector = 0
+    config_name = 'config.py'
+    while True:
+        pixels_fill((255,255,255))
+        profile_color = get_profile_color(config_name)
+        pixels_set(init.mode_selector, profile_color)
+        if config.brightness_mod > 0.0:
+            pixels_show(config.brightness_mod)
+        else:
+            pixels_show(0.004)
+        button.up.run(0) 
+        button.down.run(0) 
+        button.left.run(0) 
+        button.right.run(0)
+        button.x.run(0)
+        button.led_option.run(0)
+                
+        if button.up.was_pressed:
+            increase_brightness()
+        if button.down.was_pressed:
+            decrease_brightness()
+                
+        if button.right.was_pressed:
+            init.mode_selector -= 1
+            if init.mode_selector <= 0:
+                init.mode_selector = 0
+                config_name = "config.py"
+            else:
+                config_name = "config" + str(init.mode_selector) + ".py"
+                
+            try:
+                f = open(config_name, "r")
+                f.close()
+            except OSError:
+                init.mode_selector -= 1
+                
+        if button.left.was_pressed:
+            init.mode_selector += 1
+            config_name = "config" + str(init.mode_selector) + ".py"
+            
+            try:
+                f = open(config_name, "r")
+                f.close()
+                
+            except OSError:
+                init.mode_selector -= 1
+                config_name = "config" + str(init.mode_selector) + ".py"
+                
+        if button.led_option.released or button.x.was_pressed: #confirm button
+            if init.mode_selector == 0:
+                config_name = 'config.py'
+                return
+            else:
+                path = os.rename(config_name, 'configtmp.py')
+                path = os.rename('config.py', config_name)
+                path = os.rename('configtmp.py', 'config.py')
+                machine.reset()
+                
+                
+                
 
+        
     
     
     

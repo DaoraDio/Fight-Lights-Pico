@@ -21,8 +21,14 @@ setback_value = -10
 #counter for idle mode, gets set to setback_value on button press
 idle_counter = 0
 
+#is set at program start by the function idle_after()
+idle_ticks = 0
+
 #frequency in hz at which the timer interrups happen
 frequency = 60
+
+#length of list button.button_list
+button_list_length = 0
 
 #do not change (except you know what you are doing)
 timer1 = machine.Timer() #timer for timer the interrupts
