@@ -54,7 +54,8 @@ There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 - Display different animations in idle mode
 - Create custom profiles
 - Select custom profiles during play
-...and many more to come
+
+  ...and many more to come
 
 
 # License
