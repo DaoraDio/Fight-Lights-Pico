@@ -38,6 +38,24 @@ Qanba Obsidian Wiring guide: https://drive.google.com/file/d/1-cKfSiCJdcfAH5P0MA
 ![alt text](https://www.swe-chumbucket.com/index.php/s/gsq7pN8Loo236Qk/preview) 
 There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 
+# Features
+
+- Choose any RGB color for a LED to get on button press
+ -Choose any numbers of LEDs to light up on button press
+- Assign random colors for LEDs on button press
+- Give different buttons same color when pressed simultaniously
+- Assign fade-out effect for LEDs
+- Choose any (or no) RGB color when buttons are not pressed
+- Choose any brightness when buttons are not pressed
+- Choose rainbow effect when buttons are not pressed
+- Disable background color temporarily when a button is pressed
+- Increase or decrease brightness on bootup or during play
+- Enter idle mode after any number of seconds
+- Display different animations in idle mode
+- Create custom profiles
+- Select custom profiles during play
+
+
 # License
 
 MIT License
