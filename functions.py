@@ -10,6 +10,9 @@ import init
 import machine
 import os
 import micropython
+import animation
+
+
 micropython.alloc_emergency_exception_buf(100)
 
 #dummy interrupt, does nothing. Set a button handler to this if you want to do nothing on interrupt
@@ -28,11 +31,12 @@ def tick(timer):
 def clear_led(pin):
     init.idle_counter = init.setback_value
 
-    
+
 #frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
 #freq=1 = 1hz = 1 interrupt every second
 #fre=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
 init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
+
 
 #interrupt routine to debounce the brightness button
 #all credits to Kaspars Dambis @ https://kaspars.net/blog/micropython-button-debounce
@@ -46,17 +50,27 @@ def debounce_brightness(pin):
 
 
 def increase_brightness():
-    if config.brightness_mod >= 1:
-        config.brightness_mod = 1
-    else:
-        config.brightness_mod += config.brightness_steps
+    brightness = config.brightness_mod
+    while config.brightness_mod < (brightness + config.brightness_steps):
+        pixels_show(config.brightness_mod)
+        config.brightness_mod += 0.005
+        if config.brightness_mod >= 1:
+            config.brightness_mod = 1
+            return
 
 def decrease_brightness():
-    epsilon = 0.0001
-    if config.brightness_mod <= epsilon:
-        config.brightness_mod = 0
-    else:
-        config.brightness_mod -= config.brightness_steps
+    #epsilon = 0.0001
+    #if config.brightness_mod <= epsilon:
+    #    config.brightness_mod = 0
+    #else:
+    #    config.brightness_mod -= config.brightness_steps
+    brightness = config.brightness_mod
+    while config.brightness_mod > (brightness - config.brightness_steps):
+        pixels_show(config.brightness_mod)
+        config.brightness_mod -= 0.005
+        if config.brightness_mod <= 0:
+            config.brightness_mod = 0
+            return
         
 def pixels_show(brightness_input):
     dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
@@ -439,22 +453,61 @@ def list_to_string(list):
     for elements in list:
         my_string = my_string + elements + "+"
     
-    return my_string
+    return my_string[:-1]
     
+
+def add_fgc_input(str, num):
+    init.fgc_strings.append(str)
+    copy = str[:]
+    init.copy_strings.append(copy)
+    init.animation_num.append(num)
+    init.fgc_strings_length += 1
     
+def play_animation(num):
+        if num == 1:
+            animation.fireball((7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15),config.orange)
+        if num == 2:
+            animation.fireball((15,0,14,1,13,2,12,3,11,4,10,5,9,6,8,7),config.red)
+        if num == 3:
+            animation.flash_all(config.red)
+        if num == 4:
+            animation.flash_all(config.orange)
+        if num == 5:
+            animation.fireball((7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15),config.orange, 35)
+        return
+
+def check_fgc_string():
+    if init.fgc_strings_length == 0:
+        return
+    else:
+        for i in range(init.fgc_strings_length):
+            if not init.fgc_strings[i]:
+                play_animation(init.animation_num[i])
+                init.fgc_strings[i] = init.copy_strings[i].copy()
+                for but in button.button_list:
+                    but.VAL = 0
+            elif init.fgc_strings[i][0] == init.current_input:
+                del init.fgc_strings[i][0]
+                pass
+                
+            if init.string_leniency > config.input_reset_time:
+                init.string_leniency = 0
+                for j in range(init.fgc_strings_length):
+                    init.fgc_strings[j] = init.copy_strings[j].copy()
+
+
 def mode_select():
     init.mode_selector = 0
     config_name = 'config.py'
+    epsilon = 0.00001
     while True:
         pixels_fill((255,255,255))
-        if config_name != 'config0.py':
-            profile_color = get_profile_color(config_name)
-        else:
-            config_name = 'config.py'
+        profile_color = get_profile_color(config_name)
         pixels_set(init.mode_selector, profile_color)
-        if config.brightness_mod > 0.0:
+        print(config.brightness_mod)
+        if config.brightness_mod > 0:
             pixels_show(config.brightness_mod)
-        else:
+        if config.brightness_mod < epsilon:
             pixels_show(0.004)
         button.up.run(0) 
         button.down.run(0) 
@@ -464,8 +517,12 @@ def mode_select():
         button.led_option.run(0)
                 
         if button.up.was_pressed:
+            pixels_fill((255,255,255))
+            pixels_set(init.mode_selector, profile_color)
             increase_brightness()
         if button.down.was_pressed:
+            pixels_fill((255,255,255))
+            pixels_set(init.mode_selector, profile_color)
             decrease_brightness()
                 
         if button.right.was_pressed:
@@ -496,8 +553,8 @@ def mode_select():
                 
         if button.led_option.released or button.x.was_pressed: #confirm button
             if init.mode_selector == 0:
-                pixels_fill((0,0,0))
                 config_name = 'config.py'
+                pixels_fill((0,0,0))
                 return
             else:
                 path = os.rename(config_name, 'configtmp.py')

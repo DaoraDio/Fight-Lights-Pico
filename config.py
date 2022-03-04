@@ -1,10 +1,10 @@
 print("config")
 #Fight Lights Pico
-#Version 1.1.6
-
+#Version 1.2.0
 
 from machine import Pin
 import button
+import functions
 
 # color specifications in (R,G,B)
 blank = (0,0,0) #blank = not turned on
@@ -34,13 +34,13 @@ PIN_NUM = 0 #pin connected to LED-Chain
 leniency = 1 #controls the leniency at which simultanious button presses get the same color, higher = more lenient
              #set to 0 to disable
 
-profile_color = red #the profile color
+profile_color = blue #the profile color
 
 brightness_mod = 1 #brightness, 0 = darkest, 1.0 = brightest
 brightness_steps = 0.1 #steps at which the brightness changes per press
 
 idle_after = 30 #time when LEDs go from default to idle mode (in seconds)
-idle_mode = 1 #controls which idlemode is displayed (currently 1 and 2 available), 0 to disable idlemode
+idle_mode = 2 #controls which idlemode is displayed (currently 1 and 2 available), 0 to disable idlemode
 
 ##set the background color and brightness##
 #--set to blank or (0,0,0) if you want it turned off, example: background = blank
@@ -53,12 +53,11 @@ idle_mode = 1 #controls which idlemode is displayed (currently 1 and 2 available
 #write 'rainbow' instead of a color for a rainbow effect. Can look choppy if brightness is set too low
 background = ((0.02,red,3),(0.02,green,4), (0.02,light_blue,5), (0.02,yellow,6), (0.02,white,1,2,7,8))
 
-
-
 clear_background_on_press = False #controls if the background gets temporarely turned off while a button is being pressed
 
 fade_speed = 4 #fade speed, higher = faster
 
+input_reset_time = 50 #input leniency for fgc input, the higher the number the bigger the leniency to input the command
 
 #((list of leds), color, fade)
 #positions of the buttons and the corresponding LEDs in the LED-chain and colors the leds take on press,
@@ -84,6 +83,9 @@ l2 = button.l2.set_config((2,), 'random', True)
 r2 = button.r2.set_config((1,), 'random', True)
 
 led_option = button.led_option.set_config((0,), 'random', False)
+
+
+#functions.add_fgc_input(["d", "d+f","2+f"], 1)
 
 
 

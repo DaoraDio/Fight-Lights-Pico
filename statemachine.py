@@ -29,8 +29,9 @@ def ws2812():
 
 
 # Create the StateMachine with the ws2812 program, outputting on pre-defined pin
-# at the 8MHz frequency
-sm = rp2.StateMachine(0, ws2812, freq=8_000_000, sideset_base=Pin(PIN_NUM))
+# at the 8MHz frequency (changed to 5)
+sm = rp2.StateMachine(0, ws2812, freq=5_000_000, sideset_base=Pin(PIN_NUM))
+
 
 # Activate the state machine
 sm.active(1)

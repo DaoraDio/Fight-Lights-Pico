@@ -7,6 +7,9 @@ string_leniency = 0 #unused currently
 main_cnt = 0 # increases every iteration of the main loop
 i = 0 #increases every time the leniency_counter hits the value defines in config.py leniency
 
+timer_lock = False
+timer_target = 0
+
 #variable that keeps track of the position in the array button_list in button.py of the latest button which has been pressed
 start_pos = 0
 
@@ -26,6 +29,14 @@ idle_ticks = 0
 
 #frequency in hz at which the timer interrups happen
 frequency = 60
+
+#initializations for fgc inputs
+current_input = ""
+fgc_strings = []
+copy_strings = []
+animation_num = []
+fgc_strings_length = 0
+
 
 #length of list button.button_list
 button_list_length = 0

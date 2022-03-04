@@ -16,27 +16,26 @@ onboard_led.value(True)
 
 init.idle_ticks = functions.idle_after();
 
-locked = False
-target = 0
+temp_brightness = 0
 #main loop
 while True:
-    init.main_cnt += 1
+    #print(init.current_input)
+    init.main_cnt += 1    
     
-    #access ledoptions when led_option button is pressed
+    #access led options when led_option button is pressed
     if button.led_option.was_pressed:
         functions.mode_select()
     
     #access led options when start+select is pressed for 3 seconds
     if button.start.is_pressed and button.select.is_pressed:
-        if not locked:
-            target = init.timer_counter + functions.get_seconds(3)
-            locked = True
+        if not init.timer_lock:
+            init.timer_target = init.timer_counter + functions.get_seconds(3)
+            init.timer_lock = True
 
-        if init.timer_counter >= target:
+        if init.timer_counter >= init.timer_target:
             functions.mode_select()
     else:
-        locked = False
-    
+        init.timer_lock = False
     
     
     #goes into idle mode after seconds defined in the variable 'idle_after' has been exceeded
@@ -96,8 +95,29 @@ while True:
             button.button_list[i].run((time.ticks_cpu()) % len(config.colors))
 
     
-    #displays the led colors
-    functions.pixels_show(config.brightness_mod)
+    #create a list of all buttons currently pressed
+    currently_pressed = []
+    for butt in button.button_list:
+        if butt.is_pressed:
+            currently_pressed.append(butt.name)
+            
+    #make a string of buttons currently pressed by calling function 'list_to_string'
+    if not currently_pressed:
+        init.current_input = 'n'
+    else:
+        init.current_input = functions.list_to_string(currently_pressed)
     
+    
+    functions.check_fgc_string()
+
+    
+
+    #give a nice ramp up at the beginning of the program
+    if temp_brightness < config.brightness_mod:
+        functions.pixels_show(temp_brightness)
+        temp_brightness += 0.04
+    else:
+        #displays the led colors
+        functions.pixels_show(config.brightness_mod)
 
 

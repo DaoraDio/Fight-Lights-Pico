@@ -38,16 +38,25 @@ def idle_mode2(): #Color Palette
     functions.pixels_show(config.brightness_mod)
     steps = 1
     wait_time = 3
-    
+    epsilon = 0.0001
+    brightness = config.brightness_mod
+    config.brightness_mod = 0
     while True:
         if init.idle_counter <= init.idle_ticks:
+            config.brightness_mod = brightness
             return
         for j in range(0,255,steps):
+            if brightness-epsilon < config.brightness_mod:
+                config.brightness_mod = brightness
+            if config.brightness_mod < brightness:
+                config.brightness_mod += 0.01
             time.sleep_ms(wait_time)
             if init.idle_counter <= init.idle_ticks:
+                config.brightness_mod = brightness
                 return
             for i in range(config.led_count):
                 if init.idle_counter <= init.idle_ticks:
+                    config.brightness_mod = brightness
                     return
                 rc_index = (i * 256 // config.led_count) + j
                 functions.pixels_set(i, functions.wheel(rc_index & 255))
@@ -72,4 +81,63 @@ def pulsing_light(wait_ms=100):
             functions.pixels_set(j,(round(((math.sin(j+position) * 127 + 128)/255)*255),round(((math.sin(j+position) * 127 + 128) /255)*100), round(((math.sin(j+position) * 127 + 128) /255)*100)))
         functions.pixels_show(config.brightness_mod)
         time.sleep(wait_ms/1000.0)
+
+
+def color_fade_out(led_pos, color_rgb, speed=1):
+    color_hsv = functions.RGBtoHSV(color_rgb)
+    val = color_hsv[2]
+    
+    while val > 0:
+        new_hsv = [color_hsv[0],color_hsv[1],val]
+        for i in range(len(led_pos)):
+            functions.pixels_setHSV(led_pos[i], new_hsv)
+        functions.pixels_show(config.brightness_mod)
+        val -= speed
+        if val < 0:
+            val = 0
+        
+        
+
+        
+#fades in an led at led_pos, into color of color_rgb
+def color_fade_in(led_pos, color_rgb, speed=1):
+    color_hsv = functions.RGBtoHSV(color_rgb)
+    
+    val = 0
+    while val < color_hsv[2]:
+        val += speed
+        if val > 100:
+            val = 100
+        new_hsv = [color_hsv[0],color_hsv[1],val]
+        for i in range(len(led_pos)):
+            functions.pixels_setHSV(led_pos[i], new_hsv)
+        functions.pixels_show(config.brightness_mod)
+
+def fireball(led_order, color_rgb, speed=16):
+    #led_order = (7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15)
+
+    for i in range(0,len(led_order),2):
+        color_fade_in((led_order[i],led_order[i+1]), color_rgb, speed)
+
+    #time.sleep_ms(50)
+    for j in range(0,len(led_order),2):
+        color_fade_out((led_order[j],led_order[j+1]), color_rgb, speed)
+        
+def flash_all(color_rgb):
+    functions.pixels_fill(color_rgb)
+    functions.pixels_show(config.brightness_mod)
+    time.sleep_ms(10)
+    
+    functions.pixels_fill((0,0,0))
+    functions.pixels_show(config.brightness_mod)
+    time.sleep_ms(10)
+    
+    functions.pixels_fill(color_rgb)
+    functions.pixels_show(config.brightness_mod)
+    time.sleep_ms(10)
+    
+
+    
+    
+    
         
