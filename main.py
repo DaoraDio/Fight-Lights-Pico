@@ -17,15 +17,37 @@ onboard_led.value(True)
 init.idle_ticks = functions.idle_after();
 
 temp_brightness = 0
+
+if config.save_stats == True:
+    try: #check if file exists
+        f = open(init.file_name, "r")
+        print(init.file_name, 'found')
+        functions.print_stats()
+    except OSError: 
+        #if not create file and write data to it
+        print(init.file_name,  'not found, has been created')
+        f = open(init.file_name, 'w')
+        f.write(init.header_text)
+        f.write("uptime: 0\n")
+        for but in button.button_list:
+            f.write(but.name + ": 0\n")
+        f.close()
+
+
 #main loop
 while True:
     #print(init.current_input)
     init.main_cnt += 1    
+    init.leniency_counter += 1
+    
+    if init.leniency_counter == config.leniency:    
+        init.i = init.i + 1
+        init.leniency_counter = 0
     
     #access led options when led_option button is pressed
     if button.led_option.was_pressed:
         functions.mode_select()
-    
+
     #access led options when start+select is pressed for 3 seconds
     if button.start.is_pressed and button.select.is_pressed:
         if not init.timer_lock:
@@ -49,25 +71,16 @@ while True:
     
     
     #checks if no buttons are pressed
-    no_buttons_pressed = functions.no_buttons_pressed()
+    init.no_buttons_pressed = functions.no_buttons_pressed()
     
-    init.leniency_counter += 1
-    
-    
-    if init.leniency_counter == config.leniency:    
-        init.i = init.i + 1
-        init.leniency_counter = 0
-        
-
-    #chooses a "random" color from the color array 'colors' in config.py depending on the value of i
+    #chooses a "random" color from the color array 'colors'
     random_color_id = init.i % len(config.colors)
-    
      
     #sets the background colors
     if config.clear_background_on_press == False:
         functions.set_background()
     else:
-        if no_buttons_pressed == True:
+        if init.no_buttons_pressed == True:
             functions.set_background()
         else:
             functions.pixels_fill((0,0,0))
@@ -94,7 +107,6 @@ while True:
             i = i % len(button.button_list)
             button.button_list[i].run((time.ticks_cpu()) % len(config.colors))
 
-    
     #create a list of all buttons currently pressed
     currently_pressed = []
     for butt in button.button_list:
@@ -106,10 +118,8 @@ while True:
         init.current_input = 'n'
     else:
         init.current_input = functions.list_to_string(currently_pressed)
-    
-    
+        
     functions.check_fgc_string()
-
     
 
     #give a nice ramp up at the beginning of the program
@@ -119,5 +129,3 @@ while True:
     else:
         #displays the led colors
         functions.pixels_show(config.brightness_mod)
-
-

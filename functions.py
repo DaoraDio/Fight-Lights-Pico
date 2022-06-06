@@ -12,7 +12,6 @@ import os
 import micropython
 import animation
 
-
 micropython.alloc_emergency_exception_buf(100)
 
 #dummy interrupt, does nothing. Set a button handler to this if you want to do nothing on interrupt
@@ -26,7 +25,46 @@ def tick(timer):
     init.timer_counter += 1
     init.string_leniency += 1
 
+#this function is called every 30 seconds
+def save_stats(timer):
+    if config.save_stats == False:
+        return
     
+    init.seconds_counter += 30
+    
+    f = open(init.file_name, "r")
+    lines = f.readlines()
+    updated_lines = ""
+            
+    for line in lines:
+        if line[0] == "#":
+            continue
+        var_name = ""
+        value = ""
+                    
+        for i in range(len(line)):
+            if line[i] == ':':
+                i += 2
+                for j in range(i, len(line)):
+                    value += line[j]
+                break
+            var_name += line[i]
+        value = int(value)
+        if var_name == 'uptime':
+            value += init.seconds_counter
+            init.idle_file_counter = 0
+            init.seconds_counter = 0
+                    
+        for but in button.button_list:
+            if but.name == var_name:
+                value += but.num_presses
+                but.num_presses = 0
+        updated_lines += var_name + ": "+ str(value)+"\n"
+                    
+    f = open(init.file_name, "w")
+    f.write(init.header_text + updated_lines)
+    f.close()
+ 
 #sets the idle_counter to the setback value which wakes the leds up from idle mode
 def clear_led(pin):
     init.idle_counter = init.setback_value
@@ -34,8 +72,9 @@ def clear_led(pin):
 
 #frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
 #freq=1 = 1hz = 1 interrupt every second
-#fre=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
+#freq=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
 init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
+init.timer3.init(freq=1/30, mode=machine.Timer.PERIODIC, callback=save_stats) 
 
 
 #interrupt routine to debounce the brightness button
@@ -59,11 +98,7 @@ def increase_brightness():
             return
 
 def decrease_brightness():
-    #epsilon = 0.0001
-    #if config.brightness_mod <= epsilon:
-    #    config.brightness_mod = 0
-    #else:
-    #    config.brightness_mod -= config.brightness_steps
+    
     brightness = config.brightness_mod
     while config.brightness_mod > (brightness - config.brightness_steps):
         pixels_show(config.brightness_mod)
@@ -103,8 +138,44 @@ def pixels_fill(color):
 def pixels_fillHSV(colorHSV):
     colorRGB = HSVtoRGB(colorHSV)
     pixels_fill(colorRGB)
+
+
+def print_stats():
+    f = open(init.file_name, "r")
+    lines = f.readlines()
+    values = {}
     
+    for line in lines:
+        if line[0] == '#':
+            continue
         
+        var_name = ""
+        value = ""
+        for i in range(len(line)):
+            if line[i] == ':':
+                i += 2
+                for j in range(i, len(line)):
+                    value += line[j]
+                break
+            var_name += line[i]
+
+        value = int(value[:-1])
+        values[var_name] = value
+    
+    uptime = values['uptime']
+    del values['uptime']
+    
+    print("-------------------------------")
+    for key, value in sorted(values.items(), key=lambda item: item[1]):
+        print("%s: %s" % (key, value))
+    print('uptime:', seconds_to_time(uptime))
+            
+            
+def seconds_to_time(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return "%dh:%dm:%ds" % (hours, minutes, seconds)
+
 # Input a value 0 to 255 to get a color value.
 # The colours are a transition r - g - b - back to r.
 def wheel(pos):
@@ -146,7 +217,7 @@ def shuffle_array(arr):
         arr[rand_index] = temp
         last_index -= 1
  
-
+#unused
 def inverse_ledlist(ledlist):
     leds = []
     for i in range(config.led_count):
@@ -316,7 +387,7 @@ def no_buttons_pressed():
     
 
 def set_background():
-    speed = 30 #speed for colorwheel, higher = slower
+    speed = 1000 #speed for colorwheel, higher = slower
     
     #if background it only a color
     if isinstance(config.background[0], int):
@@ -384,6 +455,7 @@ def set_background():
                         pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
 
 #reset every neccessary value in init
+#unused
 def reset_init():
     init.leniency_counter = 0
     init.string_counter = 0
@@ -465,15 +537,11 @@ def add_fgc_input(str, num):
     
 def play_animation(num):
         if num == 1:
-            animation.fireball((7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15),config.orange)
+            animation.fireball((7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15),config.orange) #example for led-chain with 15 leds
         if num == 2:
-            animation.fireball((15,0,14,1,13,2,12,3,11,4,10,5,9,6,8,7),config.red)
+            animation.fireball((15,0,14,1,13,2,12,3,11,4,10,5,9,6,8,7),config.red) #example for led-chain with 15 leds
         if num == 3:
             animation.flash_all(config.red)
-        if num == 4:
-            animation.flash_all(config.orange)
-        if num == 5:
-            animation.fireball((7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15),config.orange, 35)
         return
 
 def check_fgc_string():
@@ -481,14 +549,11 @@ def check_fgc_string():
         return
     else:
         for i in range(init.fgc_strings_length):
+            if init.fgc_strings[i][0] == init.current_input or not init.fgc_strings[i]:
+                del init.fgc_strings[i][0]
             if not init.fgc_strings[i]:
                 play_animation(init.animation_num[i])
                 init.fgc_strings[i] = init.copy_strings[i].copy()
-                for but in button.button_list:
-                    but.VAL = 0
-            elif init.fgc_strings[i][0] == init.current_input:
-                del init.fgc_strings[i][0]
-                pass
                 
             if init.string_leniency > config.input_reset_time:
                 init.string_leniency = 0
@@ -504,7 +569,6 @@ def mode_select():
         pixels_fill((255,255,255))
         profile_color = get_profile_color(config_name)
         pixels_set(init.mode_selector, profile_color)
-        print(config.brightness_mod)
         if config.brightness_mod > 0:
             pixels_show(config.brightness_mod)
         if config.brightness_mod < epsilon:
@@ -520,10 +584,12 @@ def mode_select():
             pixels_fill((255,255,255))
             pixels_set(init.mode_selector, profile_color)
             increase_brightness()
+            print("brightness:", config.brightness_mod)
         if button.down.was_pressed:
             pixels_fill((255,255,255))
             pixels_set(init.mode_selector, profile_color)
             decrease_brightness()
+            print("brightness:", config.brightness_mod)
                 
         if button.right.was_pressed:
             init.mode_selector -= 1
@@ -550,6 +616,8 @@ def mode_select():
             except OSError:
                 init.mode_selector -= 1
                 config_name = "config" + str(init.mode_selector) + ".py"
+                if init.mode_selector == 0:
+                    config_name = "config.py"
                 
         if button.led_option.released or button.x.was_pressed: #confirm button
             if init.mode_selector == 0:
@@ -562,9 +630,21 @@ def mode_select():
                 path = os.rename('configtmp.py', 'config.py')
                 machine.reset()
                 
-                
-                
 
+#return interpolated (r,g,b) tuble between color1 and color2 depending on t
+#c1 and c2 = (r,g,b)
+#t takes values between tstart and tend
+def lerp_rgb(color1, color2, t):
+    tstart = 0
+    tend = 100
+    red = color1[0] + (color2[0] - color1[0]) * ((t-tstart) / (tend - tstart))
+    green = color1[1] + (color2[1] - color1[1]) * ((t-tstart) / (tend - tstart))
+    blue = color1[2] + (color2[2] - color1[2]) * ((t-tstart) / (tend - tstart))
+
+    return (int(red), int(green), int(blue))
+    
+    
+    
         
     
     

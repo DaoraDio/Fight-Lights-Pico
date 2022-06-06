@@ -5,13 +5,13 @@ import functions
 import time
 import init
 import machine
- 
+
 #button class
 class MyButton:
     name = ""
-    colorRGB = (0,0,0) #the rgb color the button take when pressed
-    colorHSV = (0,0,0) #the color on press in HSV
-    VAL = 0 #the value of the HSV color
+    num_presses = 0 #increases for every press
+    colorRGB = (0,0,0) #the rgb color the button, this changes for every iteration
+    savedRGB = (0,0,0) #this changes only when pressed
     led_list = [] #holds the same list as config[0]
     counter = 0
     was_pressed = False #tracks if the button was pressed
@@ -21,6 +21,8 @@ class MyButton:
     pin_num = 0 #the pin number of the button
     fade = False #flag for fade
     released = False #flag to track if the button has been released
+    time = 0 #time to track the interpolation
+    bg_colors = [] #current background color before fade
     config = ((-1,), (0,0,0), False) #(list of leds, color, Fade on or off): gets its values from config.py
         
     def __init__(self,pin_num,name, handler): #constructor, takes a pin_number and a function for a handler that gets called for the interrupt
@@ -51,17 +53,22 @@ class MyButton:
                         button_list[i].highest_prio = False
                     self.highest_prio = True
                     self.was_pressed = True
+                    self.num_presses += 1
+                    
+                    self.bg_colors.clear()
+                    for i in range(len(self.led_list)):
+                        self.bg_colors.append(functions.get_pixelcolor(self.led_list[i]-1))
                     
                     
                 ######################when the button is pressed###########################
                 if self.config[0][0] > 0:
                     for i in range(len(self.led_list)): #loops through all numbers defined in led_list
                         functions.pixels_set(self.led_list[i]-1, self.colorRGB)#sets all pixel at the pos i to the color of colorRGB
-                self.colorHSV = functions.RGBtoHSV(self.colorRGB)#converts the color from RGB to HSV and stores it in variable colorHSV
-                self.VAL = self.colorHSV[2]#gives self.VAL the value(V) of the HSV color
+                self.savedRGB = self.colorRGB
                 self.is_pressed = True
                 self.was_released = True
                 init.idle_counter = init.setback_value #sets back the idle counter, so idle mode doesn't trigger during a press
+                self.time = 100
                 
                 
             else:
@@ -74,11 +81,12 @@ class MyButton:
                 
                 ################when the button is currently not pressed###############
                 if self.fade == True: #when fade for that button is enabled
-                    if self.VAL > 0:
-                        self.VAL = functions.fade_val(self.VAL) #decrases VAL through the function fade_val
+                    if self.time > 0:
+                        self.time = functions.fade_val(self.time) #decreases the time value through the function fade_val
                         if self.config[0][0] > 0: #when led position is not defined but button active
                             for i in range(len(self.led_list)): #loops through led_list
-                                functions.pixels_setHSV(self.led_list[i]-1, (self.colorHSV[0],self.colorHSV[1], self.VAL))#sets all the colors with decreases VAL for fade effect
+                                functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i], self.savedRGB, self.time)) #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
+                    
                 self.is_pressed = False
                 if self.config[1] == 'random': #gives the button a random color if second variable of config of a button is 'random'
                     self.colorRGB = config.colors[random_color_id]
@@ -113,6 +121,7 @@ button_list = [r2,l2,square,triangle,r1,l1,circle,x,up,down,right,left,select,ps
 #sets the button list length in init.py
 init.button_list_length = len(button_list)
         
+
 
 
 

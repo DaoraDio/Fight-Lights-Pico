@@ -5,10 +5,12 @@ import config
 import time
 import statemachine
 import math
+import init
+import button
 
 #breathing light idle mode
 #all credits for the breathing light goes to Joshua Hrisko, Maker Portal LLC (c) 2021
-def idle_mode1(): #breathin LED
+def idle_mode1(): #breathing LED
     if config.idle_after == 0:
         functions.pixels_fill((0,0,0))
         functions.pixels_show(config.brightness_mod)
@@ -123,6 +125,9 @@ def fireball(led_order, color_rgb, speed=16):
     for j in range(0,len(led_order),2):
         color_fade_out((led_order[j],led_order[j+1]), color_rgb, speed)
         
+    for but in button.button_list:
+        but.time = 0
+        
 def flash_all(color_rgb):
     functions.pixels_fill(color_rgb)
     functions.pixels_show(config.brightness_mod)
@@ -136,8 +141,13 @@ def flash_all(color_rgb):
     functions.pixels_show(config.brightness_mod)
     time.sleep_ms(10)
     
+    functions.pixels_fill((0,0,0))
+    functions.pixels_show(config.brightness_mod)
 
-    
-    
+#lights up the led at pos with color
+def light_led(pos, color):
+    for i in pos:
+        functions.pixels_set(i,config.colors[init.random_color])
+        #functions.pixels_show(config.brightness_mod)
     
         

@@ -5,7 +5,7 @@ import config
 leniency_counter = 0 #increases every iteration of the main loop, resets when value reaches config.leniency
 string_leniency = 0 #unused currently
 main_cnt = 0 # increases every iteration of the main loop
-i = 0 #increases every time the leniency_counter hits the value defines in config.py leniency
+i = 0 #increases every time the leniency_counter hits the value defined in config.py leniency
 
 timer_lock = False
 timer_target = 0
@@ -30,6 +30,11 @@ idle_ticks = 0
 #frequency in hz at which the timer interrups happen
 frequency = 60
 
+no_buttons_pressed = False
+press_cnt = 0
+
+random_color = 0
+
 #initializations for fgc inputs
 current_input = ""
 fgc_strings = []
@@ -44,6 +49,7 @@ button_list_length = 0
 #do not change (except you know what you are doing)
 timer1 = machine.Timer() #timer for timer the interrupts
 timer2 = machine.Timer() #debounce timer for brightness
+timer3 = machine.Timer() 
 
 mode_selector = 0 #should not be reset on mode select
 
@@ -54,6 +60,12 @@ ranges = []
 colors = []
 brightness_values = []
 background_color_HSV = (0,0,0)
+
+
+file_name = "stats.txt"
+seconds_counter = 0 #this counts up every seconds to save to the file file_name
+header_text = "##################This file stores the number of presses for each button#########\n##################and the uptime in seconds######################################\n" #header text for the file file_name
+
 
 
 
