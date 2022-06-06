@@ -55,6 +55,7 @@ There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 - Create custom profiles
 - Select custom profiles during play
 - Add custom animations and play them when doing certain inputs
+- Log the amount of button presses for each button and the time your stick is plugged in
 
   ...and many more to come
 
