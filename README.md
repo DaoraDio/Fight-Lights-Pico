@@ -54,6 +54,7 @@ There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 - Display different animations in idle mode
 - Create custom profiles
 - Select custom profiles during play
+- Add custom animations and play them when doing certain inputs
 
   ...and many more to come
 
