@@ -85,7 +85,7 @@ class MyButton:
                         self.time = functions.fade_val(self.time) #decreases the time value through the function fade_val
                         if self.config[0][0] > 0: #when led position is not defined but button active
                             for i in range(len(self.led_list)): #loops through led_list
-                                functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i], self.savedRGB, self.time)) #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
+                                functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB, self.time)) #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
                     
                 self.is_pressed = False
                 if self.config[1] == 'random': #gives the button a random color if second variable of config of a button is 'random'
