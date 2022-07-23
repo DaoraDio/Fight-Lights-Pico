@@ -62,13 +62,21 @@ class MyButton:
                     
                 ######################when the button is pressed###########################
                 if self.config[0][0] > 0:
-                    for i in range(len(self.led_list)): #loops through all numbers defined in led_list
-                        functions.pixels_set(self.led_list[i]-1, self.colorRGB)#sets all pixel at the pos i to the color of colorRGB
+                    if self.fade == True:
+                        if self.time <= 100:
+                            self.time = functions.fade_val_inc(self.time) #increases the time value through the function fade_val
+                            if self.config[0][0] > 0: #when led position is not defined but button active
+                                for i in range(len(self.led_list)): #loops through led_list
+                                #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
+                                    functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB,self.time))
+                    
+                    else:
+                        for i in range(len(self.led_list)): #loops through all numbers defined in led_list
+                            functions.pixels_set(self.led_list[i]-1, self.colorRGB)#sets all pixel at the pos i to the color of colorRGB
                 self.savedRGB = self.colorRGB
                 self.is_pressed = True
                 self.was_released = True
                 init.idle_counter = init.setback_value #sets back the idle counter, so idle mode doesn't trigger during a press
-                self.time = 100
                 
                 
             else:
@@ -82,17 +90,17 @@ class MyButton:
                 ################when the button is currently not pressed###############
                 if self.fade == True: #when fade for that button is enabled
                     if self.time > 0:
-                        self.time = functions.fade_val(self.time) #decreases the time value through the function fade_val
+                        self.time = functions.fade_val_dec(self.time) #decreases the time value through the function fade_val
                         if self.config[0][0] > 0: #when led position is not defined but button active
                             for i in range(len(self.led_list)): #loops through led_list
-                                functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB, self.time)) #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
-                    
+                                #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
+                                functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB,self.time))
+                                
                 self.is_pressed = False
                 if self.config[1] == 'random': #gives the button a random color if second variable of config of a button is 'random'
                     self.colorRGB = config.colors[random_color_id]
                 else:
                     self.colorRGB = self.config[1] #gives the button a defined color if second variable of config is a color
-                    
                 
 #######instances of class MyButton for all buttons##########
 up = MyButton(1,'u', functions.clear_led)
@@ -105,14 +113,14 @@ start = MyButton(7,'start', functions.clear_led)
                     
 r2 = MyButton(15,'r2', functions.clear_led)
 l2 = MyButton(14,'l2', functions.clear_led)
-square = MyButton(8,'1', functions.clear_led)
-triangle = MyButton(9,'2', functions.clear_led)
+square = MyButton(8,'square', functions.clear_led)
+triangle = MyButton(9,'triangle', functions.clear_led)
 r1 = MyButton(10,'r1', functions.clear_led)
 l1 = MyButton(11,'l1', functions.clear_led)
-circle = MyButton(12,'4', functions.clear_led)
-x = MyButton(13,'3', functions.clear_led)
+circle = MyButton(12,'circle', functions.clear_led)
+x = MyButton(13,'x', functions.clear_led)
 
-led_option = MyButton(16,'brightness', functions.clear_led)
+led_option = MyButton(16,'led_option', functions.clear_led)
 
 
 #array for all the buttons, if you add a new button make sure to add it to the array aswell

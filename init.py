@@ -35,6 +35,9 @@ press_cnt = 0
 
 random_color = 0
 
+random = 'random'
+rainbow = 'rainbow'
+
 #initializations for fgc inputs
 current_input = ""
 fgc_strings = []
@@ -60,6 +63,7 @@ ranges = []
 colors = []
 brightness_values = []
 background_color_HSV = (0,0,0)
+background = 0
 
 
 file_name = "stats.txt"

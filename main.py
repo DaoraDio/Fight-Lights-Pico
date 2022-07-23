@@ -14,7 +14,8 @@ import animation
 onboard_led = Pin(25, Pin.OUT)
 onboard_led.value(True)
 
-init.idle_ticks = functions.idle_after();
+init.background = config.background
+init.idle_ticks = functions.idle_after()
 
 temp_brightness = 0
 
@@ -36,6 +37,7 @@ if config.save_stats == True:
 
 #main loop
 while True:
+    
     #print(init.current_input)
     init.main_cnt += 1    
     init.leniency_counter += 1
@@ -47,7 +49,7 @@ while True:
     #access led options when led_option button is pressed
     if button.led_option.was_pressed:
         functions.mode_select()
-
+    
     #access led options when start+select is pressed for 3 seconds
     if button.start.is_pressed and button.select.is_pressed:
         if not init.timer_lock:
@@ -78,10 +80,10 @@ while True:
      
     #sets the background colors
     if config.clear_background_on_press == False:
-        functions.set_background()
+        functions.set_background(init.background)
     else:
         if init.no_buttons_pressed == True:
-            functions.set_background()
+            functions.set_background(init.background)
         else:
             functions.pixels_fill((0,0,0))
             
@@ -129,3 +131,4 @@ while True:
     else:
         #displays the led colors
         functions.pixels_show(config.brightness_mod)
+        

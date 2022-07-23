@@ -24,7 +24,7 @@ def tick(timer):
     init.idle_counter += 1
     init.timer_counter += 1
     init.string_leniency += 1
-
+ 
 #this function is called every 30 seconds
 def save_stats(timer):
     if config.save_stats == False:
@@ -368,11 +368,18 @@ def RGBtoHSV(rgbcolor):
 #gets a value (usually the V of a HSV color)
 #decreses the value defined by config.fed_speed and returns it
 #if the value becomes negative it sets the value to 0
-def fade_val(color_val):
+def fade_val_dec(color_val):
     if color_val >= 0:
-        color_val -= config.fade_speed
-        if (color_val-config.fade_speed) < 0:
+        color_val -= config.fadeout_speed
+        if color_val < 0:
             color_val = 0
+    return color_val
+
+def fade_val_inc(color_val):
+    if color_val <= 100:
+        color_val += config.fadein_speed
+        if color_val > 100:
+            color_val = 100
     return color_val
 
 #helper function
@@ -386,21 +393,24 @@ def no_buttons_pressed():
     return True
     
 
-def set_background():
+def set_background(background):
     speed = 1000 #speed for colorwheel, higher = slower
     
     #if background it only a color
-    if isinstance(config.background[0], int):
+    #print("background:", background)
+    if isinstance(background[0], int):
         if init.bg_initialized == False:
-            init.background_color_HSV = RGBtoHSV(config.background)
+            init.background_color_HSV = RGBtoHSV(background)
             init.bg_initialized = True
         
         pixels_fillHSV(init.background_color_HSV)
-    elif config.background == 'rainbow':#if background is only 'rainbow'
+        return
+    elif background == 'rainbow':#if background is only 'rainbow'
         hsv_col = ((time.ticks_ms()/speed)%359,100,100)
         pixels_fillHSV(hsv_col)
-    elif not isinstance(config.background[0], tuple) and init.bg_initialized == False:#if background is a single tuple
-        init.ranges = list(config.background)
+        return
+    elif not isinstance(background[0], tuple) and init.bg_initialized == False:#if background is a single tuple
+        init.ranges = list(background)
         init.brightness_values.append(init.ranges.pop(0))
         if init.brightness_values[0] > 1:
             init.brightness_values[0] = 1
@@ -411,13 +421,12 @@ def set_background():
         init.bg_initialized = True
         init.single_tuple = True
         
-        
     elif init.bg_initialized == False:#if background is tuple of tuple
         #initialize the background colors
-        different_tuple = len(config.background)
+        different_tuple = len(background)
         
         #appends all the different tuple into ranges
-        for tupel in config.background:
+        for tupel in background:
             init.ranges.append(list(tupel))
         
         for tupel in init.ranges:
@@ -437,39 +446,22 @@ def set_background():
         init.bg_initialized = True
         
     #display the background colors
+    if init.single_tuple == True:
+        for ranges in init.ranges:
+            if init.colors[0] == 'rainbow':
+                hsv_col = ((time.ticks_ms()/speed)%359,100,100*init.brightness_values[0])
+                pixels_setHSV(ranges-1,hsv_col)
+            else:
+                pixels_setHSV(ranges-1, init.background_color_HSV)
     else:
-        if init.single_tuple == True:
-            for ranges in init.ranges:
-                if init.colors[0] == 'rainbow':
-                    hsv_col = ((time.ticks_ms()/speed)%359,100,100*init.brightness_values[0])
-                    pixels_setHSV(ranges-1,hsv_col)
+        for i in range(len(init.ranges)):
+            for j in range(len(init.ranges[i])):
+                if init.colors[i] == 'rainbow':
+                    hsv_col = ((time.ticks_ms()/speed)%359,100,100*init.brightness_values[i])
+                    pixels_setHSV(init.ranges[i][j]-1,hsv_col)
                 else:
-                    pixels_setHSV(ranges-1, init.background_color_HSV)
-        else:
-            for i in range(len(init.ranges)):
-                for j in range(len(init.ranges[i])):
-                    if init.colors[i] == 'rainbow':
-                        hsv_col = ((time.ticks_ms()/speed)%359,100,100*init.brightness_values[i])
-                        pixels_setHSV(init.ranges[i][j]-1,hsv_col)
-                    else:
-                        pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
+                    pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
 
-#reset every neccessary value in init
-#unused
-def reset_init():
-    init.leniency_counter = 0
-    init.string_counter = 0
-    init.main_cnt = 0
-    init.i = 0
-    init.timer_counter = 0
-    init.idle_counter = 0
-    init.bg_initialized = False
-    init.single_tuple = False
-    init.ranges = []
-    init.colors = []
-    init.brightness_values = []
-    init.background_color_HSV = (0,0,0)
-    init.mode_selector = 0
 
 def get_profile_color(config_name):
     file = open(config_name, 'r')
@@ -560,6 +552,8 @@ def check_fgc_string():
                 for j in range(init.fgc_strings_length):
                     init.fgc_strings[j] = init.copy_strings[j].copy()
 
+def testo():
+    return
 
 def mode_select():
     init.mode_selector = 0
@@ -629,9 +623,10 @@ def mode_select():
                 path = os.rename('config.py', config_name)
                 path = os.rename('configtmp.py', 'config.py')
                 machine.reset()
+
                 
 
-#return interpolated (r,g,b) tuble between color1 and color2 depending on t
+#return interpolated (r,g,b) tuble between color1 and color2 depending on t (time)
 #c1 and c2 = (r,g,b)
 #t takes values between tstart and tend
 def lerp_rgb(color1, color2, t):
@@ -642,6 +637,16 @@ def lerp_rgb(color1, color2, t):
     blue = color1[2] + (color2[2] - color1[2]) * ((t-tstart) / (tend - tstart))
 
     return (int(red), int(green), int(blue))
+
+def reset_background():
+    init.bg_initialized = False
+    init.single_tuple = False
+    init.ranges = []
+    init.colors = []
+    init.brightness_values = []
+    init.background_color_HSV = (0,0,0)
+    init.background = 0
+    
     
     
     
