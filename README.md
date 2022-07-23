@@ -50,8 +50,7 @@ There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 - Choose rainbow effect when buttons are not pressed
 - Disable background color temporarily when a button is pressed
 - Increase or decrease brightness on bootup or during play
-- Enter idle mode after any number of seconds
-- Display different animations in idle mode
+- Enter idle mode after any number of seconds and display different animations
 - Create custom profiles
 - Select custom profiles during play
 - Add custom animations and play them when doing certain inputs
