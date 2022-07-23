@@ -44,7 +44,7 @@ There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
  -Choose any numbers of LEDs to light up on button press
 - Assign random colors for LEDs on button press
 - Give different buttons same color when pressed simultaniously
-- Assign fade-out effect for LEDs
+- Assign fade-in and fade-out effect for LEDs
 - Choose any (or no) RGB color when buttons are not pressed
 - Choose any brightness when buttons are not pressed
 - Choose rainbow effect when buttons are not pressed
