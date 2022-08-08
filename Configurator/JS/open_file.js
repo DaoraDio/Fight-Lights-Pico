@@ -282,6 +282,9 @@ function get_code()
         var cell4 = row.insertCell(3);
         var cell5 = row.insertCell(4);
 
+        if(button_leds2 == 0)
+            button_leds2 = "Not Set";
+
         cell1.innerHTML = button_name;
         cell2.innerHTML = button_leds2;
         cell3.innerHTML = button_color;
