@@ -55,7 +55,7 @@ def save_stats(timer):
             init.idle_file_counter = 0
             init.seconds_counter = 0
                     
-        for but in button.button_list:
+        for but in config.button_list:
             if but.name == var_name:
                 value += but.num_presses
                 but.num_presses = 0
@@ -386,7 +386,7 @@ def fade_val_inc(color_val):
 #return true if no button is pressed at the moment
 #returns false when a button is currently pressed
 def no_buttons_pressed():
-    for but in button.button_list:
+    for but in config.button_list:
         if but.is_pressed == True:
             return False
     
@@ -567,25 +567,35 @@ def mode_select():
             pixels_show(config.brightness_mod)
         if config.brightness_mod < epsilon:
             pixels_show(0.004)
-        button.up.run(0) 
-        button.down.run(0) 
-        button.left.run(0) 
-        button.right.run(0)
-        button.x.run(0)
-        button.led_option.run(0)
+            
+        if config.ledOptions_increase_brightness:
+            config.ledOptions_increase_brightness[0].run(0)
+            
+        if config.ledOptions_decrease_brightness:
+            config.ledOptions_decrease_brightness[0].run(0)
+            
+        if config.ledOptions_confirm:
+            config.ledOptions_confirm[0].run(0)
+            
+        if config.ledOptions_left_button:
+            config.ledOptions_left_button[0].run(0)
+            
+        if config.ledOptions_right_button:
+            config.ledOptions_right_button[0].run(0)
+            
                 
-        if button.up.was_pressed:
+        if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].was_pressed:
             pixels_fill((255,255,255))
             pixels_set(init.mode_selector, profile_color)
             increase_brightness()
             print("brightness:", config.brightness_mod)
-        if button.down.was_pressed:
+        if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].was_pressed:
             pixels_fill((255,255,255))
             pixels_set(init.mode_selector, profile_color)
             decrease_brightness()
             print("brightness:", config.brightness_mod)
                 
-        if button.right.was_pressed:
+        if config.ledOptions_right_button and config.ledOptions_right_button[0].was_pressed:
             init.mode_selector -= 1
             if init.mode_selector <= 0:
                 init.mode_selector = 0
@@ -599,7 +609,7 @@ def mode_select():
             except OSError:
                 init.mode_selector -= 1
                 
-        if button.left.was_pressed:
+        if config.ledOptions_left_button and config.ledOptions_left_button[0].was_pressed:
             init.mode_selector += 1
             config_name = "config" + str(init.mode_selector) + ".py"
             
@@ -612,8 +622,8 @@ def mode_select():
                 config_name = "config" + str(init.mode_selector) + ".py"
                 if init.mode_selector == 0:
                     config_name = "config.py"
-                
-        if button.led_option.released or button.x.was_pressed: #confirm button
+        
+        if config.ledOptions_confirm[0].was_pressed: #confirm button
             if init.mode_selector == 0:
                 config_name = 'config.py'
                 pixels_fill((0,0,0))
@@ -623,6 +633,7 @@ def mode_select():
                 path = os.rename('config.py', config_name)
                 path = os.rename('configtmp.py', 'config.py')
                 machine.reset()
+            
 
                 
 

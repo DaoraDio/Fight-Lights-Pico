@@ -15,23 +15,24 @@ def idle_mode1(): #breathing LED
         functions.pixels_fill((0,0,0))
         functions.pixels_show(config.brightness_mod)
     
-    functions.shuffle_array(config.colors)
+    functions.shuffle_array(config.idle_mode1_colors)
     
-    speed = 2
+    speed = config.idle_mode1_speed
     breath_amps = [ii for ii in range(0,255,speed)]
     breath_amps.extend([ii for ii in range(255,-1,-speed)])
-    for color in config.colors: # emulate breathing LED
-        if init.idle_counter < init.idle_ticks:
-                return
-        for ii in breath_amps:
+    while init.idle_counter > init.idle_ticks:
+        for color in config.idle_mode1_colors: # emulate breathing LED
             if init.idle_counter < init.idle_ticks:
                     return
-            for jj in range(len(statemachine.ar)):
+            for ii in breath_amps:
                 if init.idle_counter < init.idle_ticks:
-                    return
-                functions.pixels_set(jj, color) # show all colors
-            functions.pixels_show((ii/255) * config.brightness_mod)
-            time.sleep(0.02)            
+                        return
+                for jj in range(len(statemachine.ar)):
+                    if init.idle_counter < init.idle_ticks:
+                        return
+                    functions.pixels_set(jj, color) # show all colors
+                functions.pixels_show((ii/255) * config.brightness_mod)
+                time.sleep(0.02)            
         
 
 #https://core-electronics.com.au/tutorials/how-to-use-ws2812b-rgb-leds-with-raspberry-pi-pico.html
@@ -63,6 +64,22 @@ def idle_mode2(): #Color Palette
                 rc_index = (i * 256 // config.led_count) + j
                 functions.pixels_set(i, functions.wheel(rc_index & 255))
             functions.pixels_show(config.brightness_mod)
+            
+def idle_mode3(): #lights out
+    brightness = config.brightness_mod
+    step_speed = brightness / 100
+    while brightness > 0:
+        brightness -= step_speed
+        if brightness < 0:
+            brightness = 0
+        functions.pixels_show(brightness)
+    
+    functions.pixels_fill((0,0,0))
+    functions.pixels_show(brightness)
+    
+    while init.idle_counter > init.idle_ticks:
+        pass
+    
             
 def color_change():
     for i in range(360):

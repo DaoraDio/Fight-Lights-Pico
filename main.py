@@ -47,19 +47,29 @@ while True:
         init.leniency_counter = 0
     
     #access led options when led_option button is pressed
-    if button.led_option.was_pressed:
-        functions.mode_select()
-    
-    #access led options when start+select is pressed for 3 seconds
-    if button.start.is_pressed and button.select.is_pressed:
-        if not init.timer_lock:
-            init.timer_target = init.timer_counter + functions.get_seconds(3)
-            init.timer_lock = True
-
-        if init.timer_counter >= init.timer_target:
+    try:
+        if config.led_option.was_pressed:
             functions.mode_select()
-    else:
-        init.timer_lock = False
+    except:
+        pass
+    
+    
+    #access led options when buttons in config.led_options are pressed for config.led_options_start_time seconds
+    if(config.ledOptions_led_buttons):
+        led_options = []
+        for button in config.ledOptions_led_buttons:
+            led_options.append(button.is_pressed)
+        
+        if all(led_options):
+            if not init.timer_lock:
+                init.timer_target = init.timer_counter + functions.get_seconds(config.ledOptions_start_time)
+                init.timer_lock = True
+
+            if init.timer_counter >= init.timer_target:
+                functions.mode_select()
+                #print("test", init.i)
+        else:
+            init.timer_lock = False
     
     
     #goes into idle mode after seconds defined in the variable 'idle_after' has been exceeded
@@ -70,6 +80,8 @@ while True:
             animation.idle_mode1()
         if config.idle_mode == 2:
             animation.idle_mode2()
+        if config.idle_mode == 3:
+            animation.idle_mode3()
     
     
     #checks if no buttons are pressed
@@ -91,7 +103,7 @@ while True:
     
     #get button pos with the highest priority and save the pos in start_pos
     index = 0
-    for but in button.button_list:
+    for but in config.button_list:
         index += 1
         if but.highest_prio == True:
             init.start_pos = index+1
@@ -101,17 +113,17 @@ while True:
     
     #calls run function for every button starting from start_pos
     if config.leniency >= 1:
-        for i in range(init.start_pos, len(button.button_list)+init.start_pos):
-            i = i % len(button.button_list)
-            button.button_list[i].run(random_color_id)
+        for i in range(init.start_pos, len(config.button_list)+init.start_pos):
+            i = i % len(config.button_list)
+            config.button_list[i].run(random_color_id)
     else:
-        for i in range(init.start_pos, len(button.button_list)+init.start_pos):
-            i = i % len(button.button_list)
+        for i in range(init.start_pos, len(config.button_list)+init.start_pos):
+            i = i % len(config.button_list)
             button.button_list[i].run((time.ticks_cpu()) % len(config.colors))
 
     #create a list of all buttons currently pressed
     currently_pressed = []
-    for butt in button.button_list:
+    for butt in config.button_list:
         if butt.is_pressed:
             currently_pressed.append(butt.name)
             

@@ -49,8 +49,8 @@ class MyButton:
                 self.counter = self.counter +1
                 ######################when the button was just pressed###########################
                 if self.counter == 1:
-                    for i in range(len(button_list)):
-                        button_list[i].highest_prio = False
+                    for i in range(len(config.button_list)):
+                        config.button_list[i].highest_prio = False
                     self.highest_prio = True
                     self.was_pressed = True
                     self.num_presses += 1
@@ -96,38 +96,17 @@ class MyButton:
                                 #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
                                 functions.pixels_set(self.led_list[i]-1, functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB,self.time))
                                 
+                                
+                    
                 self.is_pressed = False
                 if self.config[1] == 'random': #gives the button a random color if second variable of config of a button is 'random'
                     self.colorRGB = config.colors[random_color_id]
+                    #pass
                 else:
                     self.colorRGB = self.config[1] #gives the button a defined color if second variable of config is a color
+                    #pass
                 
-#######instances of class MyButton for all buttons##########
-up = MyButton(1,'u', functions.clear_led)
-down = MyButton(2,'d', functions.clear_led)
-right = MyButton(3,'f', functions.clear_led)
-left = MyButton(4,'b', functions.clear_led)
-select = MyButton(5,'select', functions.clear_led)
-ps = MyButton(6,'ps', functions.clear_led)
-start = MyButton(7,'start', functions.clear_led)                   
-                    
-r2 = MyButton(15,'r2', functions.clear_led)
-l2 = MyButton(14,'l2', functions.clear_led)
-square = MyButton(8,'square', functions.clear_led)
-triangle = MyButton(9,'triangle', functions.clear_led)
-r1 = MyButton(10,'r1', functions.clear_led)
-l1 = MyButton(11,'l1', functions.clear_led)
-circle = MyButton(12,'circle', functions.clear_led)
-x = MyButton(13,'x', functions.clear_led)
 
-led_option = MyButton(16,'led_option', functions.clear_led)
-
-
-#array for all the buttons, if you add a new button make sure to add it to the array aswell
-button_list = [r2,l2,square,triangle,r1,l1,circle,x,up,down,right,left,select,ps,start,led_option]
-
-#sets the button list length in init.py
-init.button_list_length = len(button_list)
         
 
 

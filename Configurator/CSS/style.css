@@ -1,0 +1,586 @@
+html *
+{
+    font-family: Arial;
+}
+
+h2
+{
+    text-align: center;
+    position:sticky;
+}
+
+#parent
+{
+    display: flex;
+}
+
+.flex_child
+{
+    width: 30%;
+}
+
+#left_flex
+{
+    position: relative;
+    width: 34%;
+    
+}
+#middle_flex
+{
+    position: inherit;
+    width: 90%;
+    padding-left: 7%;
+    
+}
+#right_flex
+{
+    position: inherit;
+    
+    
+}
+
+input
+{
+    margin-bottom: 13px;
+}
+
+#pin_num
+{
+    width: 175px;
+}
+
+select
+{
+    margin-bottom: 20px;
+}
+
+#code_box
+{
+    
+    width: 100%;
+    height: 40vh;
+    background-color: lightgray;
+
+}
+
+#color_adder
+{
+    position:absolute; 
+    top: 60px; 
+    right: 300px;
+}
+
+#add_color_button
+{
+    position:absolute; 
+    top: 60px; 
+    right: 182px;
+    height: 31px;
+    width: 55px;
+}
+#clean_color_inputs
+{
+    position:absolute; 
+    top: 58px; 
+    right: 5px;
+
+    height: 31px;
+    width: 35px;
+    /*border: solid gray 1px;*/
+    border: none;
+    z-index: 1;
+    font-size: 20px;
+    background: transparent;
+    color: rgb(123, 123, 253);
+}
+
+#delete_color
+{
+    position:absolute; 
+    top: 45px; 
+    right: 370px;
+
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    padding-bottom: 30px;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+}
+
+#update_color
+{
+    position:absolute; 
+    top: 60px; 
+    right: 240px;
+    height: 31px;
+    width: 55px;
+    /*display: none;*/
+}
+
+
+#color_name
+{
+    position:absolute; 
+    top: 60px; 
+    right: 3px;
+    height: 25px;
+}
+
+#save_button
+{
+    cursor: alias;
+    position:fixed;
+    top:5px; 
+    right: 5px;
+
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 5px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#color_info
+{
+    position: absolute;
+    top: 33px;
+    right: 200px;
+
+ 
+    color: red;
+}
+
+/*TABLE*/
+
+.def_col
+{
+    background-color: gray;
+}
+
+#color_table tr:not(:nth-child(-n+2))
+{
+    cursor: pointer;
+}
+
+#color_table tr:not(:nth-child(-n+2)):hover
+{
+    background-color: #ddd;
+}
+
+
+#button_table tr:not(:first-child)
+{
+    cursor: pointer;
+}
+
+#button_table tr:not(:first-child):hover
+{
+    background-color: #ddd;
+}
+
+
+
+#color_table
+{
+  position:absolute;
+  top: 100px;
+  right: 5px; 
+}
+
+#table_name
+{
+
+    padding-right: 120px;
+}
+
+.tg 
+{
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+
+.tg td
+{
+   border-color:black;
+   border-style:solid;
+   border-width:1px;
+   font-family:Arial, sans-serif;
+    font-size:14px;
+    padding:2px 5px;
+    
+    max-width: 1px;
+  overflow:hidden;
+  word-wrap:break-word;
+
+}
+.tg th
+{
+    border-color:black;
+    border-style:solid;
+    border-width:1px;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+  font-weight:normal;
+  /*overflow:hidden;
+  word-break:normal;*/
+  padding: 3px 20px;
+}
+
+/*button table*/
+#button_table
+{
+    padding-right: 2000px;
+}
+
+
+
+#button_conf
+{
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+/*button*/
+
+#delete_button
+{
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    padding-bottom: 30px;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+}
+
+#update_button
+{
+    height: 31px;
+    width: 55px;
+}
+
+
+#add_button
+{
+    height: 31px;
+    width: 55px;
+}
+
+#button_name
+{
+    height: 25px;
+}
+
+#color_select
+{
+    height: 30px;
+    width: 70px;
+}
+
+#refresh_button
+{
+    position: relative;
+    left: 295px;
+    top: 126px;
+    height: 31px;
+    width: 35px;
+    /*border: solid gray 1px;*/
+    border: none;
+    z-index: 1;
+    font-size: 20px;
+    background: transparent;
+    color: rgb(123, 123, 253);
+    
+}
+
+#button_error_message
+{
+    color: red;
+}
+
+#set_leds_button
+{
+    height: 30px;
+}
+
+#led_conf_modal::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+#led_conf_modal
+{
+    border: solid 1px;
+    border-radius: 5px;
+
+    width: 40vh;
+    margin-bottom: 70vh;
+    top: 10%
+}
+
+
+.modal_button
+{
+    margin-top: 10px;
+}
+
+#background_conf
+{   
+    width: 60%;
+    margin-left: 20px;
+
+    box-shadow: 0px 1px 0px 0px #1c1b18;
+	background:linear-gradient(to bottom, #eae0c2 5%, #ccc2a6 100%);
+	background-color:#eae0c2;
+	border-radius:15px;
+	border:1px solid #333029;
+	display:inline-block;
+	cursor:pointer;
+	color:#505739;
+	font-family:Arial;
+	font-size:14px;
+	font-weight:bold;
+	padding:12px 16px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+
+#background_conf:hover {
+	background:linear-gradient(to bottom, #ccc2a6 5%, #eae0c2 100%);
+	background-color:#ccc2a6;
+}
+#background_conf:active {
+	position:relative;
+	top:1px;
+}
+
+#set_background_modal::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+#set_background_modal
+{
+    border: solid 1px;
+    border-radius: 5px;
+    width: 43vh;
+    margin-bottom: 70vh;
+}
+
+#bg_brightness
+{
+    float: left;
+}
+
+#background_table tr:not(:first-child)
+{
+    cursor: pointer;
+}
+
+#background_table tr:not(:first-child):hover
+{
+    background-color: #ddd;
+}
+
+#open_button
+{
+    cursor: alias;
+    top: 1%;
+
+    background-color: #3d4aff; /* Green */
+    border: none;
+    color: white;
+    padding: 5px 20px;
+    text-align: center;
+    text-decoration: none;
+
+    font-size: 16px;
+    z-index: 1;
+    width: 80%;
+}
+
+#file_wrapper
+{
+    position: absolute;
+    background-color: rgb(240, 239, 239);
+    width: 400px;
+    padding-left: 10px;
+    padding-top: 5px;
+    border: 1px solid rgb(173, 173, 173);
+    top: 10px;
+}
+
+#file_select_text
+{
+    color: white;
+    background-color: #3d4aff;
+    text-align: center;
+    width: 90%;
+}
+
+#idle_mode1_config::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+#circle_table
+{
+    width: 100%;
+    text-align: center;
+}
+
+#idle_circle_select
+{
+    width: 80px;
+    height: 31px;
+}
+
+#delete_idle_table
+{
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    padding-bottom: 30px;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+}
+
+#add_idle_table
+{
+    height: 31px;
+    width: 35px;
+}
+
+#circle_table tr:not(:first-child)
+{
+    cursor: pointer;
+}
+
+#circle_table tr:not(:first-child):hover
+{
+    background-color: #ddd;
+}
+
+#reset_idle_table
+{
+    height: 50px;
+    width: 40px;
+    /*border: solid gray 1px;*/
+    border: none;
+    font-size: 30px;
+    background: transparent;
+    color: rgb(123, 123, 253);
+}
+
+#led_options_button
+{
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	background-color:#ffffff;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+
+#led_options_button:hover
+{
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	background-color:#f6f6f6;
+}
+
+#led_options_button:active
+{
+	position:relative;
+	top:1px;
+}
+
+#led_options_configuration::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+#led_options_table
+{
+    width: 100%;
+}
+
+
+#reset_led_options_table
+{
+    height: 50px;
+    width: 40px;
+    /*border: solid gray 1px;*/
+    border: none;
+    font-size: 30px;
+    background: transparent;
+    color: rgb(123, 123, 253);
+}
+
+#led_options_select
+{
+    width: 80px;
+    height: 31px;
+}
+
+#delete_led_options_table
+{
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    padding-bottom: 30px;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+}
+
+#add_led_options_table
+{
+    height: 31px;
+    width: 35px;
+}
+
+#led_options_table tr:not(:first-child)
+{
+    cursor: pointer;
+}
+
+#led_options_table tr:not(:first-child):hover
+{
+    background-color: #ddd;
+}
+
+.brightness_select
+{
+    margin-left: 40%;
+}
+
+.led_option_selects
+{
+    width: 100px;
+}
+
+
