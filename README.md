@@ -40,6 +40,7 @@ There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 
 # Features
 
+- Configuration through UI
 - Choose any RGB color for a LED to get on button press
 - Choose any numbers of LEDs to light up on button press
 - Assign random colors for LEDs on button press
