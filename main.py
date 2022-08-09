@@ -30,7 +30,7 @@ if config.save_stats == True:
         f = open(init.file_name, 'w')
         f.write(init.header_text)
         f.write("uptime: 0\n")
-        for but in button.button_list:
+        for but in config.button_list:
             f.write(but.name + ": 0\n")
         f.close()
 
