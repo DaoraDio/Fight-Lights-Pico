@@ -323,7 +323,7 @@ select
     border: solid 1px;
     border-radius: 5px;
 
-    width: 40vh;
+    width: 25vw;
     margin-bottom: 70vh;
     top: 10%
 }
@@ -374,8 +374,8 @@ select
 {
     border: solid 1px;
     border-radius: 5px;
-    width: 43vh;
-    margin-bottom: 70vh;
+    
+
 }
 
 #bg_brightness
