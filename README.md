@@ -38,6 +38,8 @@ Qanba Obsidian Wiring guide: https://drive.google.com/file/d/1-cKfSiCJdcfAH5P0MA
 ![alt text](https://www.swe-chumbucket.com/index.php/s/gsq7pN8Loo236Qk/preview) 
 There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
 
+Also check out the Website: https://fight-lights.com/
+
 # Features
 
 - Configuration through UI
