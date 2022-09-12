@@ -559,8 +559,28 @@ def mode_select():
     init.mode_selector = 0
     config_name = 'config.py'
     epsilon = 0.00001
+    delay = 25
+
+    #small animation at the beginning
+    time.sleep_ms(delay)
+    pixels_fill((0,0,0))
+    pixels_show(config.brightness_mod)
+    
+    time.sleep_ms(delay)
+    pixels_fill(((255,255,255)))
+    pixels_show(config.brightness_mod)
+    
+    time.sleep_ms(delay)
+    pixels_fill((0,0,0))
+    pixels_show(config.brightness_mod)
+    
+    time.sleep_ms(delay)
+    pixels_fill(((255,255,255)))
+    pixels_show(config.brightness_mod)
+    
+    
     while True:
-        pixels_fill((255,255,255))
+        pixels_fill(((255,255,255)))
         profile_color = get_profile_color(config_name)
         pixels_set(init.mode_selector, profile_color)
         if config.brightness_mod > 0:
@@ -660,9 +680,11 @@ def reset_background():
     
     
     
-    
-        
-    
+def lerp(tstart,tend,t):
+    ystart = 0
+    yend = 255
+    y = ystart + (yend - ystart) * ((t-tstart)/(tend-tstart))
+    return y
     
     
     

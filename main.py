@@ -34,10 +34,10 @@ if config.save_stats == True:
             f.write(but.name + ": 0\n")
         f.close()
 
+#animation.idle_mode4()
 
 #main loop
 while True:
-    
     #print(init.current_input)
     init.main_cnt += 1    
     init.leniency_counter += 1
@@ -61,13 +61,18 @@ while True:
             led_options.append(button.is_pressed)
         
         if all(led_options):
+            V = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter))
+            col = (V,V,V)
+            functions.pixels_fill(col)
+            functions.pixels_show(config.brightness_mod)
+
             if not init.timer_lock:
                 init.timer_target = init.timer_counter + functions.get_seconds(config.ledOptions_start_time)
+                init.timer_start = init.timer_counter
                 init.timer_lock = True
 
             if init.timer_counter >= init.timer_target:
                 functions.mode_select()
-                #print("test", init.i)
         else:
             init.timer_lock = False
     
@@ -82,6 +87,8 @@ while True:
             animation.idle_mode2()
         if config.idle_mode == 3:
             animation.idle_mode3()
+        if config.idle_mode == 4:
+            animation.idle_mode4()
     
     
     #checks if no buttons are pressed
@@ -91,13 +98,14 @@ while True:
     random_color_id = init.i % len(config.colors)
      
     #sets the background colors
-    if config.clear_background_on_press == False:
-        functions.set_background(init.background)
-    else:
-        if init.no_buttons_pressed == True:
+    if not init.timer_lock:
+        if config.clear_background_on_press == False:
             functions.set_background(init.background)
         else:
-            functions.pixels_fill((0,0,0))
+            if init.no_buttons_pressed == True:
+                functions.set_background(init.background)
+            else:
+                functions.pixels_fill((0,0,0))
             
 
     

@@ -9,12 +9,15 @@ i = 0 #increases every time the leniency_counter hits the value defined in confi
 
 timer_lock = False
 timer_target = 0
+timer_start = 1
 
 #variable that keeps track of the position in the array button_list in button.py of the latest button which has been pressed
 start_pos = 0
 
 #global counter that increases at the rate of frequency
 timer_counter = 0
+
+
 
 #value to which the timer counter gets reset after a button press,
 #ideally it should be 0, but if the frequency is too high and the setback value is too high as well (aka 0 or >-5)...
@@ -26,6 +29,9 @@ idle_counter = 0
 
 #is set at program start by the function idle_after()
 idle_ticks = 0
+
+
+
 
 #frequency in hz at which the timer interrups happen
 frequency = 60
@@ -69,7 +75,3 @@ background = 0
 file_name = "stats.txt"
 seconds_counter = 0 #this counts up every seconds to save to the file file_name
 header_text = "##################This file stores the number of presses for each button#########\n##################and the uptime in seconds######################################\n" #header text for the file file_name
-
-
-
-
