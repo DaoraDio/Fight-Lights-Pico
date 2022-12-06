@@ -94,9 +94,11 @@ function select_button_table()
         this.style.backgroundColor = "#ddd";
 
         rIndex = this.rowIndex;
-       //console.log(rIndex);
+        //console.log(rIndex);
         document.getElementById("button_row_id").innerHTML = rIndex;
         document.getElementById("button_name").value = this.cells[0].innerHTML;
+        document.getElementById("button_brightness").value = parseInt(this.cells[5].innerHTML);
+        document.getElementById("brightness_label").innerText = "Brightness: " + this.cells[5].innerHTML;
     }
   }
 }
@@ -122,6 +124,7 @@ function reset_all()
       var css = '#button_table tr:not(:first-child):hover';
       table.rows[i].style = css;
   }
+  document.getElementById("button_row_id").innerHTML = "-1";
 
   //update_color_button_table();
   //document.getElementById("add_color_button").style.display="none";
@@ -239,6 +242,7 @@ function add_button()
     var cell3 = row.insertCell(2);
     var cell4 = row.insertCell(3);
     var cell5 = row.insertCell(4);
+    var cell6 = row.insertCell(5);
     
     
     var fade = '<input type="checkbox" id="fade_cb" name="fade_cb" onchange="">';
@@ -279,6 +283,7 @@ function add_button()
     cell3.innerHTML = "random";
     cell4.innerHTML = fade;
     cell5.innerHTML = gpio_pins;
+    cell6.innerHTML = document.getElementById("button_brightness").value + "%";
 
     //update_color_button_table();
 }

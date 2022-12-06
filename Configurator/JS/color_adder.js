@@ -54,37 +54,8 @@ function getRGBColor()
     rgb = hexTorgb(hex);
 }
 
-function startsWithNumber(str) {
-  return /^\d/.test(str);
-}
-
-function addColor()
+function check_colortable_duplicate(name)
 {
-  getRGBColor();
-
-  var name = document.getElementById("color_name").value;
-  name = name.trim();
-  name = name.replace(/\s/g, '');
-  if(name == "")
-  {
-    document.getElementById("color_info").innerHTML = "Name cannot be empty";
-    return;
-  }
-  else if(startsWithNumber(name))
-  {
-    document.getElementById("color_info").innerHTML = "Name cannot start with a number";
-    return;
-  }
-  else if(name.includes("_MyButton"))
-  {
-    document.getElementById("color_info").innerHTML = "Name cannot contain _MyButton";
-    return;
-  }
-  else
-  {
-    document.getElementById("color_info").innerHTML = "";
-  }
-
   var table = document.getElementById("color_table");
   
   for (var i = 1, row; row = table.rows[i]; i++) 
@@ -93,11 +64,32 @@ function addColor()
     col_name = col_name.split("\t");
     if(name == col_name[0])
     {
-      document.getElementById("color_info").innerHTML = "Name already exists";
-      return;
+      return "Name already exists";
     }
  }
- 
+ return false;
+}
+function addColor()
+{
+  getRGBColor();
+
+  var name = document.getElementById("color_name").value;
+  name = name.trim();
+  name = name.replace(/\s/g, '');
+
+  if(check_name(name) != true)
+  {
+    document.getElementById("color_info").innerHTML = check_name(name);
+    return;
+  }
+
+  if(check_colortable_duplicate(name) != false)
+  {
+    document.getElementById("color_info").innerHTML = check_colortable_duplicate(name);
+    return;
+  }
+
+  var table = document.getElementById("color_table");
 
   var row = table.insertRow();
 
@@ -139,25 +131,23 @@ function reset()
 
 }
 
-function delete_color()
-{
-  var name = document.getElementById("color_name");
-  var col_select = document.getElementById("color_select");
-  if(col_select.value === name.value)
-    col_select.value = "random";
-
-  var row_id = parseInt(document.getElementById("row_id").innerHTML);
-  document.getElementById("color_table").deleteRow(row_id);
-  reset();
-}
-
 function update_color()
 {
     var table = document.getElementById("color_table");
     var row_id = parseInt(document.getElementById("row_id").innerHTML);
+    var name = document.getElementById("color_name").value;
 
+    name = name.trim();
+    name = name.replace(/\s/g, '');
   
-    table.rows[row_id].cells[0].innerHTML = document.getElementById("color_name").value;
+    if(check_name(name) != true)
+    {
+      document.getElementById("color_info").innerHTML = check_name(name);
+      return;
+    }
+  
+
+    table.rows[row_id].cells[0].innerHTML = name;
     getRGBColor();
     table.rows[row_id].cells[1].innerHTML = rgb[0];
     table.rows[row_id].cells[2].innerHTML = rgb[1];
@@ -166,6 +156,97 @@ function update_color()
     var cell_color = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
     table.rows[row_id].cells[4].style.backgroundColor = cell_color;
     reset();
-    
+}
 
+function delete_color()
+{
+  var button_uses_color = false;
+  var background_uses_color = false;
+  var button_table = document.getElementById("button_table");
+  var bg_table = document.getElementById("background_table");
+  var name = document.getElementById("color_name");
+
+  for (var i = 1, row; row = button_table.rows[i]; i++) 
+  {
+    var col_name = row.innerText;
+    col_name = col_name.split("\t");
+
+    if(row.cells[2].innerHTML == name.value)
+    {
+      button_uses_color = true;
+      break;
+    }
+  }  
+
+  for (var i = 1, row; row = bg_table.rows[i]; i++) 
+  {
+    var col_name = row.innerText;
+    col_name = col_name.split("\t");
+
+    if(row.cells[1].innerHTML == name.value)
+    {
+      background_uses_color = true;
+      break;
+    }
+  }  
+  //console.log("button Color: ", button_uses_color);
+  //console.log("background Color: ", background_uses_color);
+
+  if(background_uses_color || button_uses_color)
+  {
+    if (confirm("This color is used as button or background color, do you still want to delete it? Colors will be set to blank")) 
+    {
+      ;
+    } 
+    else 
+    {
+      return;
+    }
+  }
+
+
+  
+  var col_select = document.getElementById("color_select");
+  if(col_select.value === name.value)
+    col_select.value = "blank";
+
+
+  
+  for (var i = 1, row; row = button_table.rows[i]; i++) 
+  {
+    var col_name = row.innerText;
+    col_name = col_name.split("\t");
+
+    if(row.cells[2].innerHTML == name.value)
+    {
+      row.cells[2].innerHTML = "blank";
+    }
+  }  
+
+  for (var i = 1, row; row = bg_table.rows[i]; i++) 
+  {
+    var col_name = row.innerText;
+    col_name = col_name.split("\t");
+
+    if(row.cells[1].innerHTML == name.value)
+    {
+      row.cells[1].innerHTML = "blank";
+    }
+  }  
+
+  var circle_table = document.getElementById("circle_table");
+  for (var i = 1, row; row = circle_table.rows[i]; i++) 
+  {
+    var col_name = row.innerText;
+    col_name = col_name.split("\t");
+
+    if(row.cells[0].innerHTML == name.value)
+    {
+      document.getElementById("circle_table").deleteRow(i);
+    }
+  }    
+
+  var row_id = parseInt(document.getElementById("row_id").innerHTML);
+  document.getElementById("color_table").deleteRow(row_id);
+  reset();
 }

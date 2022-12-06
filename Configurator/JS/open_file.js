@@ -3,6 +3,26 @@ var i = 0;
 const file_name_textbox = document.getElementById("file_names");
 
 //returns the line of code of str from the loaded file
+function set_brightness_slider(that)
+{
+    //console.log(that.value);
+    var brightness_label = document.getElementById("brightness_label");
+    brightness_label.innerText = "Brightness: " + that.value + "%";
+    
+    
+    var row_id = document.getElementById("button_row_id").innerHTML;
+    row_id = parseInt(row_id);
+
+    var button_table = document.getElementById("button_table");
+    if(row_id > 0)
+    {
+        row = button_table.rows[row_id];
+        row.cells[5].innerHTML = that.value + "%";
+    }
+
+
+
+}
 function get_variable_line(str)
 {
     var code = document.getElementById("new_codebox").value;
@@ -27,6 +47,7 @@ function py_tuple_to_rgb_array(tuple)
     tuple = tuple.split(',');
     return [parseInt(tuple[0]),parseInt(tuple[1]),parseInt(tuple[2])]
 }
+
 
 function get_code()
 {
@@ -210,6 +231,7 @@ function get_code()
                                         <th>Color</th>\
                                         <th>Fade</th>\
                                         <th>GPIO Pin</th>\
+                                        <th>Brightness</th>\
                                     </tr>\
                                 </table>';
 
@@ -247,6 +269,7 @@ function get_code()
                             <option value="28">GP28</option>\
                         </select></td> ';
     update_color_select();
+    
     for(var i = 0; i < button_list.length; i++)
     {
         var button = get_variable_line(button_list[i]);
@@ -261,10 +284,13 @@ function get_code()
         var button_conf = get_variable_line(button_list[i]+'.set_config(');
         button_conf = button_conf.replace(button_list[i]+'.set_config(', '');
         button_conf = button_conf.split(' ');
+        
     
         var button_color = button_conf[1].slice(0,-1);
         var button_fade = button_conf[2].slice(0,-1);
         var button_leds = button_conf[0].replaceAll(',', ' ');
+        var button_brightness = parseFloat(button_conf[3]) * 100;
+      
         button_leds = button_leds.replaceAll('(', ' ');
         button_leds = button_leds.replaceAll(')', ' ');
         button_leds = button_leds.split(' ');
@@ -274,6 +300,8 @@ function get_code()
             button_leds2 += button_leds[j] + " ";
         button_leds2 = button_leds2.slice(0,-1);
 
+        
+
         var row = button_table.insertRow();
 
         var cell1 = row.insertCell(0);
@@ -281,6 +309,7 @@ function get_code()
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
         var cell5 = row.insertCell(4);
+        var cell6 = row.insertCell(5);
 
         if(button_leds2 == 0)
             button_leds2 = "Not Set";
@@ -290,6 +319,7 @@ function get_code()
         cell3.innerHTML = button_color;
         cell4.innerHTML = fade;
         cell5.innerHTML = gpio_pins;
+        cell6.innerHTML = button_brightness  + '%';
         
         var n_row = button_table.rows[i+1];
         if(button_fade == "True")
@@ -400,6 +430,11 @@ function get_code()
     led_options_confirm = led_options_confirm.replace('_MyButton', '');
     document.getElementById("led_options_confirm").value = led_options_confirm;
     //console.log(led_option_increase_brightness);
+
+    //rainbow speed
+    var rainbow_speed =  get_value("rainbow_speed = ");
+    document.getElementById("rainbow_speed").value = rainbow_speed;
+
 
     
     //var idle1_config_button = document.getElementById("idle1_config");

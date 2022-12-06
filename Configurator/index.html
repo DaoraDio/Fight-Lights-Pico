@@ -2,11 +2,12 @@
 <link rel="stylesheet" type="text/css" href="CSS\style.css">
 
 <html>
-  <h2>Fight Lights Pico Configurator</h2>
+  <h2><a target="_blank" href="https://fight-lights.com">Fight Lights Pico</a></h2>
+  <h2>Configurator</h2>
   <div id="file_wrapper">
     <div id="file_select_text">Open one or multiple config files:</div>
     <input type="file" id="open_button" onchange="get_names()" multiple accept=".py"><br>
-    <button class="arrow" onclick="left_arrow()" disabled autocomplete="off">←</button><input id="file_names" type="text" placeholder="Select a File" disabled><button class="arrow" onclick="right_arrow()" disabled autocomplete="off">→</button>
+    <button class="arrow" onclick="left_arrow()" disabled autocomplete="off">&#8592</button><input id="file_names" type="text" placeholder="Select a File" disabled><button class="arrow" onclick="right_arrow()" disabled autocomplete="off">&#8594</button>
   </div>
   <br>
   <br>
@@ -23,9 +24,13 @@
         <script src="JS\open_file.js"></script>
         <script src="JS\idle_mode_conf.js"></script>
         <script src="JS\led_options.js"></script>
+        <script src="JS\check_name.js"></script>
+
+        <!--<button id=""  onclick="check_name('asd_')">TEST</button>-->
         
 
     <div id="parent">
+      
       <div class="flex_child" id="left_flex">
        <!-- <input type="file" id="input" multiple>-->
 
@@ -102,7 +107,7 @@
         <!--IDLE MODE-->
         <div id="idlemode_tx">Idle Mode:</div>
 
-        <button id="idle1_config" hidden onclick="show_idle_modal()">⚙</button>
+        <button id="idle1_config" hidden onclick="show_idle_modal()">&#9881</button>
         <select name="idle_select" id="idle_select" onchange="show_idle1_config()">
             <option value="1">Mode 1 (Breathing)</option>
             <option value="2">Mode 2 (Rainbow)</option>
@@ -135,19 +140,24 @@
 
 
         <h3 id="button_conf">Button Configuration</h3>
-        <button id="refresh_button" onclick="reset_all()">⟳</button>
+        <button id="refresh_button" onclick="reset_all()">&#10227</button>
         <div>Button Fade in speed: <input type="number" min="0" id="fade_in" value="20" step="0.1"></div>
         <div>Button Fade out speed: <input type="number" min="0" id="fade_out" value="6" step="0.1"></div>
 
 
-        <button id="delete_button" onclick="delete_button()" disabled>🗑</button>
+        <button id="delete_button" onclick="delete_button()" disabled>&#128465</button>
         <button id="update_button" onclick="update_button()" disabled>Update</button>
         <button id="add_button" onclick="add_button()">Add</button>
         <input  id="button_name" type="text" placeholder="Button Name">
         <button id="set_leds_button" disabled onclick="led_open_modal()">Set LEDs</button>
         Color:
         <select id="color_select" onmouseenter="update_color_select()" onchange="set_color_from_select()" disabled><option>random</option></select>
-        <div id="button_row_id" hidden>1</div>
+        <br>
+        <label id="brightness_label" for="button_brightness">Brightness: 100%</label>
+        <br>
+        <input type="range" min="0" max="100" value="100" id="button_brightness" oninput="set_brightness_slider(this)">
+        
+        <div id="button_row_id" hidden>-1</div>
         <div id="button_error_message"></div>
         
         <table class="tg" id="button_table" onmouseover="select_button_table()">
@@ -157,6 +167,7 @@
               <th>Color</th>
               <th>Fade</th>
               <th>GPIO Pin</th>
+              <th>Brightness</th>
             </tr>
       </table>
       </div>
@@ -167,8 +178,8 @@
           <input class="color_select" type="color" id="color_adder" value="#ff0000" onchange="getRGBColor()">
           <button id="add_color_button" onclick="addColor()">Add</button>
           <button id="update_color" onclick="update_color()" disabled>Update</button>
-          <button id="clean_color_inputs" onclick="reset()">⟳</button>
-          <button id="delete_color" onclick="delete_color()" disabled>🗑</button>
+          <button id="clean_color_inputs" onclick="reset()">&#10227</button>
+          <button id="delete_color" onclick="delete_color()" disabled>&#128465</button>
           <input type="text" id="color_name" placeholder="Color Name">
           <div id="row_id" hidden></div>
           <div id="color_info"></div>
@@ -223,6 +234,7 @@
         <option>blank</option>
       </optgroup>
     </select></div>
+    <div title="default value = 1000, higher values = slower">Rainbow Speed:</div> <input type="number" min="0" value="1000" id="rainbow_speed" title="default value = 1000, higher values = slower">
     <p><input type="range" min="0" max="100" value="100" class="slider" id="bg_brightness" oninput="set_brightness()">&nbsp&nbspBrightness: <span id="brightness_text"></span>%</p>
     <br>
     <button onclick="bg_set_all()">Set for all</button>
@@ -257,12 +269,12 @@
     <label for="circle_checkbox2">Select colors to circle between</label>
 
     <br>
-    <button id="delete_idle_table" onclick="delete_idle_color()"disabled>🗑</button>
+    <button id="delete_idle_table" onclick="delete_idle_color()"disabled>&#128465</button>
     <button id="add_idle_table" onclick="add_idle_color()">Add</button>
     <select id="idle_circle_select" onmouseenter="update_idle_circle_select()">
       <option>blank</option>
     </select>
-    <button id="reset_idle_table" onclick="reset_idle_selection()">⟳</button>
+    <button id="reset_idle_table" onclick="reset_idle_selection()">&#10227</button>
     <div id="circle_row_id" hidden></div>
     <table class="tg" id="circle_table" onmouseover="select_circle_table()">
       <thead>
@@ -283,12 +295,12 @@
     <input id="led_options_start_time" type="number" min="0" value="0">
     <p>Buttons to press together to enter options mode:</p>
 
-    <button id="delete_led_options_table" onclick="delete_led_options_table()" disabled>🗑</button>
+    <button id="delete_led_options_table" onclick="delete_led_options_table()" disabled>&#128465</button>
     <button id="add_led_options_table" onclick="add_led_option_button()">Add</button>
     <select id="led_options_select" onmouseenter="">
 
     </select>
-    <button id="reset_led_options_table" onclick="reset_led_options_table()">⟳</button>
+    <button id="reset_led_options_table" onclick="reset_led_options_table()">&#10227</button>
     <div id="led_options_table_row_id" hidden></div>
     <table class="tg" id="led_options_table" onmouseover="select_led_option_table()">
       <thead>

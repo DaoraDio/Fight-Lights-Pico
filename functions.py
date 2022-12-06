@@ -394,10 +394,9 @@ def no_buttons_pressed():
     
 
 def set_background(background):
-    speed = 1000 #speed for colorwheel, higher = slower
+    #speed = 1000 #speed for colorwheel, higher = slower
     
     #if background it only a color
-    #print("background:", background)
     if isinstance(background[0], int):
         if init.bg_initialized == False:
             init.background_color_HSV = RGBtoHSV(background)
@@ -406,7 +405,7 @@ def set_background(background):
         pixels_fillHSV(init.background_color_HSV)
         return
     elif background == 'rainbow':#if background is only 'rainbow'
-        hsv_col = ((time.ticks_ms()/speed)%359,100,100)
+        hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100)
         pixels_fillHSV(hsv_col)
         return
     elif not isinstance(background[0], tuple) and init.bg_initialized == False:#if background is a single tuple
@@ -449,7 +448,7 @@ def set_background(background):
     if init.single_tuple == True:
         for ranges in init.ranges:
             if init.colors[0] == 'rainbow':
-                hsv_col = ((time.ticks_ms()/speed)%359,100,100*init.brightness_values[0])
+                hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100*init.brightness_values[0])
                 pixels_setHSV(ranges-1,hsv_col)
             else:
                 pixels_setHSV(ranges-1, init.background_color_HSV)
@@ -457,7 +456,7 @@ def set_background(background):
         for i in range(len(init.ranges)):
             for j in range(len(init.ranges[i])):
                 if init.colors[i] == 'rainbow':
-                    hsv_col = ((time.ticks_ms()/speed)%359,100,100*init.brightness_values[i])
+                    hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100*init.brightness_values[i])
                     pixels_setHSV(init.ranges[i][j]-1,hsv_col)
                 else:
                     pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
@@ -688,3 +687,4 @@ def lerp(tstart,tend,t):
     
     
     
+

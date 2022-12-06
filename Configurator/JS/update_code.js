@@ -110,6 +110,8 @@ function set_code()
     var col_name = row.innerText;
     col_name = col_name.split("\t");
     var leds = col_name[1].replace(/[ ,]+/g, ",");
+    var brightness = parseInt(col_name[5]) / 100;
+    
     leds += ",";
     if(leds == "Not,Set,")
       leds = "0,";
@@ -117,7 +119,7 @@ function set_code()
       var fade2 = "True";
     else
       var fade2 = "False";
-    button_colors += col_name[0] + "_MyButton" + ".set_config((" + leds + "), "+col_name[2] + ", " + fade2 + ")\n";
+    button_colors += col_name[0] + "_MyButton" + ".set_config((" + leds + "), "+col_name[2] + ", " + fade2 + ", " + brightness + ")\n";
   }
 
   //clear bg
@@ -209,6 +211,8 @@ function set_code()
     led_options_confirm = "ledOptions_confirm = []"
   //console.log(led_options);
 
+  var rainbow_speed = "rainbow_speed = " + document.getElementById("rainbow_speed").value;
+  
 
   //output
   document.getElementById("code_box").value = header 
@@ -240,7 +244,8 @@ function set_code()
                                               + led_options_dec_brightness + '\n'
                                               + led_options_left + '\n'
                                               + led_options_right + '\n'
-                                              + led_options_confirm + '\n';
+                                              + led_options_confirm + '\n'
+                                              + rainbow_speed + '\n';
 }
 
 setInterval(function()

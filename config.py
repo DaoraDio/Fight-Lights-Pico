@@ -61,21 +61,21 @@ button_list = [up_MyButton,down_MyButton,right_MyButton,left_MyButton,select_MyB
 init.button_list_length = len(button_list)
 
 
-up_MyButton.set_config((0,), random, False)
-down_MyButton.set_config((0,), random, False)
-right_MyButton.set_config((0,), random, False)
-left_MyButton.set_config((0,), random, False)
-select_MyButton.set_config((1,2,3,4,5,6,7,8,), violet, False)
-ps_MyButton.set_config((1,2,3,4,5,6,7,8,), light_blue, False)
-start_MyButton.set_config((1,2,3,4,5,6,7,8,), red, False)
-square_MyButton.set_config((5,), random, True)
-triangle_MyButton.set_config((6,), random, True)
-r1_MyButton.set_config((8,), random, True)
-l1_MyButton.set_config((7,), random, True)
-circle_MyButton.set_config((3,), random, True)
-x_MyButton.set_config((4,), green, True)
-l2_MyButton.set_config((2,), random, True)
-r2_MyButton.set_config((1,), random, True)
+up_MyButton.set_config((0,), random, False, 1)
+down_MyButton.set_config((0,), random, False, 1)
+right_MyButton.set_config((0,), random, False, 1)
+left_MyButton.set_config((0,), random, False, 1)
+select_MyButton.set_config((1,2,3,4,5,6,7,8,), violet, False, 1)
+ps_MyButton.set_config((1,2,3,4,5,6,7,8,), light_blue, False, 1)
+start_MyButton.set_config((1,2,3,4,5,6,7,8,), red, False, 1)
+square_MyButton.set_config((5,), random, True, 1)
+triangle_MyButton.set_config((6,), random, True, 1)
+r1_MyButton.set_config((8,), random, True, 1)
+l1_MyButton.set_config((7,), random, True, 1)
+circle_MyButton.set_config((3,), random, True, 1)
+x_MyButton.set_config((4,), green, True, 1)
+l2_MyButton.set_config((2,), random, True, 1)
+r2_MyButton.set_config((1,), random, True, 1)
 
 ledOptions_led_buttons = [start_MyButton,select_MyButton]
 ledOptions_start_time = 3
@@ -84,3 +84,4 @@ ledOptions_decrease_brightness = [down_MyButton]
 ledOptions_left_button = [left_MyButton]
 ledOptions_right_button = [right_MyButton]
 ledOptions_confirm = [x_MyButton]
+rainbow_speed = 1000
