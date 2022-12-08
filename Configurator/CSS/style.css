@@ -144,6 +144,7 @@ select
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    z-index: 2;
 }
 
 #color_info
@@ -195,20 +196,19 @@ select
 
 #table_name
 {
-
     padding-right: 120px;
 }
+
 
 .tg 
 {
     border-collapse:collapse;
-    border-spacing:0;
 }
 
 
 .tg td
 {
-   border-color:black;
+    border-color:rgb(0, 0, 0);
    border-style:solid;
    border-width:1px;
    font-family:Arial, sans-serif;
@@ -220,11 +220,14 @@ select
   word-wrap:break-word;
 
 }
+
 .tg th
 {
-    border-color:black;
+    border-color:rgb(0, 0, 0);
+    background-color: #d1d1d1;
     border-style:solid;
     border-width:1px;
+    
     font-family:Arial, sans-serif;
     font-size:14px;
   font-weight:normal;
@@ -378,6 +381,7 @@ select
 #bg_brightness
 {
     float: left;
+    width: 100px;
 }
 
 #background_table tr:not(:first-child)
@@ -581,7 +585,28 @@ select
 }
 
 
-#button_brightness
+
+#button_brightness 
 {
-    width:100px
+    width:100px;
+    position: absolute;
+    margin-top: 40px;
+    margin-left: 5px;
+}
+
+#brightness_label
+{
+    margin-top: 26px;
+    position: absolute;
+    font-size: 14px;
+    margin-left: 5px;
+    color: rgb(75, 75, 75);
+}
+
+#color_label
+{
+    padding-top: 10px;
+    position: absolute;
+    font-size: 13px;
+    color: rgb(75, 75, 75);
 }

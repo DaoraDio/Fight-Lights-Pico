@@ -132,9 +132,36 @@ function reset_all()
 
 function delete_button()
 {
+  var button_name = document.getElementById("button_name").value;
+
+  if (confirm("Do you really want to delete Button: " + button_name + "?")) 
+  {
+    ;
+  } 
+  else 
+  {
+    return;
+  }
+
+  var led_options_table = document.getElementById("led_options_table");
+  var button_table = document.getElementById("button_table");
   var row_id = parseInt(document.getElementById("button_row_id").innerHTML);
-  document.getElementById("button_table").deleteRow(row_id);
+  
+
+  
+
+  for (var i = 1, row; row = led_options_table.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == button_name)
+    {
+      led_options_table.deleteRow(i);
+      i--;
+    }
+  }  
+
+  button_table.deleteRow(row_id);
   reset_all();
+  show_led_options(false); //open led_options function to update the selects 
 
 }
 

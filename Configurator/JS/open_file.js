@@ -278,6 +278,7 @@ function get_code()
     
         var button_name = button[1];
         button_name = button_name.replaceAll("'",'');
+        button_name = button_name.trim();
     
         var button_gpio = parseInt(button[0]);
     
