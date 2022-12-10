@@ -8,6 +8,7 @@
     <div id="file_select_text">Open one or multiple config files:</div>
     <input type="file" id="open_button" onchange="get_names()" multiple accept=".py"><br>
     <button class="arrow" onclick="left_arrow()" disabled autocomplete="off">&#8592</button><input id="file_names" type="text" placeholder="Select a File" disabled><button class="arrow" onclick="right_arrow()" disabled autocomplete="off">&#8594</button>
+    <button onclick="paste()" hidden id="load_from_clipboard">Load code from clipboard</button>
   </div>
   <br>
   <br>
@@ -141,8 +142,8 @@
 
         <h3 id="button_conf">Button Configuration</h3>
         <button id="refresh_button" onclick="reset_all()">&#10227</button>
-        <div>Button Fade in speed: <input type="number" min="0" id="fade_in" value="20" step="0.1"></div>
-        <div>Button Fade out speed: <input type="number" min="0" id="fade_out" value="6" step="0.1"></div>
+        <div title="higher values = faster fade">Button Fade in speed: <input type="number" min="0" id="fade_in" value="20" step="0.1"></div>
+        <div title="higher values = faster fade">Button Fade out speed: <input type="number" min="0" id="fade_out" value="6" step="0.1"></div>
 
 
         <button id="delete_button" onclick="delete_button()" disabled>&#128465</button>
@@ -207,7 +208,8 @@
         </table>
     <br>
     <br>
-     <button id="save_button" onclick="save_code('config.py')">Save Code</button> 
+     <button id="save_button" onclick="save_code('config.py')">Downlaod Code</button> 
+     <button id="save_button" onclick="copy_to_clipboard()" style="margin-right: 160px; height: 30px;" title="Copy code to clipboard">&#128203</button>
     </div>
   </div>
 

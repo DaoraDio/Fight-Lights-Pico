@@ -1,3 +1,11 @@
+navigator.sayswho= (function(){
+    var N= navigator.appName, ua= navigator.userAgent, tem,
+    M= ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*([\d\.]+)/i);
+    if(M && (tem= ua.match(/version\/([\.\d]+)/i))!= null) M[2]= tem[1];
+    M= M? [M[1], M[2]]:[N, navigator.appVersion, '-?'];
+    return M.join(' ');
+})();
+
 function call_on_start()
 {
     update_leniency_input();
@@ -6,6 +14,14 @@ function call_on_start()
     set_code();
     set_bg_table();
     show_idle1_config();
+
+
+    var browser = navigator.sayswho;
+    browser = browser.split(" ");
+    console.log(browser);
+
+    if(browser[0] == 'Chrome')
+        document.getElementById("load_from_clipboard").hidden = false;
 }
 
 function update_leniency_input()

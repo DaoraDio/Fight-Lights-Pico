@@ -252,3 +252,24 @@ setInterval(function()
 { 
   set_code();                                        
 }, 100);
+
+function copy_to_clipboard()
+{
+  var copyText = document.getElementById("code_box");
+
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+  navigator.clipboard.writeText(copyText.value);
+
+  // Alert the copied text
+  alert("Code saved to clipboard");
+}
+
+async function paste() {
+  const text = await navigator.clipboard.readText();
+  var input = document.getElementById("new_codebox");
+  input.value = text;
+
+  get_code();
+}
