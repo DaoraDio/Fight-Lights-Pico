@@ -566,7 +566,7 @@ def mode_select():
     pixels_show(config.brightness_mod)
     
     time.sleep_ms(delay)
-    pixels_fill(((255,255,255)))
+    pixels_fill(((255,0,0)))
     pixels_show(config.brightness_mod)
     
     time.sleep_ms(delay)
@@ -574,12 +574,12 @@ def mode_select():
     pixels_show(config.brightness_mod)
     
     time.sleep_ms(delay)
-    pixels_fill(((255,255,255)))
+    pixels_fill(((255,0,0)))
     pixels_show(config.brightness_mod)
     
     
     while True:
-        pixels_fill(((255,255,255)))
+        pixels_fill(((255,0,0)))
         profile_color = get_profile_color(config_name)
         pixels_set(init.mode_selector, profile_color)
         if config.brightness_mod > 0:
@@ -604,12 +604,12 @@ def mode_select():
             
                 
         if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].was_pressed:
-            pixels_fill((255,255,255))
+            pixels_fill((255,0,0))
             pixels_set(init.mode_selector, profile_color)
             increase_brightness()
             print("brightness:", config.brightness_mod)
         if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].was_pressed:
-            pixels_fill((255,255,255))
+            pixels_fill((255,0,0))
             pixels_set(init.mode_selector, profile_color)
             decrease_brightness()
             print("brightness:", config.brightness_mod)

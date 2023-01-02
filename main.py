@@ -19,6 +19,7 @@ init.idle_ticks = functions.idle_after()
 
 temp_brightness = 0
 
+
 if config.save_stats == True:
     try: #check if file exists
         f = open(init.file_name, "r")
@@ -36,6 +37,7 @@ if config.save_stats == True:
 
 #animation.idle_mode4()
 
+    
 #main loop
 while True:
     #print(init.current_input)
@@ -62,7 +64,7 @@ while True:
         
         if all(led_options):
             V = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter))
-            col = (V,V,V)
+            col = (V,0,0)
             functions.pixels_fill(col)
             functions.pixels_show(config.brightness_mod)
 
