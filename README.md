@@ -13,7 +13,7 @@ I try to keep the code as versatile as possible, so it is not only limited to Ar
 I have made a short video showcasing some of the features to give you an idea on how it may look in the end:
 https://www.youtube.com/watch?v=nG0_0xVvnjk
 
-Reddit user u/mad_max206 has also build this project for his Qanba Obsidian, you can see his result here: https://www.youtube.com/watch?v=yL6-1daim48
+You can also look at some of the community made project here: https://fight-lights.com/Gallery/gallery/
 
 # Requirement
 
