@@ -162,6 +162,7 @@ function delete_color()
 {
   var button_uses_color = false;
   var background_uses_color = false;
+  var playerled_uses_color = false;
   var button_table = document.getElementById("button_table");
   var bg_table = document.getElementById("background_table");
   var name = document.getElementById("color_name");
@@ -191,10 +192,19 @@ function delete_color()
   }  
   //console.log("button Color: ", button_uses_color);
   //console.log("background Color: ", background_uses_color);
+  var p1_col = document.getElementById("player_led1").getAttribute("colorname");
+  var p2_col = document.getElementById("player_led2").getAttribute("colorname");
+  var p3_col = document.getElementById("player_led3").getAttribute("colorname");
+  var p4_col = document.getElementById("player_led4").getAttribute("colorname");
 
-  if(background_uses_color || button_uses_color)
+  if(name.value == p1_col || name.value == p2_col || name.value == p3_col || name.value == p4_col)
   {
-    if (confirm("This color is used as button or background color, do you still want to delete it? Colors will be set to blank")) 
+    playerled_uses_color = true;
+  }
+
+  if(background_uses_color || button_uses_color || playerled_uses_color)
+  {
+    if (confirm("This color is used as button, background or playerLED color, do you still want to delete it? Colors will be set to blank")) 
     {
       ;
     } 
@@ -203,6 +213,29 @@ function delete_color()
       return;
     }
   }
+
+  if(name.value == p1_col)
+  {
+    document.getElementById("player_led1").style.backgroundColor  = "black";
+    document.getElementById("player_led1").setAttribute("colorname", "blank");
+  }
+  if(name.value == p2_col)
+  {
+    document.getElementById("player_led2").style.backgroundColor  = "black";
+    document.getElementById("player_led2").setAttribute("colorname", "blank");
+  }
+  if(name.value == p3_col)
+  {
+    document.getElementById("player_led3").style.backgroundColor  = "black";
+    document.getElementById("player_led3").setAttribute("colorname", "blank");
+  }
+  if(name.value == p4_col)
+  {
+    document.getElementById("player_led4").style.backgroundColor  = "black";
+    document.getElementById("player_led4").setAttribute("colorname", "blank");
+  }
+    
+
 
 
   

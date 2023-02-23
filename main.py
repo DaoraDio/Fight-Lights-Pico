@@ -9,6 +9,10 @@ import init
 import random
 import animation
 
+if config.activate_player_led:
+    import playerLED
+
+
 #--------------------------main program-------------------------------------------------------
 #lights up the onborad led to have an indication of wether the board is running or not
 onboard_led = Pin(25, Pin.OUT)
@@ -18,7 +22,6 @@ init.background = config.background
 init.idle_ticks = functions.idle_after()
 
 temp_brightness = 0
-
 
 if config.save_stats == True:
     try: #check if file exists
@@ -36,11 +39,16 @@ if config.save_stats == True:
         f.close()
 
 #animation.idle_mode4()
-
     
 #main loop
-while True:
+while True:    
     #print(init.current_input)
+    #print(init.p1_active)
+    #print(init.p2_active)
+    #print(init.p3_active)
+    #print(init.p4_active)
+    #print()
+    
     init.main_cnt += 1    
     init.leniency_counter += 1
     

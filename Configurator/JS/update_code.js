@@ -212,6 +212,30 @@ function set_code()
   //console.log(led_options);
 
   var rainbow_speed = "rainbow_speed = " + document.getElementById("rainbow_speed").value;
+
+  var activate_playerled = document.getElementById("playerled_cb");
+  if(activate_playerled.checked)
+    activate_playerled = "activate_player_led = False";
+  else
+    activate_playerled = "activate_player_led = True";
+
+  var playerled_brightness = document.getElementById("playerLED_brightness").value / 100;
+  playerled_brightness = "playerLED_brightness = " + playerled_brightness;
+
+  var playerled_pin_num = document.getElementById("playerLED_pin_num").value;
+  playerled_pin_num = "playerLED_PIN_NUM = " + playerled_pin_num;
+
+  var player1_led = document.getElementById("player_led1").getAttribute('colorname');
+  var player2_led = document.getElementById("player_led2").getAttribute('colorname');
+  var player3_led = document.getElementById("player_led3").getAttribute('colorname');
+  var player4_led = document.getElementById("player_led4").getAttribute('colorname');
+
+  player1_led = "P1_color = " + player1_led;
+  player2_led = "P2_color = " + player2_led;
+  player3_led = "P3_color = " + player3_led;
+  player4_led = "P4_color = " + player4_led;
+
+
   
 
   //output
@@ -245,7 +269,15 @@ function set_code()
                                               + led_options_left + '\n'
                                               + led_options_right + '\n'
                                               + led_options_confirm + '\n'
-                                              + rainbow_speed + '\n';
+                                              + rainbow_speed + '\n'
+                                              + activate_playerled + '\n'
+                                              + playerled_brightness + '\n'
+                                              + playerled_pin_num + '\n'
+                                              + player1_led + '\n'
+                                              + player2_led + '\n'
+                                              + player3_led + '\n'
+                                              + player4_led + '\n'
+                                              ;
 }
 
 setInterval(function()

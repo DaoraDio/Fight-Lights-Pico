@@ -26,6 +26,7 @@
         <script src="JS\idle_mode_conf.js"></script>
         <script src="JS\led_options.js"></script>
         <script src="JS\check_name.js"></script>
+        <script src="JS\player_LED.js"></script>
 
         <!--<button id=""  onclick="check_name('asd_')">TEST</button>-->
         
@@ -123,6 +124,13 @@
 
         <!--LED Options-->
         <button id="led_options_button" onclick="show_led_options(true)">Configure LED Option Mode</button>
+        <br>
+
+        <!--Player LED-->
+        <br>
+        <button id="playerled_button" onclick="show_playerLED_modal()">Configure Player LEDs</button>
+        <input type="checkbox" id="playerled_cb" name="playerled_cb" onchange="enable_disbale_cb(this)">
+        <label for="playerled_cb"> Disable</label>
         <br>
 
         <!--Save Stats-->
@@ -350,7 +358,68 @@
   </dialog>
 
 
+  <dialog id="player_led_modal">
+    <h3>Player LED Configuration</h3>
+    Player LED GPIO PIN:
+    <select name="playerLED_pin_num" id="playerLED_pin_num">
+      <option value="0">GP0</option>
+      <option value="1">GP1</option>
+      <option value="2">GP2</option>
+      <option value="3">GP3</option>
+      <option value="4">GP4</option>
+      <option value="5">GP5</option>
+      <option value="6">GP6</option>
+      <option value="7">GP7</option>
+      <option value="8">GP8</option>
+      <option value="9">GP9</option>
+      <option value="10">GP10</option>
+      <option value="11">GP11</option>
+      <option value="12">GP12</option>
+      <option value="13">GP13</option>
+      <option value="14">GP14</option>
+      <option value="15">GP15</option>
+      <option value="16">GP16</option>
+      <option value="17">GP17</option>
+      <option value="18">GP18</option>
+      <option value="19">GP19</option>
+      <option value="20">GP20</option>
+      <option value="21">GP21</option>
+      <option value="22">GP22</option>
+      <option value="23">GP23</option>
+      <option value="24">GP24</option>
+      <option value="25">GP25</option>
+      <option value="26">GP26</option>
+      <option value="27">GP27</option>
+      <option value="28">GP28</option>
+    </select> 
+    <br>
+    <p>
+      Brightness: <span id="playerLED_brightness_text"></span>%
+      <br>
+      <input type="range" min="0" max="100" value="100" class="slider" id="playerLED_brightness" oninput="set_playerLED_brightness()">
+      <br>
+      <label id="playerled_ label">Player LED Color:</label>
+      <select value="playerled_color_select" id="playerled_color_select" onchange="select_playerled_color(this)">
+        <optgroup label="Colors">
+          <option>blank</option>
+        </optgroup>
+      </select></div>
+      <div class="container">
+        <div class="player_LED_circle" id="player_led1" title="Player 1" onclick="on_playerled_click(1)" colorname="blank"><span>1</span></div>
+        <div class="player_LED_circle" id="player_led2" title="Player 2" onclick="on_playerled_click(2)" colorname="blank"><span>2</span></div>
+        <div class="player_LED_circle" id="player_led3" title="Player 3" onclick="on_playerled_click(3)" colorname="blank"><span>3</span></div>
+        <div class="player_LED_circle" id="player_led4" title="Player 4" onclick="on_playerled_click(4)" colorname="blank"><span>4</span></div>
+      </div>
+      
+    </p>
+        
+    
+    <button onclick="close_playerLED_modal()">Close</button>
+    
+  </dialog>
+
+
   <textarea id="new_codebox" autocomplete="off" hidden></textarea>
-  <textarea id="code_box" name="code_box" hidden></textarea>
+  <textarea id="code_box" name="code_box"></textarea>
     </body>
 </html> 

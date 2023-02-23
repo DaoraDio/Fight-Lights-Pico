@@ -439,6 +439,58 @@ function get_code()
 
     
     //var idle1_config_button = document.getElementById("idle1_config");
+    var activate_player_led = get_value("activate_player_led = ");
+    if(activate_player_led == "True")
+    {
+        document.getElementById("playerled_cb").checked = false;
+        document.getElementById("playerled_button").disabled = false;
+    }
+    else if(activate_player_led == "False")
+    {
+        document.getElementById("playerled_cb").checked = true;
+        document.getElementById("playerled_button").disabled = true;
+    }
+
+
+    var playerLED_brightness = get_value("playerLED_brightness = ");
+    playerLED_brightness = playerLED_brightness * 100;
+
+    document.getElementById("playerLED_brightness_text").innerText = playerLED_brightness;
+    document.getElementById("playerLED_brightness").value = playerLED_brightness;
+
+    var player1_color = get_value("P1_color = ");
+    var player2_color = get_value("P2_color = ");
+    var player3_color = get_value("P3_color = ");
+    var player4_color = get_value("P4_color = ");
+
+    var p1 = document.getElementById("player_led1");
+    p1.setAttribute('colorname', player1_color);
+
+    var p2 = document.getElementById("player_led2");
+    p2.setAttribute('colorname', player2_color);
+
+    var p3 = document.getElementById("player_led3");
+    p3.setAttribute('colorname', player3_color);
+
+    
+    var p4 = document.getElementById("player_led4");
+    p4.setAttribute('colorname', player4_color);
+
+    var p1_color = "rgb"+get_value(player1_color + " = ");
+    var p2_color = "rgb"+get_value(player2_color + " = ");
+    var p3_color = "rgb"+get_value(player3_color + " = ");
+    var p4_color = "rgb"+get_value(player4_color + " = ");
+
+
+    p1.style.backgroundColor = p1_color;
+    p2.style.backgroundColor = p2_color;
+    p3.style.backgroundColor = p3_color;
+    p4.style.backgroundColor = p4_color;
+
+    var playerled_pinnum = get_value("playerLED_PIN_NUM = ");
+    document.getElementById("playerLED_pin_num").value = playerled_pinnum;
+
+
 
 }
 

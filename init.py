@@ -58,7 +58,8 @@ button_list_length = 0
 #do not change (except you know what you are doing)
 timer1 = machine.Timer() #timer for timer the interrupts
 timer2 = machine.Timer() #debounce timer for brightness
-timer3 = machine.Timer() 
+timer3 = machine.Timer()
+timer4 = machine.Timer() #timer for player LED update
 
 mode_selector = 0 #should not be reset on mode select
 
@@ -75,3 +76,9 @@ background = 0
 file_name = "stats.txt"
 seconds_counter = 0 #this counts up every seconds to save to the file file_name
 header_text = "##################This file stores the number of presses for each button#########\n##################and the uptime in seconds######################################\n" #header text for the file file_name
+
+####player LED status
+p1_active = False
+p2_active = False
+p3_active = False
+p4_active = False

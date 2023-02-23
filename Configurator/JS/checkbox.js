@@ -22,6 +22,14 @@ function call_on_start()
 
     if(browser[0] == 'Chrome')
         document.getElementById("load_from_clipboard").hidden = false;
+
+    var playerled_cb = document.getElementById("playerled_cb");
+    if(playerled_cb.checked)
+    {
+        document.getElementById("playerled_button").disabled = true;
+    }
+    else
+        document.getElementById("playerled_button").disabled = false;
 }
 
 function update_leniency_input()
