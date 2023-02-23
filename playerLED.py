@@ -16,10 +16,10 @@ P2_color = config.P2_color
 P3_color = config.P3_color
 P4_color = config.P4_color
 
-P1 = Pin(18,Pin.IN,Pin.PULL_DOWN)
-P2 = Pin(19,Pin.IN,Pin.PULL_DOWN)
-P3 = Pin(20,Pin.IN,Pin.PULL_DOWN)
-P4 = Pin(21,Pin.IN,Pin.PULL_DOWN)
+P1 = Pin(21,Pin.IN,Pin.PULL_DOWN)
+P2 = Pin(20,Pin.IN,Pin.PULL_DOWN)
+P3 = Pin(19,Pin.IN,Pin.PULL_DOWN)
+P4 = Pin(18,Pin.IN,Pin.PULL_DOWN)
 
 P1_LED_pos = 0
 P2_LED_pos = 1
