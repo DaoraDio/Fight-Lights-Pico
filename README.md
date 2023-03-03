@@ -58,6 +58,7 @@ Also check out the Website: https://fight-lights.com/
 - Select custom profiles during play
 - Add custom animations and play them when doing certain inputs
 - Log the amount of button presses for each button and the time your stick is plugged in
+- Player LED support
 
   ...and many more to come
 
