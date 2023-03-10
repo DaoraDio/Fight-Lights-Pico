@@ -172,9 +172,15 @@ function update_button()
   var row_id = parseInt(document.getElementById("button_row_id").innerHTML);
   var name = document.getElementById("button_name").value;
   var error = document.getElementById("button_error_message");
+  var old_name = table.rows[row_id].cells[0].innerHTML;
 
   name = name.trim();
   name = name.replace(/\s/g, '');
+
+  old_name = old_name.trim();
+  old_name = old_name.replace(/\s/g, '');
+
+
   if(name == "")
   {
     reset_all();
@@ -199,9 +205,54 @@ function update_button()
     }
   }
 
-
   table.rows[row_id].cells[0].innerHTML = name;
+
+  //update other tables/selects
+  var led_options_table = document.getElementById("led_options_table");
+  for (var i = 1, row; row = led_options_table.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == old_name)
+      row.cells[0].innerHTML = name;
+  } 
+
+
+  var led_options_inc_brightness = document.getElementById("led_options_inc_brightness");
+  if(led_options_inc_brightness.value == old_name)
+  {
+    show_led_options(false);
+    led_options_inc_brightness.value = name;
+  }
+
+
+  var led_options_dec_brightness = document.getElementById("led_options_dec_brightness");
+  if(led_options_dec_brightness.value == old_name)
+  {
+    show_led_options(false);
+    led_options_dec_brightness.value = name;
+  }
+
+  var led_options_left = document.getElementById("led_options_left");
+  if(led_options_left.value == old_name)
+  {
+    show_led_options(false);
+    led_options_left.value = name;
+  }
+
+  var led_options_right = document.getElementById("led_options_right");
+  if(led_options_right.value == old_name)
+  {
+    show_led_options(false);
+    led_options_right.value = name;
+  }
+
+  var led_options_confirm = document.getElementById("led_options_confirm");
+  if(led_options_confirm.value == old_name)
+  {
+    show_led_options(false);
+    led_options_confirm.value = name;
+  }
 }
+
 
 function update_color_select()
 {
@@ -273,6 +324,7 @@ function add_button()
     
     
     var fade = '<input type="checkbox" id="fade_cb" name="fade_cb" onchange="">';
+    //var gpio_pins = '<td><button class="arcade_button_set_gpio" onclick="open_gpio_modal(this)" name="' + name + '">Set GPIO Pin</button></td>';
     var gpio_pins = '<td>\
                           <select name="gpio_select" id="gpio_select">\
                             <option value="0">GP0</option>\
@@ -305,6 +357,7 @@ function add_button()
                             <option value="27">GP27</option>\
                             <option value="28">GP28</option>\
                         </select></td> ';
+        
     cell1.innerHTML = name;
     cell2.innerHTML = "Not Set";
     cell3.innerHTML = "random";

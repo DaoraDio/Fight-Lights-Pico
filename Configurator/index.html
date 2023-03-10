@@ -27,6 +27,7 @@
         <script src="JS\led_options.js"></script>
         <script src="JS\check_name.js"></script>
         <script src="JS\player_LED.js"></script>
+        <script src="JS\gpio_config.js"></script>
 
         <!--<button id=""  onclick="check_name('asd_')">TEST</button>-->
         
@@ -38,11 +39,11 @@
 
        <!--profile name-->
        <div>Profile Name </div>
-       <input id="profile_name" type="text" placeholder="Set name for this Profile">
+       <input id="profile_name" type="text" placeholder="Set name for this Profile"> <div class="helper" title="Name of the Profile&#10;only used to recognize the profile in the configurator">?</div>
 
         <!--NUM LEDS-->
         <div>Number of LEDs </div>
-        <input id="led_count" name="led_count" type="number" value="8" min="1" onchange="set_bg_table()">
+        <input id="led_count" name="led_count" type="number" value="8" min="1" onchange="set_bg_table()"> <div class="helper" title="Total number of LEDs in your LED chain">?</div>
         
         <!--GPIO PIN-->
         <div>LED Chain GPIO Pin</div>
@@ -76,21 +77,23 @@
           <option value="26">GP26</option>
           <option value="27">GP27</option>
           <option value="28">GP28</option>
-        </select> 
+        </select> <div class="helper" title="GPIO Pin that the LED chain connects to">?</div>
+        <button onclick="open_gpio_modal(this)" name="LED Chain" hidden>SET GPIO PIN</button>
 
         <!--PROFILE COLOR-->
         <div>Profile Color</div>
-        <input class="color_select" type="color" id="profile_color" value="#ff0000">
+        <input class="color_select" type="color" id="profile_color" value="#ff0000"> <div class="helper" title="When in LED Options mode&#10;the profile color helps identify the profile to select">?</div>
       
         <!-- LENIENCY -->
         <div id="leniency_tx">Multipress leniency</div>
         <input id="leniency_tb" name="input" type="number" value="1" min="1"> 
         <input type="checkbox" id="leniency_cb" name="leniency_cb" onchange="update_leniency_input()">
-        <label for="leniency_cb">Disable</label> <br>
+        <label for="leniency_cb">Disable</label> <div class="helper" title="Button colors that are set to 'random' have the feature, when pressed together at the same time, will light up with the same color. This controls how lenient the recognition is">?</div> <br>
 
         <!--BRIGHTNESS-->
-        <p>Startup Brightness: <span id="brightness"></span>%</p> 
-        <div class="slidecontainer">
+        <div class="slidecontainer"> 
+          
+        <p><div class="helper" title="This controls with how much brightness the LEDs have when plugged in.">?</div> Startup Brightness:  <span id="brightness"></span>%</p>
             <input type="range" min="0" max="100" value="100" class="slider" id="myRange">
             
             <script src="JS\slider.js"></script>
@@ -105,6 +108,7 @@
             <option value="2">2 Steps</option>
             <option value="1">Toggle On/Off</option>
         </select> 
+        <div class="helper" title="When increasing or decreasing the brightness via LED options mode, the step size controls how much the brightness changes per instance.&#10;10 steps - 10% change per click&#10;5 steps - 20% change per click&#10;4 steps - 25% change per click&#10;2 steps - 50% change per click&#10;Toggle On/Off - 100% change per click&#10;Example: If your startup brightness is set to 50% and step size set to 4 steps, increasing the brightness once will set your LEDs brightness to 75% ">?</div>
         
         <!--IDLE MODE-->
         <div id="idlemode_tx">Idle Mode:</div>
@@ -117,13 +121,16 @@
         </select> 
 
         <input type="checkbox" id="idle_cb" name="idle_cb" onchange="update_idle_mode()">
-        <label for="idle_cb">Disable</label>
+        <label for="idle_cb">Disable</label> 
+        <div class="helper" title="When no button is pressed for a time, the LEDs will enter a Idle mode where they display certain animations&#10;Mode 1 (Breathing) - The LEDs will circle between colors, each color slowly fades in an out. The cog button on the left lets you control what colors are circled between the speed&#10;Mode 2 (Rainbow) - All LEDs will change their colors through the RGB spectrum&#10;Mode 3 (Lights Out) - All LEDs turn off">?</div>
 
         <div id="idleseconds_tx">Enter Idle mode after (in seconds):</div>
         <input id="idle_tb" name="input" type="number" value="0" min="0">
+        <div class="helper" title="This controls how long it takes to enter idle mode after your last button press. (in seconds)">?</div>
 
         <!--LED Options-->
         <button id="led_options_button" onclick="show_led_options(true)">Configure LED Option Mode</button>
+        <div class="helper" title="LED options mode lets you change the brightness of the LEDs and select and load profiles during play.">?</div>
         <br>
 
         <!--Player LED-->
@@ -131,18 +138,21 @@
         <button id="playerled_button" onclick="show_playerLED_modal()">Configure Player LEDs</button>
         <input type="checkbox" id="playerled_cb" name="playerled_cb" onchange="enable_disbale_cb(this)">
         <label for="playerled_cb"> Disable</label>
+        <div class="helper" title="Use the brook player LED pins to light up WS2812 LEDs as Player LEDs.&#10;Disable if not used to prevent unneeded code execution">?</div>
         <br>
 
         <!--Save Stats-->
         <br>
         <input type="checkbox" id="stats_cb" name="stats_cb">
         <label for="stats_cb"> Enable Stat Logging</label>
+        <div class="helper" title="Enabling stat logging will create a log file inside your Pi Pico that logs how long your stick has been used, and how many times each button has been pressed&#10;Warning: Do this only after all your buttons have been set. New buttons will not automatically be added to an existing file, and changing names aswell. New buttons and changed names have to be added and changed manually">?</div>
       </div>
 
       <div class="flex_child" id="middle_flex">
-        <h3 id="button_conf">Background color configuration</h3>
+        <h3 id="button_conf">Background color configuration <div class="helper" title="The background color sets what colors the LEDs have when not pressed">?</div></h3>
         <input type="checkbox" id="clear_bg_on_press">
         <label for="clear_bg_on_press">Clear background color on button press</label>
+        <div class="helper" title="When checked, pressing a button will temporarily turn all background colors off until the button is released again. So only the LEDs of the button that is currently pressed are lit ">?</div>
         <br>
         <button id="background_conf" onclick="show_bg_modal()">Set Background Colors</button>
       
@@ -150,8 +160,9 @@
 
         <h3 id="button_conf">Button Configuration</h3>
         <button id="refresh_button" onclick="reset_all()">&#10227</button>
-        <div title="higher values = faster fade">Button Fade in speed: <input type="number" min="0" id="fade_in" value="20" step="0.1"></div>
-        <div title="higher values = faster fade">Button Fade out speed: <input type="number" min="0" id="fade_out" value="6" step="0.1"></div>
+        
+        <div>Button Fade in speed: <input type="number" min="0" max="100" id="fade_in" value="20" step="0.2"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from 0% brightness to full brightness when pressed. Can take floating point numbers as value&#10;Higher values = faster fade">?</div></div>
+        <div>Button Fade out speed: <input type="number" min="0" max="100" id="fade_out" value="6" step="0.2"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from full brightness to 0% brightness when released. Can take floating point numbers as value&#10;Higher values = faster fade">?</div></div>
 
 
         <button id="delete_button" onclick="delete_button()" disabled>&#128465</button>
@@ -330,26 +341,31 @@
     <div>
       increase brightness:
       <select id="led_options_inc_brightness" class="led_option_selects"></select>
+      <div class="helper" title="Select which button increases brightness during LED Options mode">?</div>
     </div>
 
     <div>
       decrease brightness:
       <select id="led_options_dec_brightness" class="led_option_selects"></select>
+      <div class="helper" title="Select which button decreases brightness during LED Options mode">?</div>
     </div>
 
     <div>
       Profile advance:
       <select id="led_options_left" class="led_option_selects"></select>
+      <div class="helper" title="Select which button selects the next profile (the next config.py file) during LED Options mode">?</div>
     </div>
 
     <div>
       Profile back:
       <select id="led_options_right" class="led_option_selects"></select>
+      <div class="helper" title="Select which button selects the previous profile during LED Options mode">?</div>
     </div>
 
     <div>
       confirm:
       <select id="led_options_confirm" class="led_option_selects"></select>
+      <div class="helper" title="Select which button serves as the confirmation button to exit LED Options mode and lock in the selected Profile.">?</div>
     </div>
 
     <br>
@@ -410,13 +426,66 @@
         <div class="player_LED_circle" id="player_led3" title="Player 3" onclick="on_playerled_click(3)" colorname="blank"><span>3</span></div>
         <div class="player_LED_circle" id="player_led4" title="Player 4" onclick="on_playerled_click(4)" colorname="blank"><span>4</span></div>
       </div>
-      
     </p>
-        
-    
     <button onclick="close_playerLED_modal()">Close</button>
-    
   </dialog>
+
+  
+
+  <dialog id="gpio_config_modal">
+    <p id="gpio_config_head">GPIO Config</p>
+    <dialog id="gpio_config_confirm">The GPIO PIN is already set, do you want to add this button to the GPIO PIN or overwrite it? 
+      <br>
+      <br>
+      <br>
+      <button onclick="close_confirm_modal()">Add to it</button>
+      <button onclick="close_confirm_modal()">Replace it</button>
+      <button onclick="close_confirm_modal()">Cancel</button>
+    </dialog>
+    <img src="images/pico_gif_wide.gif"  width="1400" height="800" title="pico" id="pico-image">
+    
+    <div><button onclick="close_gpio_modal()">Close</button></div>
+    <!-- left gpios buttons-->
+    
+    <button class="gpio_button_left" id="gp0" onclick="set_gpio(0)">gp0<label class="gpio_label_left" id="gp0_label"></label></button>
+    <button class="gpio_button_left" id="gp1"onclick="set_gpio(1)">gp1<label class="gpio_label_left" id="gp1_label"></label></button>
+
+    <button class="gpio_button_left" id="gp2"onclick="set_gpio(2)">gp2<label class="gpio_label_left" id="gp2_label"></label></button>
+    <button class="gpio_button_left" id="gp3"onclick="set_gpio(3)">gp3<label class="gpio_label_left" id="gp3_label"></label></button>
+    <button class="gpio_button_left" id="gp4"onclick="set_gpio(4)">gp4<label class="gpio_label_left" id="gp4_label"></label></button>
+    <button class="gpio_button_left" id="gp5"onclick="set_gpio(5)">gp5<label class="gpio_label_left" id="gp5_label"></label></button>
+
+    <button class="gpio_button_left" id="gp6"onclick="set_gpio(6)">gp6<label class="gpio_label_left" id="gp6_label"></label></button>
+    <button class="gpio_button_left" id="gp7"onclick="set_gpio(7)">gp7<label class="gpio_label_left" id="gp7_label"></label></button>
+    <button class="gpio_button_left" id="gp8"onclick="set_gpio(8)">gp8<label class="gpio_label_left" id="gp8_label"></label></button>
+    <button class="gpio_button_left" id="gp9"onclick="set_gpio(9)">gp9<label class="gpio_label_left" id="gp9_label"></label></button>
+
+    <button class="gpio_button_left" id="gp10"onclick="set_gpio(10)">gp10<label class="gpio_label_left" id="gp10_label"></label></button>
+    <button class="gpio_button_left" id="gp11"onclick="set_gpio(11)">gp11<label class="gpio_label_left" id="gp11_label"></label></button>
+    <button class="gpio_button_left" id="gp12"onclick="set_gpio(12)">gp12<label class="gpio_label_left" id="gp12_label"></label></button>
+    <button class="gpio_button_left" id="gp13"onclick="set_gpio(13)">gp13<label class="gpio_label_left" id="gp13_label"></label></button>
+
+    <button class="gpio_button_left" id="gp14"onclick="set_gpio(14)">gp14<label class="gpio_label_left" id="gp14_label"></label></button>
+    <button class="gpio_button_left" id="gp15"onclick="set_gpio(15)">gp15<label class="gpio_label_left" id="gp15_label"></label></button>
+
+    <!-- right gpios buttons-->
+    <button class="gpio_button_right" id="gp16"onclick="set_gpio(16)">gp16<label class="gpio_label_right" id="gp16_label"></label></button>
+    <button class="gpio_button_right" id="gp17"onclick="set_gpio(17)">gp17<label class="gpio_label_right" id="gp17_label"></label></button>
+
+    <button class="gpio_button_right" id="gp18"onclick="set_gpio(18)">gp18<label class="gpio_label_right" id="gp18_label"></label></button>
+    <button class="gpio_button_right" id="gp19"onclick="set_gpio(19)">gp19<label class="gpio_label_right" id="gp19_label"></label></button>
+    <button class="gpio_button_right" id="gp20"onclick="set_gpio(20)">gp20<label class="gpio_label_right" id="gp20_label"></label></button>
+    <button class="gpio_button_right" id="gp21"onclick="set_gpio(21)">gp21<label class="gpio_label_right" id="gp21_label"></label></button>
+
+    <button class="gpio_button_right" id="gp22"onclick="set_gpio(22)">gp22<label class="gpio_label_right" id="gp22_label"></label></button>
+
+    <button class="gpio_button_right" id="gp26"onclick="set_gpio(26)">gp26<label class="gpio_label_right" id="gp26_label"></label></button>
+    <button class="gpio_button_right" id="gp27"onclick="set_gpio(27)">gp27<label class="gpio_label_right" id="gp27_label"></label></button>
+
+    <button class="gpio_button_right" id="gp28"onclick="set_gpio(28)">gp28<label class="gpio_label_right" id="gp28_label"></label></button>
+  </dialog>
+
+  
 
 
   <textarea id="new_codebox" autocomplete="off" hidden></textarea>

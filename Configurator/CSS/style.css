@@ -621,8 +621,6 @@ select
 {
     border: solid 1px;
     border-radius: 5px;
-    
-
 }
 
 .player_LED_circle {
@@ -698,3 +696,258 @@ select
     background: none;
     background-color: #ffffff;
   }
+
+#gpio_config_head
+{
+    text-align: center;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+
+/***************************************************/
+#gpio_config_modal::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+#gpio_config_modal
+{
+    border: solid 1px;
+    border-radius: 5px;
+}
+
+
+#pico-image {
+    pointer-events: none;
+}
+
+
+
+.gpio_button_left, .gpio_button_right
+{
+    position: absolute;
+    width: 64px;
+    height: 27px;
+    cursor: pointer;
+    font-size: 0px;
+    
+
+    background-color: rgba(0, 248, 21,0);
+    border: 0px;
+    
+}
+
+#parent_gpio_config
+{
+    position: relative;
+}
+
+.gpio_button_left
+{
+    left: 496px; 
+}
+
+#gp0
+{
+    top: calc(198px + 26px); 
+}
+
+#gp1
+{
+    top: calc(226px + 26px); 
+}
+
+#gp2
+{
+    top: calc(282px + 26px); 
+}
+
+#gp3
+{
+    top: calc(310px + 26px);  
+}
+
+#gp4
+{
+    top: calc(338px + 26px); 
+}
+
+#gp5
+{
+    top: calc(366px + 26px); 
+}
+
+#gp6
+{
+    top: calc(422px + 26px); 
+}
+
+#gp7
+{
+    top: calc(450px + 26px); 
+}
+
+
+#gp8
+{
+    top: calc(478px + 26px); 
+}
+
+#gp9
+{
+    top: calc(506px + 26px);  
+}
+
+#gp10
+{
+    top: calc(562px + 26px); 
+}
+
+#gp11
+{
+    top: calc(590px + 26px); 
+}
+
+#gp12
+{
+    top: calc(618px + 26px);  
+}
+
+#gp13
+{
+    top: calc(646px + 26px);  
+}
+
+#gp14
+{
+    top: calc(702px + 26px);  
+}
+
+#gp15
+{
+    top: calc(730px + 26px);  
+}
+
+/*right gpios*/
+.gpio_button_right
+{
+    left: 872px;
+}
+#gp16
+{
+    top: calc(730px + 26px); 
+}
+
+#gp17
+{
+    top: calc(702px + 26px); 
+}
+
+#gp18
+{
+    top: calc(646px + 26px); 
+}
+
+#gp19
+{
+    top: calc(618px + 26px);  
+}
+
+#gp20
+{
+    top: calc(590px + 26px);  
+}
+
+#gp21
+{
+    top: calc(562px + 26px);  
+}
+
+#gp22
+{
+    top: calc(506px + 26px);  
+}
+
+#gp26
+{
+    top: calc(450px + 26px);  
+}
+
+#gp27
+{
+    top: calc(422px + 26px);  
+}
+
+#gp28
+{
+    top: calc(366px + 26px);  
+}
+
+
+/*labels*/
+.gpio_label_left,.gpio_label_right
+{
+    position: absolute; 
+    font-size: 16px;
+    font-weight: bold;
+    visibility: visible;
+    pointer-events: none;
+    white-space: nowrap;
+    /*text-align: right;*/
+}
+
+.gpio_button_left > .gpio_label_left
+{
+    top: 2px;
+    right: 67px;
+} 
+
+.gpio_button_right > .gpio_label_right
+{
+    top: 2px;
+    left: 67px;
+} 
+
+.arcade_button_set_gpio
+{
+    width: 100%;
+    white-space: nowrap;
+}
+
+#gpio_config_confirm
+{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border: solid 2px;
+    border-radius: 5px;
+    color: #1a1816;
+    font-size: large;
+}
+
+#gpio_config_confirm::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+.helper
+{
+    padding: 2px;
+    border: 1px solid rgb(151, 151, 151); border-radius: 50%;
+    color: rgb(59, 59, 59);
+    background: rgb(241,241,241);
+    background: linear-gradient(0deg, rgba(241,241,241,1) 0%, rgba(255,255,255,1) 100%);
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    font-size: 12px;
+    text-align: center;
+    user-select: none;
+    cursor: help;
+    opacity: 40%;
+}

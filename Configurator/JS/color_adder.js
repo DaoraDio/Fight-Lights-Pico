@@ -136,6 +136,7 @@ function update_color()
     var table = document.getElementById("color_table");
     var row_id = parseInt(document.getElementById("row_id").innerHTML);
     var name = document.getElementById("color_name").value;
+    var old_name = table.rows[row_id].cells[0].innerHTML;
 
     name = name.trim();
     name = name.replace(/\s/g, '');
@@ -155,6 +156,68 @@ function update_color()
 
     var cell_color = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
     table.rows[row_id].cells[4].style.backgroundColor = cell_color;
+
+    //////////////////////update colors of other tables//////////////////
+    var color_select = document.getElementById("color_select");
+    if(color_select.value == old_name)
+    {
+      update_color_select();
+      color_select.value = name;
+    }
+
+    var button_table = document.getElementById("button_table");
+    for (var i = 1, row; row = button_table.rows[i]; i++) 
+    {
+      if(row.cells[2].innerHTML == old_name)
+        row.cells[2].innerHTML = name;
+    }  
+
+    var background_table = document.getElementById("background_table");
+    for (var i = 1, row; row = background_table.rows[i]; i++) 
+    {
+      if(row.cells[1].innerHTML == old_name)
+        row.cells[1].innerHTML = name;
+    } 
+
+
+    var player1 = document.getElementById("player_led1");
+    var player2 = document.getElementById("player_led2");
+    var player3 = document.getElementById("player_led3");
+    var player4 = document.getElementById("player_led4");
+
+    var r = table.rows[row_id].cells[1].innerHTML;
+    var g = table.rows[row_id].cells[2].innerHTML;
+    var b = table.rows[row_id].cells[3].innerHTML;
+
+    if(player1.getAttribute('colorname')==old_name){
+      player1.setAttribute('colorname',name);
+      player1.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
+    }
+      
+    if(player2.getAttribute('colorname')==old_name){
+      player2.setAttribute('colorname',name);
+      player2.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
+    }
+      
+    if(player3.getAttribute('colorname')==old_name){
+      player3.setAttribute('colorname',name);
+      player3.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
+    }
+      
+    if(player4.getAttribute('colorname')==old_name){
+      player4.setAttribute('colorname',name);
+      player4.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
+    }
+      
+    var circle_table = document.getElementById("circle_table");
+    for (var i = 1, row; row = circle_table.rows[i]; i++) 
+    {
+      if(row.cells[0].innerHTML == old_name)
+        row.cells[0].innerHTML = name;
+    } 
+
+
+
     reset();
 }
 
