@@ -376,29 +376,33 @@ function get_code()
     document.getElementById("led_options_start_time").value = start_time;
     //get buttons
     var led_options_button = get_variable_line("ledOptions_led_buttons = [");
-    if(led_options_button != "ledOptions_led_buttons = []")
+
+        
+    led_options_button = led_options_button.replace("ledOptions_led_buttons = [", '');
+    led_options_button = led_options_button.slice(0,-1);
+    led_options_button = led_options_button.replaceAll("_MyButton", '');
+    led_options_button = led_options_button.split(',');
+    console.log(led_options_button)
+    var table_replace = '<table class="tg" id="led_options_table" onmouseover="">\
+                            <thead>\
+                            <tr>\
+                                <th style="font-weight: bold;">Buttons</th>\
+                            </tr>\
+                            </thead>\
+                        </table>';
+    var led_options_table = document.getElementById("led_options_table");
+    led_options_table.innerHTML = table_replace;
+    if(led_options_button.length !== 1)
     {
-        console.log(led_options_button);
-        led_options_button = led_options_button.replace("ledOptions_led_buttons = [", '');
-        led_options_button = led_options_button.slice(0,-1);
-        led_options_button = led_options_button.replaceAll("_MyButton", '');
-        led_options_button = led_options_button.split(',');
-        var table_replace = '<table class="tg" id="led_options_table" onmouseover="">\
-                                <thead>\
-                                <tr>\
-                                    <th style="font-weight: bold;">Buttons</th>\
-                                </tr>\
-                                </thead>\
-                            </table>';
-        var led_options_table = document.getElementById("led_options_table");
-        led_options_table.innerHTML = table_replace;
         for(var i = 0; i < led_options_button.length; i++)
         {
             var row = led_options_table.insertRow();
             var cell1 = row.insertCell(0);
             cell1.innerHTML = led_options_button[i];
         }
-    }   
+    }
+
+      
     //led option increse brightness
     var led_option_increase_brightness = get_value("ledOptions_increase_brightness = ");
     led_option_increase_brightness = led_option_increase_brightness.substring(1);
