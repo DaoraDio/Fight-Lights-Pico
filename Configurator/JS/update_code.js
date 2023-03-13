@@ -277,7 +277,7 @@ function set_code()
                                               + player2_led + '\n'
                                               + player3_led + '\n'
                                               + player4_led + '\n'
-                                              ;
+                                              + "############do not delete this line#######################";
 }
 
 setInterval(function()
