@@ -181,17 +181,12 @@ function update_button()
   old_name = old_name.replace(/\s/g, '');
 
 
-  if(name == "")
+  if(check_name(name) != true)
   {
-    reset_all();
-    error.innerHTML = "Name cannot be empty";
-    return;
-  }
-  else if(startsWithNumber(name))
-  {
-    reset_all();
-    error.innerHTML ="Name cannot start with a number";
-    return;
+     reset_all();
+     //error.innerHTML = check_name(name);
+     alert(check_name(name));
+     return;
   }
   for (var i = 1, row; row = table.rows[i]; i++) 
   {
@@ -200,7 +195,7 @@ function update_button()
     if(name == col_name[0])
     {
       reset_all();
-      error.innerHTML = "Name already exists";
+      alert("Name already exists");
       return;
     }
   }
@@ -217,40 +212,30 @@ function update_button()
 
 
   var led_options_inc_brightness = document.getElementById("led_options_inc_brightness");
-  if(led_options_inc_brightness.value == old_name)
-  {
-    show_led_options(false);
-    led_options_inc_brightness.value = name;
-  }
-
-
   var led_options_dec_brightness = document.getElementById("led_options_dec_brightness");
-  if(led_options_dec_brightness.value == old_name)
-  {
-    show_led_options(false);
-    led_options_dec_brightness.value = name;
-  }
-
   var led_options_left = document.getElementById("led_options_left");
-  if(led_options_left.value == old_name)
-  {
-    show_led_options(false);
-    led_options_left.value = name;
-  }
-
   var led_options_right = document.getElementById("led_options_right");
-  if(led_options_right.value == old_name)
-  {
-    show_led_options(false);
-    led_options_right.value = name;
-  }
-
   var led_options_confirm = document.getElementById("led_options_confirm");
-  if(led_options_confirm.value == old_name)
-  {
-    show_led_options(false);
+
+  //safe the old values
+  var led_options_inc_brightness_old = led_options_inc_brightness.value;
+  var led_options_dec_brightness_old = led_options_dec_brightness.value;
+  var led_options_left_old = led_options_left.value;
+  var led_options_right_old = led_options_right.value;
+  var led_options_confirm_old = led_options_confirm.value;
+  show_led_options(false);
+
+  if(led_options_inc_brightness_old == old_name)
+    led_options_inc_brightness.value = name;
+  if(led_options_dec_brightness_old == old_name)
+    led_options_dec_brightness.value = name;
+  if(led_options_left_old == old_name)
+    led_options_left.value = name;
+  if(led_options_right_old == old_name)
+    led_options_right.value = name;
+  if(led_options_confirm_old == old_name)
     led_options_confirm.value = name;
-  }
+  
 }
 
 
@@ -283,24 +268,15 @@ function add_button()
 
    name = name.trim();
    name = name.replace(/\s/g, '');
-   if(name == "")
+
+   if(check_name(name) != true)
    {
-     reset_all();
-     error.innerHTML = "Name cannot be empty";
-     return;
+      reset_all();
+      //error.innerHTML = check_name(name);
+      alert(check_name(name));
+      return;
    }
-   else if(name.includes("_MyButton"))
-   {
-    reset_all();
-    error.innerHTML ="Name cannot contain _MyButton";
-    return;
-   }
-   else if(startsWithNumber(name))
-   {
-     reset_all();
-     error.innerHTML ="Name cannot start with a number";
-     return;
-   }
+
    for (var i = 1, row; row = table.rows[i]; i++) 
    {
      var col_name = row.innerText;
@@ -308,7 +284,7 @@ function add_button()
      if(name == col_name[0])
      {
        reset_all();
-       error.innerHTML = "Name already exists";
+       alert("Name already exists");
        return;
      }
    }

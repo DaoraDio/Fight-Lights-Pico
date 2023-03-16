@@ -54,12 +54,16 @@ function getRGBColor()
     rgb = hexTorgb(hex);
 }
 
-function check_colortable_duplicate(name)
+//checks if the parameter name is duplicate in the color table
+//the optional argument skip_row determines which row of the color table skipts the check
+function check_colortable_duplicate(name, skip_row=0)
 {
   var table = document.getElementById("color_table");
   
   for (var i = 1, row; row = table.rows[i]; i++) 
   {
+    if(skip_row > 0 && i === skip_row)
+      continue;
     var col_name = row.innerText;
     col_name = col_name.split("\t");
     if(name == col_name[0])
@@ -69,6 +73,8 @@ function check_colortable_duplicate(name)
  }
  return false;
 }
+
+
 function addColor()
 {
   getRGBColor();
@@ -79,13 +85,16 @@ function addColor()
 
   if(check_name(name) != true)
   {
-    document.getElementById("color_info").innerHTML = check_name(name);
+    //document.getElementById("color_info").innerHTML = check_name(name);
+    reset();
+    alert(check_name(name));
     return;
   }
 
   if(check_colortable_duplicate(name) != false)
   {
-    document.getElementById("color_info").innerHTML = check_colortable_duplicate(name);
+    reset();
+    alert(check_colortable_duplicate(name));
     return;
   }
 
@@ -143,7 +152,15 @@ function update_color()
   
     if(check_name(name) != true)
     {
-      document.getElementById("color_info").innerHTML = check_name(name);
+      //document.getElementById("color_info").innerHTML = check_name(name);
+      reset();
+      alert(check_name(name));
+      return;
+    }
+    if(check_colortable_duplicate(name, row_id) != false)
+    {
+      reset();
+      alert(check_colortable_duplicate(name));
       return;
     }
   

@@ -34,19 +34,19 @@ function show_led_options(open)
     document.getElementById("led_options_inc_brightness").innerHTML = replace_led_option_selects("led_options_inc_brightness");
     document.getElementById("led_options_inc_brightness").value = current_val;
 
-    var current_val = document.getElementById("led_options_dec_brightness").value;
+    current_val = document.getElementById("led_options_dec_brightness").value;
     document.getElementById("led_options_dec_brightness").innerHTML = replace_led_option_selects("led_options_dec_brightness");
     document.getElementById("led_options_dec_brightness").value = current_val;
 
-    var current_val = document.getElementById("led_options_left").value;
+    current_val = document.getElementById("led_options_left").value;
     document.getElementById("led_options_left").innerHTML = replace_led_option_selects("led_options_left");
     document.getElementById("led_options_left").value = current_val;
 
-    var current_val = document.getElementById("led_options_right").value;
+    current_val = document.getElementById("led_options_right").value;
     document.getElementById("led_options_right").innerHTML = replace_led_option_selects("led_options_right");
     document.getElementById("led_options_right").value = current_val;
     
-    var current_val = document.getElementById("led_options_confirm").value;
+    current_val = document.getElementById("led_options_confirm").value;
     document.getElementById("led_options_confirm").innerHTML = replace_led_option_selects("led_options_confirm");
     document.getElementById("led_options_confirm").value = current_val;
 
