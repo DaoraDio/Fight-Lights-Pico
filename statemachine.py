@@ -1,7 +1,12 @@
 print("statemachine")
 import rp2
 import sys
-import config
+try:
+    import config
+except ImportError:
+    print('\033[91m' + 'No config file found.\nMake sure your config file is named config.py and is in the same directory as the main.py' + '\033[0m')
+    import sys
+    sys.exit()
 import array
 from machine import Pin
 

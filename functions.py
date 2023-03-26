@@ -14,6 +14,21 @@ import animation
 
 micropython.alloc_emergency_exception_buf(100)
 
+#decorator to measure the execution time of a function in ms
+def measure_execution_time(func):
+    def wrapper(*args, **kwargs):
+        times = []
+        iterations = 100
+        for i in range(iterations):
+            t1 = time.ticks_us()
+            func(*args, **kwargs)
+            t2 = time.ticks_us()-t1
+            times.append(t2)
+        average = sum(times) / len(times)
+        #print(f'Took {t2/1000:.3f} ms')
+        print(f'Took on average {average/1000:.3f} ms')
+    return wrapper
+
 #dummy interrupt, does nothing. Set a button handler to this if you want to do nothing on interrupt
 def dummy(pin):
     pass
@@ -24,7 +39,8 @@ def tick(timer):
     init.idle_counter += 1
     init.timer_counter += 1
     init.string_leniency += 1
- 
+
+
 #this function is called every 30 seconds
 def save_stats(timer):
     if config.save_stats == False:
@@ -32,39 +48,38 @@ def save_stats(timer):
     
     init.seconds_counter += 30
     
-    f = open(init.file_name, "r")
-    lines = f.readlines()
-    updated_lines = ""
+    lines = init.file_content
+    updated_lines = []
             
     for line in lines:
-        if line[0] == "#":
+        if line[0] == "#" or line == '\n':
             continue
-        var_name = ""
-        value = ""
-                    
-        for i in range(len(line)):
-            if line[i] == ':':
-                i += 2
-                for j in range(i, len(line)):
-                    value += line[j]
-                break
-            var_name += line[i]
+        
+        name, value = line.split(":")
+        #name = name.strip()
         value = int(value)
-        if var_name == 'uptime':
+                    
+        if name == 'uptime':
             value += init.seconds_counter
             init.idle_file_counter = 0
             init.seconds_counter = 0
                     
-        for but in config.button_list:
-            if but.name == var_name:
-                value += but.num_presses
-                but.num_presses = 0
-        updated_lines += var_name + ": "+ str(value)+"\n"
-                    
-    f = open(init.file_name, "w")
-    f.write(init.header_text + updated_lines)
-    f.close()
- 
+        for button in config.button_list:
+            if button.name == name:
+                value += button.num_presses
+                button.num_presses = 0
+
+        updated_lines.append(f"{name}: {value}\n")
+    
+    content = init.header_text + ''.join(updated_lines)
+
+    with open(init.file_name, "w") as f:
+        f.write(content)
+    
+    content = [line + "\n" for line in content.split("\n")]
+    init.file_content = content
+
+
 #sets the idle_counter to the setback value which wakes the leds up from idle mode
 def clear_led(pin):
     init.idle_counter = init.setback_value
@@ -75,7 +90,6 @@ def clear_led(pin):
 #freq=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
 init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
 init.timer3.init(freq=1/30, mode=machine.Timer.PERIODIC, callback=save_stats) 
-
 
 #interrupt routine to debounce the brightness button
 #all credits to Kaspars Dambis @ https://kaspars.net/blog/micropython-button-debounce
@@ -109,13 +123,16 @@ def decrease_brightness():
         
 def pixels_show(brightness_input):
     dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
-    for ii,cc in enumerate(statemachine.ar):
-        r = int(((cc >> 8) & 0xFF) * brightness_input) # 8-bit red dimmed to brightness
-        g = int(((cc >> 16) & 0xFF) * brightness_input) # 8-bit green dimmed to brightness
-        b = int((cc & 0xFF) * brightness_input) # 8-bit blue dimmed to brightness
-        dimmer_ar[ii] = (g<<16) + (r<<8) + b # 24-bit color dimmed to brightness
-    statemachine.sm.put(dimmer_ar, 8) # update the state machine with new colors
-    #time.sleep_ms(10)
+    brightness_scale = int(255 * brightness_input)
+    for ii, cc in enumerate(statemachine.ar):
+        r = (cc >> 8) & 0xFF
+        g = (cc >> 16) & 0xFF
+        b = cc & 0xFF
+        r_scaled = (r * brightness_scale) >> 8
+        g_scaled = (g * brightness_scale) >> 8
+        b_scaled = (b * brightness_scale) >> 8
+        dimmer_ar[ii] = (g_scaled << 16) | (r_scaled << 8) | b_scaled
+    statemachine.sm.put(dimmer_ar, 8)
 
 def pixels_set(i, color):
     statemachine.ar[i] = (color[1]<<16) + (color[0]<<8) + color[2] # set 24-bit color
@@ -386,23 +403,22 @@ def fade_val_inc(color_val):
 #return true if no button is pressed at the moment
 #returns false when a button is currently pressed
 def no_buttons_pressed():
-    for but in config.button_list:
-        if but.is_pressed == True:
+    for button in config.button_list:
+        if button.is_pressed == True:
             return False
     
     return True
     
-
+    
 def set_background(background):
     #speed = 1000 #speed for colorwheel, higher = slower
     
     #if background it only a color
     if isinstance(background[0], int):
         if init.bg_initialized == False:
-            init.background_color_HSV = RGBtoHSV(background)
             init.bg_initialized = True
         
-        pixels_fillHSV(init.background_color_HSV)
+        pixels_fill(background)
         return
     elif background == 'rainbow':#if background is only 'rainbow'
         hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100)
@@ -415,8 +431,10 @@ def set_background(background):
             init.brightness_values[0] = 1
         init.colors.append(init.ranges.pop(0))
         if not isinstance(init.colors[0], str):
-            init.background_color_HSV = list(RGBtoHSV(init.colors[0]))
-            init.background_color_HSV[2] *= init.brightness_values[0]
+            init.background_color = list(RGBtoHSV(init.colors[0]))
+            init.background_color[2] *= init.brightness_values[0]
+            init.background_color = HSVtoRGB(init.background_color)
+             
         init.bg_initialized = True
         init.single_tuple = True
         
@@ -439,6 +457,7 @@ def set_background(background):
             else:
                 hsv_col = list(RGBtoHSV(init.ranges[i][0]))
                 hsv_col[2] *= init.brightness_values[i]
+                hsv_col = HSVtoRGB(hsv_col)
                 init.colors.append(hsv_col)
             
             init.ranges[i].pop(0)
@@ -451,7 +470,7 @@ def set_background(background):
                 hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100*init.brightness_values[0])
                 pixels_setHSV(ranges-1,hsv_col)
             else:
-                pixels_setHSV(ranges-1, init.background_color_HSV)
+                pixels_set(ranges-1, init.background_color)
     else:
         for i in range(len(init.ranges)):
             for j in range(len(init.ranges[i])):
@@ -459,7 +478,7 @@ def set_background(background):
                     hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100*init.brightness_values[i])
                     pixels_setHSV(init.ranges[i][j]-1,hsv_col)
                 else:
-                    pixels_setHSV(init.ranges[i][j]-1,init.colors[i])
+                    pixels_set(init.ranges[i][j]-1,init.colors[i])
 
 
 def get_profile_color(config_name):
@@ -551,8 +570,6 @@ def check_fgc_string():
                 for j in range(init.fgc_strings_length):
                     init.fgc_strings[j] = init.copy_strings[j].copy()
 
-def testo():
-    return
 
 def mode_select():
     init.mode_selector = 0
@@ -642,10 +659,23 @@ def mode_select():
                 if init.mode_selector == 0:
                     config_name = "config.py"
         
-        if config.ledOptions_confirm[0].was_pressed: #confirm button
+
+        for button in config.ledOptions_led_buttons:
+            button.run(0)
+        
+        #checks if all options button have been pressed at the same time
+        all_pressed = True
+        for button in config.ledOptions_led_buttons:
+            if not button.was_pressed:
+                all_pressed = False
+                break
+ 
+        
+        if config.ledOptions_confirm[0].was_pressed or all_pressed: #confirm button
             if init.mode_selector == 0:
                 config_name = 'config.py'
                 pixels_fill((0,0,0))
+                init.timer_counter = 0
                 return
             else:
                 path = os.rename(config_name, 'configtmp.py')

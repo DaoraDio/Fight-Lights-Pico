@@ -6,6 +6,7 @@ import time
 import init
 import machine
 
+
 #button class
 class MyButton:
     name = ""
@@ -25,6 +26,7 @@ class MyButton:
     bg_colors = ()#current background color before fade
     config = ((-1,), (0,0,0), False, 1) #(list of leds, color, Fade on or off, brightness): gets its values from config.py
     brightness = 1 #brightness when the button is pressed, values between 0 - 1
+    last_color = (0,0,0)
         
     def __init__(self,pin_num,name, handler): #constructor, takes a pin_number and a function for a handler that gets called for the interrupt
         self.name = name
@@ -51,21 +53,19 @@ class MyButton:
                 self.counter = self.counter +1
                 ######################when the button was just pressed###########################
                 if self.counter == 1:
-                    for i in range(len(config.button_list)):
-                        config.button_list[i].highest_prio = False
+                    for button in config.button_list:
+                        button.highest_prio = False
                     self.highest_prio = True
                     self.was_pressed = True
                     self.num_presses += 1
                     
                     self.bg_colors = ()
                     for i in range(len(self.led_list)):
-                        #self.bg_colors.append(functions.get_pixelcolor(self.led_list[i]-1))
-                        #self.bg_colors = self.bg_colors + (functions.HSVtoRGB(init.colors[self.led_list[i]-1]),)
                         self.bg_colors = self.bg_colors + (functions.get_pixelcolor(self.led_list[i]-1),)
-                    
+                        
                     
                 ######################when the button is pressed###########################
-                if self.config[0][0] > 0:
+                if self.config[0][0] > 0:                        
                     if self.fade == True:
                         if self.time <= 100:
                             self.time = functions.fade_val_inc(self.time) #increases the time value through the function fade_val
@@ -73,7 +73,7 @@ class MyButton:
                                 for i in range(len(self.led_list)): #loops through led_list
                                 #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
                                     if not init.timer_lock:
-                                        lerp_color = functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB,self.time)
+                                        lerp_color = functions.lerp_rgb(self.bg_colors[i], self.savedRGB,self.time)
                                         functions.pixels_set(self.led_list[i]-1, lerp_color)
                     else:
                         for i in range(len(self.led_list)): #loops through all numbers defined in led_list
@@ -91,6 +91,7 @@ class MyButton:
                     self.counter = 0
                     self.released = True
                     self.was_released = False
+                    self.last_color = self.colorRGB
                    
                 
                 ################when the button is currently not pressed###############
@@ -101,7 +102,7 @@ class MyButton:
                             for i in range(len(self.led_list)): #loops through led_list
                                 #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
                                 if not init.timer_lock:
-                                    lerp_color = functions.lerp_rgb(self.bg_colors[i-1], self.savedRGB,self.time)
+                                    lerp_color = functions.lerp_rgb(self.bg_colors[i], self.savedRGB,self.time)
                                     functions.pixels_set(self.led_list[i]-1, lerp_color)
                                     
                                 

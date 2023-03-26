@@ -13,7 +13,9 @@ if config.activate_player_led:
     import playerLED
 
 
-#--------------------------main program-------------------------------------------------------
+#clear the init.code variable to free up the memory if the main has been started from another config
+init.code = ""
+
 #lights up the onborad led to have an indication of wether the board is running or not
 onboard_led = Pin(25, Pin.OUT)
 onboard_led.value(True)
@@ -21,12 +23,13 @@ onboard_led.value(True)
 init.background = config.background
 init.idle_ticks = functions.idle_after()
 
-temp_brightness = 0
+
 
 if config.save_stats == True:
     try: #check if file exists
         f = open(init.file_name, "r")
         print(init.file_name, 'found')
+        init.file_content = f.readlines()
         functions.print_stats()
     except OSError: 
         #if not create file and write data to it
@@ -38,16 +41,17 @@ if config.save_stats == True:
             f.write(but.name + ": 0\n")
         f.close()
 
-#animation.idle_mode4()
-    
-#main loop
-while True:    
+
+#--------------------------main program-------------------------------------------------------
+def main():
     #print(init.current_input)
     #print(init.p1_active)
     #print(init.p2_active)
     #print(init.p3_active)
     #print(init.p4_active)
     #print()
+    
+
     
     init.main_cnt += 1    
     init.leniency_counter += 1
@@ -80,7 +84,7 @@ while True:
                 init.timer_target = init.timer_counter + functions.get_seconds(config.ledOptions_start_time)
                 init.timer_start = init.timer_counter
                 init.timer_lock = True
-
+           
             if init.timer_counter >= init.timer_target:
                 functions.mode_select()
         else:
@@ -88,9 +92,7 @@ while True:
     
     
     #goes into idle mode after seconds defined in the variable 'idle_after' has been exceeded
-    if init.idle_counter > init.idle_ticks:
-        if config.idle_mode == 0:
-                pass
+    if init.idle_counter > init.idle_ticks and config.idle_mode != 0:
         if config.idle_mode == 1:
             animation.idle_mode1()
         if config.idle_mode == 2:
@@ -103,6 +105,7 @@ while True:
     
     #checks if no buttons are pressed
     init.no_buttons_pressed = functions.no_buttons_pressed()
+    #print(init.no_buttons_pressed)
     
     #chooses a "random" color from the color array 'colors'
     random_color_id = init.i % len(config.colors)
@@ -155,10 +158,17 @@ while True:
     
 
     #give a nice ramp up at the beginning of the program
-    if temp_brightness < config.brightness_mod:
-        functions.pixels_show(temp_brightness)
-        temp_brightness += 0.04
+    if init.temp_brightness < config.brightness_mod:
+        functions.pixels_show(init.temp_brightness)
+        init.temp_brightness += 0.04
     else:
         #displays the led colors
         functions.pixels_show(config.brightness_mod)
+        
+
+
+#main loop
+while True:
+    main()  
+
         

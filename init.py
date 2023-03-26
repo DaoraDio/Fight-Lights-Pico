@@ -1,11 +1,12 @@
 print("init")
 import machine
-import config
+code = "" #hold the code for main.py when launching from config
 
 leniency_counter = 0 #increases every iteration of the main loop, resets when value reaches config.leniency
 string_leniency = 0 #unused currently
 main_cnt = 0 # increases every iteration of the main loop
 i = 0 #increases every time the leniency_counter hits the value defined in config.py leniency
+temp_brightness = 0
 
 timer_lock = False
 timer_target = 0
@@ -69,13 +70,15 @@ single_tuple = False
 ranges = []
 colors = []
 brightness_values = []
-background_color_HSV = (0,0,0)
+background_color = (0,0,0)
 background = 0
 
 
 file_name = "stats.txt"
 seconds_counter = 0 #this counts up every seconds to save to the file file_name
 header_text = "##################This file stores the number of presses for each button#########\n##################and the uptime in seconds######################################\n" #header text for the file file_name
+file_content = "" #stores the files content in memory 
+
 
 ####player LED status
 p1_active = False

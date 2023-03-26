@@ -1,3 +1,10 @@
+#when launching this module by accident it will launch the main.py instead
+if __name__ == '__main__':
+    import init
+    with open('main.py', 'r') as f:
+        init.code = f.read()
+    exec(init.code)
+
 print("config")
 #Fight Lights Pico
 
