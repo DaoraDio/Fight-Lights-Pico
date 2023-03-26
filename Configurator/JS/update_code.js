@@ -1,5 +1,6 @@
 function set_code()
 {
+  var failsave = "#when launching this module by accident it will launch the main.py instead\nif __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
   var header = "print(\"config\")\n\#Fight Lights Pico\n\nfrom machine import Pin\nfrom init import random, rainbow\nimport button\nimport functions\nimport init\n\n";
 
   //profile name
@@ -239,7 +240,7 @@ function set_code()
   
 
   //output
-  document.getElementById("code_box").value = header 
+  document.getElementById("code_box").value = failsave + header 
                                               + colors + "\n"
                                               + colors_arr + "\n"
                                               + idle_mode1_colors + "\n"
