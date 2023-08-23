@@ -27,6 +27,8 @@ class MyButton:
     config = ((-1,), (0,0,0), False, 1) #(list of leds, color, Fade on or off, brightness): gets its values from config.py
     brightness = 1 #brightness when the button is pressed, values between 0 - 1
     last_color = (0,0,0)
+    fadein_speed = 0
+    fadeout_speed = 0
         
     def __init__(self,pin_num,name, handler): #constructor, takes a pin_number and a function for a handler that gets called for the interrupt
         self.name = name
@@ -36,11 +38,13 @@ class MyButton:
         
         
     #gets called from the config.py to set the config variable and the led_list variable
-    def set_config(self, led_locations, color, fade, brightness):
+    def set_config(self, led_locations, color, fade, brightness, fadein_speed, fadeout_speed):
         self.fade = fade
         self.config = ((led_locations),color, self.fade)
         self.led_list = led_locations
         self.brightness = brightness
+        self.fadein_speed = fadein_speed
+        self.fadeout_speed = fadeout_speed
         
         
     #run function, controls all behaviour of a button, on press, when released and when currently not pressed
@@ -68,7 +72,7 @@ class MyButton:
                 if self.config[0][0] > 0:                        
                     if self.fade == True:
                         if self.time <= 100:
-                            self.time = functions.fade_val_inc(self.time) #increases the time value through the function fade_val
+                            self.time = functions.fade_val_inc(self.time, self.fadein_speed) #increases the time value through the function fade_val
                             if self.config[0][0] > 0: #when led position is not defined but button active
                                 for i in range(len(self.led_list)): #loops through led_list
                                 #sets all the colors with interpolated value between the background color and the color of press at the time of self.time
@@ -97,7 +101,7 @@ class MyButton:
                 ################when the button is currently not pressed###############
                 if self.fade == True: #when fade for that button is enabled
                     if self.time > 0:
-                        self.time = functions.fade_val_dec(self.time) #decreases the time value through the function fade_val
+                        self.time = functions.fade_val_dec(self.time, self.fadeout_speed) #decreases the time value through the function fade_val
                         if self.config[0][0] > 0: #when led position is not defined but button active
                             for i in range(len(self.led_list)): #loops through led_list
                                 #sets all the colors with interpolated value between the background color and the color of press at the time of self.time

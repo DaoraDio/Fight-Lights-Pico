@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="CSS\style.css">
-
 <html>
+  <textarea id="new_codebox" autocomplete="off" hidden></textarea>
+  <textarea id="code_box" name="code_box" hidden></textarea>
+
   <h2><a target="_blank" href="https://fight-lights.com">Fight Lights Pico</a></h2>
-  <h2>Configurator</h2>
+  <h2>Configurator for V2.4.0</h2>
   <div id="file_wrapper">
     <div id="file_select_text">Open one or multiple config files:</div>
     <input type="file" id="open_button" onchange="get_names()" multiple accept=".py"><br>
@@ -15,7 +17,7 @@
   <br>
   <br>
   <br>
-    <body onload="call_on_start()">
+    <body onload="call_on_start()" id="droppable">
         <script src="JS\checkbox.js"></script>
         <script src="JS\update_code.js"></script>
         <script src="JS\button.js"></script>
@@ -28,6 +30,8 @@
         <script src="JS\check_name.js"></script>
         <script src="JS\player_LED.js"></script>
         <script src="JS\gpio_config.js"></script>
+        <script src="JS\dropHandler.js"></script>
+        <script src="JS\on_off_modal.js"></script>
 
         <!--<button id=""  onclick="check_name('asd_')">TEST</button>-->
         
@@ -107,8 +111,9 @@
             <option value="4">4 Steps</option>
             <option value="2">2 Steps</option>
             <option value="1">Toggle On/Off</option>
+            <option value="smooth">Smooth</option>
         </select> 
-        <div class="helper" title="When increasing or decreasing the brightness via LED options mode, the step size controls how much the brightness changes per instance.&#10;10 steps - 10% change per click&#10;5 steps - 20% change per click&#10;4 steps - 25% change per click&#10;2 steps - 50% change per click&#10;Toggle On/Off - 100% change per click&#10;Example: If your startup brightness is set to 50% and step size set to 4 steps, increasing the brightness once will set your LEDs brightness to 75% ">?</div>
+        <div class="helper" title="When increasing or decreasing the brightness via LED options mode, the step size controls how much the brightness changes per instance.&#10;10 steps - 10% change per click&#10;5 steps - 20% change per click&#10;4 steps - 25% change per click&#10;2 steps - 50% change per click&#10;Toggle On/Off - 100% change per click&#10;Smooth - The change in brightness is no longer in steps but increases/decreases smoothly as long as the corresponding button is held &#10;&#10;Example: If your startup brightness is set to 50% and step size set to 4 steps, increasing the brightness once will set your LEDs brightness to 75% ">?</div>
         
         <!--IDLE MODE-->
         <div id="idlemode_tx">Idle Mode:</div>
@@ -118,11 +123,13 @@
             <option value="1">Mode 1 (Breathing)</option>
             <option value="2">Mode 2 (Rainbow)</option>
             <option value="3">Mode 3 (Lights Out)</option>
+            <option value="4">Mode 4 (Rain)</option>
+            <option value="5">Mode 5 (Color Chaser)</option>
         </select> 
 
         <input type="checkbox" id="idle_cb" name="idle_cb" onchange="update_idle_mode()">
         <label for="idle_cb">Disable</label> 
-        <div class="helper" title="When no button is pressed for a time, the LEDs will enter a Idle mode where they display certain animations&#10;Mode 1 (Breathing) - The LEDs will circle between colors, each color slowly fades in an out. The cog button on the left lets you control what colors are circled between the speed&#10;Mode 2 (Rainbow) - All LEDs will change their colors through the RGB spectrum&#10;Mode 3 (Lights Out) - All LEDs turn off">?</div>
+        <div class="helper" title="When no button is pressed for a time, the LEDs will enter a Idle mode where they display certain animations&#10;Mode 1 (Breathing) - The LEDs will circle between colors, each color slowly fades in an out. The cog button on the left lets you control what colors are circled between the speed&#10;Mode 2 (Rainbow) - All LEDs will change their colors through the RGB spectrum&#10;Mode 3 (Lights Out) - All LEDs turn off&#10;Mode 4 (Rain) - credits to Frawsty&#10;Mode 5 (Color Chaser) - snake like effect through all LEDs">?</div>
 
         <div id="idleseconds_tx">Enter Idle mode after (in seconds):</div>
         <input id="idle_tb" name="input" type="number" value="0" min="0">
@@ -140,6 +147,13 @@
         <label for="playerled_cb"> Disable</label>
         <div class="helper" title="Use the brook player LED pins to light up WS2812 LEDs as Player LEDs.&#10;Disable if not used to prevent unneeded code execution">?</div>
         <br>
+        
+        <!--On Off Buttons-->
+        <br>
+        <button id="led_options_button" onclick="show_onoff_modal()">Set On/Off Button</button>
+        <div class="helper" title="Set a button or a combination of buttons as a ON/Off switch for the LEDs outside of LED Options mode.">?</div>
+        <br>
+
 
         <!--Save Stats-->
         <br>
@@ -157,18 +171,21 @@
         <button id="background_conf" onclick="show_bg_modal()">Set Background Colors</button>
       
 
-
         <h3 id="button_conf">Button Configuration</h3>
-        <button id="refresh_button" onclick="reset_all()">&#10227</button>
         
-        <div>Button Fade in speed: <input type="number" min="0" max="100" id="fade_in" value="20" step="0.2"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from 0% brightness to full brightness when pressed. Can take floating point numbers as value&#10;Higher values = faster fade">?</div></div>
-        <div>Button Fade out speed: <input type="number" min="0" max="100" id="fade_out" value="6" step="0.2"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from full brightness to 0% brightness when released. Can take floating point numbers as value&#10;Higher values = faster fade">?</div></div>
+        
+        <div>Button Fade in speed: <input type="number" min="0" max="100" id="fade_in" value="20" step="0.2" oninput="update_fadein()"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from 0% brightness to full brightness when pressed. Can take floating point numbers as value&#10;Higher values = faster fade">?</div> <button onclick="set_fadein_for_all()">Set for all</button></div>
+        <div>Button Fade out speed: <input type="number" min="0" max="100" id="fade_out" value="6" step="0.2" oninput="update_fadeout()"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from full brightness to 0% brightness when released. Can take floating point numbers as value&#10;Higher values = faster fade">?</div> <button onclick="set_fadeout_for_all()">Set for all</button></div>
 
 
-        <button id="delete_button" onclick="delete_button()" disabled>&#128465</button>
+        <button id="delete_button" onclick="delete_button()" title="Delete" disabled>&#128465</button>
         <button id="update_button" onclick="update_button()" disabled>Update</button>
         <button id="add_button" onclick="add_button()">Add</button>
-        <input  id="button_name" type="text" placeholder="Button Name">
+        <div class="input-container">
+          <input  id="button_name" type="text" placeholder="Button Name">
+          <button id="refresh_button" onclick="reset_all()" title="reset inputs">&#10227</button>
+        </div>
+        
         <button id="set_leds_button" disabled onclick="led_open_modal()">Set LEDs</button>
       <label id="color_label" for="color_select">Button Color</label>
         <select id="color_select" onmouseenter="update_color_select()" onchange="set_color_from_select()" disabled><option>random</option></select>
@@ -185,23 +202,26 @@
         <table class="tg" id="button_table" onmouseover="select_button_table()">
             <tr>
               <th id="button_name">Button Name</th>
-              <th>LED Positions</th>
-              <th>Color</th>
-              <th>Fade</th>
-              <th>GPIO Pin</th>
-              <th>Brightness</th>
+              <th title="Positions of the LEDs which light up when the button is pressed">LED Positions</th>
+              <th title="Color the LEDs take when the button is pressed">Color</th>
+              <th title="set if fade is enabled or disabled for the Button">Fade</th>
+              <th title="the GPIO pint for the Button">GPIO Pin</th>
+              <th title="Brightness of the color for that button">Brightness</th>
+              <th title="Fade-in speed">Fade-in</th>
+              <th title="Fade-out speed">Fade-out</th>
             </tr>
       </table>
       </div>
       
+      
       <div class="flex_child" id="right_flex">
           <!--ADD COLOR-->
-          <div id="color_info"></div>
+          <h3 id="color_info">Colors</div>
           <input class="color_select" type="color" id="color_adder" value="#ff0000" onchange="getRGBColor()">
           <button id="add_color_button" onclick="addColor()">Add</button>
           <button id="update_color" onclick="update_color()" disabled>Update</button>
-          <button id="clean_color_inputs" onclick="reset()">&#10227</button>
-          <button id="delete_color" onclick="delete_color()" disabled>&#128465</button>
+          <button id="clean_color_inputs" onclick="reset()" title="reset inputs">&#10227</button>
+          <button id="delete_color" onclick="delete_color()" title="Delete" disabled>&#128465</button>
           <input type="text" id="color_name" placeholder="Color Name">
           <div id="row_id" hidden></div>
           <div id="color_info"></div>
@@ -227,7 +247,7 @@
         </table>
     <br>
     <br>
-     <button id="save_button" onclick="save_code('config.py')">Downlaod Code</button> 
+     <button id="save_button" onclick="save_code('config.py')">Download Code</button> 
      <button id="save_button" onclick="copy_to_clipboard()" style="margin-right: 160px; height: 30px;" title="Copy code to clipboard">&#128203</button>
     </div>
   </div>
@@ -296,12 +316,12 @@
     <label for="circle_checkbox2">Select colors to circle between</label>
 
     <br>
-    <button id="delete_idle_table" onclick="delete_idle_color()"disabled>&#128465</button>
+    <button id="delete_idle_table" onclick="delete_idle_color()" title="Delete" disabled>&#128465</button>
     <button id="add_idle_table" onclick="add_idle_color()">Add</button>
     <select id="idle_circle_select" onmouseenter="update_idle_circle_select()">
       <option>blank</option>
     </select>
-    <button id="reset_idle_table" onclick="reset_idle_selection()">&#10227</button>
+    <button id="reset_idle_table" onclick="reset_idle_selection()" title="reset inputs">&#10227</button>
     <div id="circle_row_id" hidden></div>
     <table class="tg" id="circle_table" onmouseover="select_circle_table()">
       <thead>
@@ -316,18 +336,21 @@
     <button onclick="close_modal()">Close</button>
   </dialog>
 
-  <dialog id="led_options_configuration">
+  <dialog class="modal" id="led_options_configuration">
     <h3>Configure LED Options mode</h3>
+    LED Options Color:
+    <input class="color_select" type="color" id="led_options_color" value="#ff0000">
+
     <p>hold duration to enter (in seconds):</p>
     <input id="led_options_start_time" type="number" min="0" value="0">
     <p>Buttons to press together to enter options mode:</p>
 
-    <button id="delete_led_options_table" onclick="delete_led_options_table()" disabled>&#128465</button>
+    <button id="delete_led_options_table" onclick="delete_led_options_table()" title="Delete" disabled>&#128465</button>
     <button id="add_led_options_table" onclick="add_led_option_button()">Add</button>
     <select id="led_options_select" onmouseenter="">
 
     </select>
-    <button id="reset_led_options_table" onclick="reset_led_options_table()">&#10227</button>
+    <button id="reset_led_options_table" onclick="reset_led_options_table()" title="reset inputs">&#10227</button>
     <div id="led_options_table_row_id" hidden></div>
     <table class="tg" id="led_options_table" onmouseover="select_led_option_table()">
       <thead>
@@ -336,6 +359,7 @@
         </tr>
       </thead>
     </table>
+
     <h3 style="text-align: center;">Set button bindings:</h3>
     <br>
     <div>
@@ -365,8 +389,13 @@
     <div>
       confirm:
       <select id="led_options_confirm" class="led_option_selects"></select>
-      <div class="helper" title="Select which button serves as the confirmation button to exit LED Options mode and lock in the selected Profile.">?</div>
+      <div class="helper" title="Select which button serves as the confirmation button to exit LED Options mode and lock in the selected Profile/Brightness. Alternatively pressing the buttons you entered LED options mode with at the same time will act as confirm aswell">?</div>
     </div>
+
+
+    <input type="checkbox" id="led_options_color_cb" name="" onchange="">
+    <label for="led_options_color_cb">Use all available LEDs as profile color</label>
+    <div class="helper" title="When checked the selected profile color will light up all available LEDs in that color. Unchecked only one LED will be lit up (the position of the Profile)">?</div>
 
     <br>
     <br>
@@ -485,10 +514,27 @@
     <button class="gpio_button_right" id="gp28"onclick="set_gpio(28)">gp28<label class="gpio_label_right" id="gp28_label"></label></button>
   </dialog>
 
-  
+  <dialog class="modal" id="on_off_button_modal">
+    <h2 id="modal_headline">Configure On/Off button</h2>
 
+    <div id="modal_body">
+      <p>Buttons to press together to turn LEDs ON/OFF</p>
 
-  <textarea id="new_codebox" autocomplete="off" hidden></textarea>
-  <textarea id="code_box" name="code_box" hidden></textarea>
-    </body>
+      <button id="on_off_delete" onclick="delete_onoff_table()" class="delete_buttons" title="Delete" disabled>&#128465</button>
+      <button id="on_off_add" onclick="onoff_add()">Add</button>
+      <select id="on_off_select" onmouseenter=""></select>
+      <button id="on_off_reset" onclick="reset_onoff_table()" title="reset inputs" class="reset_buttons">&#10227</button>
+      <div id="on_off_row_id" hidden></div>
+      <table class="tg" id="on_off_table" onmouseover="select_onoff_table()">
+        <thead>
+          <tr>
+            <th style="font-weight: bold;">Buttons</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <button class="modal_button" id="" onclick="close_onoff_modal()">Close</button>
+  </dialog>
+
+</body>
 </html> 

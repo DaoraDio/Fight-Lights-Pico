@@ -143,8 +143,16 @@ function get_code()
 
     //get brightness_steps  
     var brightness_steps = get_value("brightness_steps = ");
-    brightness_steps = 1/parseFloat(brightness_steps);
-    document.getElementById("brightness_steps").value = brightness_steps;
+    if(brightness_steps != "smooth")
+    {
+        brightness_steps = 1/parseFloat(brightness_steps);
+        document.getElementById("brightness_steps").value = brightness_steps;
+    }
+    else
+    {
+        document.getElementById("brightness_steps").value = "smooth";
+    }
+
     console.log(brightness_steps);
 
     //get idle_mode  
@@ -205,14 +213,14 @@ function get_code()
     //console.log("bg:", background);
 
     //get fadeout_speed   
-    var fadeout_speed = get_value("fadeout_speed = ");
-    document.getElementById("fade_out").value = fadeout_speed;
-    console.log("fadeout:", fadeout_speed);
+    //var fadeout_speed = get_value("fadeout_speed = ");
+    //document.getElementById("fade_out").value = fadeout_speed;
+    //console.log("fadeout:", fadeout_speed);
 
     //get fadein_speed   
-    var fadein_speed = get_value("fadein_speed = ");
-    document.getElementById("fade_in").value = fadein_speed;
-    console.log("fadein:", fadein_speed);
+    //var fadein_speed = get_value("fadein_speed = ");
+    //document.getElementById("fade_in").value = fadein_speed;
+    //console.log("fadein:", fadein_speed);
 
     //get button_list   
     var button_list = get_value("button_list = ");
@@ -232,6 +240,8 @@ function get_code()
                                         <th>Fade</th>\
                                         <th>GPIO Pin</th>\
                                         <th>Brightness</th>\
+                                        <th>Fade-in</th>\
+                                        <th>Fade-out</th>\
                                     </tr>\
                                 </table>';
 
@@ -285,12 +295,15 @@ function get_code()
         var button_conf = get_variable_line(button_list[i]+'.set_config(');
         button_conf = button_conf.replace(button_list[i]+'.set_config(', '');
         button_conf = button_conf.split(' ');
+        console.log(button_conf)
         
     
         var button_color = button_conf[1].slice(0,-1);
         var button_fade = button_conf[2].slice(0,-1);
         var button_leds = button_conf[0].replaceAll(',', ' ');
         var button_brightness = parseFloat(button_conf[3]) * 100;
+        var button_fadein = button_conf[4].replaceAll(',', ' ');
+        var button_fadeout = button_conf[5].replaceAll(')', ' ');;
       
         button_leds = button_leds.replaceAll('(', ' ');
         button_leds = button_leds.replaceAll(')', ' ');
@@ -311,6 +324,8 @@ function get_code()
         var cell4 = row.insertCell(3);
         var cell5 = row.insertCell(4);
         var cell6 = row.insertCell(5);
+        var cell7 = row.insertCell(6);
+        var cell8 = row.insertCell(7);
 
         if(button_leds2 == 0)
             button_leds2 = "Not Set";
@@ -321,6 +336,8 @@ function get_code()
         cell4.innerHTML = fade;
         cell5.innerHTML = gpio_pins;
         cell6.innerHTML = button_brightness  + '%';
+        cell7.innerHTML = button_fadein;
+        cell8.innerHTML = button_fadeout;
         
         var n_row = button_table.rows[i+1];
         if(button_fade == "True")
@@ -438,6 +455,50 @@ function get_code()
     led_options_confirm = led_options_confirm.replace('_MyButton', '');
     document.getElementById("led_options_confirm").value = led_options_confirm;
     //console.log(led_option_increase_brightness);
+
+    //led options color
+    var ledOptions_color = get_value("ledOptions_color = ");
+    ledOptions_color = py_tuple_to_rgb_array(ledOptions_color);
+    document.getElementById("led_options_color").value = rgbToHex(parseInt(ledOptions_color[0]),parseInt(ledOptions_color[1]),parseInt(ledOptions_color[2]));
+
+    //LED Options checkbox
+    var ledOptions_profile_color_use_all_LEDs = get_value("ledOptions_profile_color_use_all_LEDs = ");
+    if(ledOptions_profile_color_use_all_LEDs == "False")
+        document.getElementById("led_options_color_cb").checked = false;
+    else
+        document.getElementById("led_options_color_cb").checked = true;
+    
+
+
+    //ON OFF Button
+    var OnOff_button = get_variable_line("OnOff_button = [");
+
+        
+    OnOff_button = OnOff_button.replace("OnOff_button = [", '');
+    OnOff_button = OnOff_button.slice(0,-1);
+    OnOff_button = OnOff_button.replaceAll("_MyButton", '');
+    OnOff_button = OnOff_button.split(',');
+    console.log(OnOff_button)
+    var table_replace = '<table class="tg" id="on_off_table" onmouseover="">\
+                            <thead>\
+                            <tr>\
+                                <th style="font-weight: bold;">Buttons</th>\
+                            </tr>\
+                            </thead>\
+                        </table>';
+    var on_off_table = document.getElementById("on_off_table");
+    on_off_table.innerHTML = table_replace;
+    if(OnOff_button.length !== 1)
+    {
+        for(var i = 0; i < OnOff_button.length; i++)
+        {
+            var row = on_off_table.insertRow();
+            var cell1 = row.insertCell(0);
+            cell1.innerHTML = OnOff_button[i];
+        }
+    }
+
+
 
     //rainbow speed
     var rainbow_speed =  get_value("rainbow_speed = ");

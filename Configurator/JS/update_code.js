@@ -1,7 +1,7 @@
 function set_code()
 {
   var failsave = "#when launching this module by accident it will launch the main.py instead\nif __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
-  var header = "print(\"config\")\n\#Fight Lights Pico\n\nfrom machine import Pin\nfrom init import random, rainbow\nimport button\nimport functions\nimport init\n\n";
+  var header = "print(\"config\")\n\#Fight Lights Pico V2.4.0\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth\nimport button\nimport functions\nimport init\n\n";
 
   //profile name
   var profile_name = document.getElementById("profile_name").value;
@@ -51,8 +51,14 @@ function set_code()
 
   //brightness steps
   var brightness_steps = document.getElementById("brightness_steps").value;
-  brightness_steps = 1 / brightness_steps;
-  var brightness_steps2 = "brightness_steps = " + brightness_steps;
+  if(brightness_steps != "smooth")
+  {
+    brightness_steps = 1 / brightness_steps;
+    var brightness_steps2 = "brightness_steps = " + brightness_steps;
+  }
+  else
+    var brightness_steps2 = "brightness_steps = smooth"
+
 
   //idle mode
   var idle_mode = document.getElementById("idle_select").value;
@@ -112,6 +118,8 @@ function set_code()
     col_name = col_name.split("\t");
     var leds = col_name[1].replace(/[ ,]+/g, ",");
     var brightness = parseInt(col_name[5]) / 100;
+    var fadein = parseFloat(col_name[6]);
+    var fadeout = parseFloat(col_name[7]);
     
     leds += ",";
     if(leds == "Not,Set,")
@@ -120,7 +128,7 @@ function set_code()
       var fade2 = "True";
     else
       var fade2 = "False";
-    button_colors += col_name[0] + "_MyButton" + ".set_config((" + leds + "), "+col_name[2] + ", " + fade2 + ", " + brightness + ")\n";
+    button_colors += col_name[0] + "_MyButton" + ".set_config((" + leds + "), "+col_name[2] + ", " + fade2 + ", " + brightness + ", " + fadein + ", " + fadeout + ")\n";
   }
 
   //clear bg
@@ -236,6 +244,30 @@ function set_code()
   player3_led = "P3_color = " + player3_led;
   player4_led = "P4_color = " + player4_led;
 
+  //led_options
+  var OnOff_button = "OnOff_button = [";
+  var OnOff_table = document.getElementById("on_off_table");
+  for (var i = 1, row; row = OnOff_table.rows[i]; i++) 
+  {
+      var col = row.innerText;
+      col = col.trim();
+      //console.log(col);
+      OnOff_button += col + '_MyButton' + ',';
+  }
+  OnOff_button = OnOff_button.slice(0,-1);
+  OnOff_button += "]";
+  if(OnOff_button == "OnOff_button = ]")
+    OnOff_button = "OnOff_button = []";
+
+  //ledOptions_color
+  var ledOptions_color = "ledOptions_color = (" + hexTorgb(document.getElementById("led_options_color").value) + ")";
+
+
+  //ledOptions_profile_color_use_all_LEDs 
+  if(document.getElementById("led_options_color_cb").checked)
+    var led_options_color_cb = "ledOptions_profile_color_use_all_LEDs = True"
+  else
+    var led_options_color_cb = "ledOptions_profile_color_use_all_LEDs = False"
 
   
 
@@ -258,11 +290,13 @@ function set_code()
                                               + profile_color + "\n"
                                               + clear_bg + "\n"
                                               + background_color + '\n'
-                                              + fade_out2 + "\n"
-                                              + fade_in2 + "\n"
+                                              //+ fade_out2 + "\n"
+                                              //+ fade_in2 + "\n"
                                               + buttons + '\n'
                                               + button_list + '\n'
                                               + button_colors + '\n'
+                                              + ledOptions_color + '\n'
+                                              + led_options_color_cb + '\n'
                                               + led_options + '\n'
                                               + led_options_start + '\n'
                                               + led_options_inc_brightness + '\n'
@@ -270,6 +304,7 @@ function set_code()
                                               + led_options_left + '\n'
                                               + led_options_right + '\n'
                                               + led_options_confirm + '\n'
+                                              + OnOff_button + '\n'
                                               + rainbow_speed + '\n'
                                               + activate_playerled + '\n'
                                               + playerled_brightness + '\n'

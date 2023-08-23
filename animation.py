@@ -7,6 +7,7 @@ import statemachine
 import math
 import init
 import button
+import random
 
 #breathing light idle mode
 #all credits for the breathing light goes to Joshua Hrisko, Maker Portal LLC (c) 2021
@@ -80,7 +81,161 @@ def idle_mode3(): #lights out
     while init.idle_counter > init.idle_ticks:
         pass
     
+#Rain (by FrawstyBawlz & ChatGPT) **EXPERIMENTAL** 
+def idle_mode4():
+    num_leds = config.led_count  # Replace this with the number of LEDs in your chain
+
+    # Define the time delay between raindrop movements (in seconds)
+    delay = 0.11
+
+    # Define the colors for raindrops and flashes in RGB format
+    raindrop_color = (0, 0, 200)  # Blue
+
+    # Define the number of raindrops to add in each iteration
+    raindrops_per_iteration = 5
+
+    # Define the maximum and minimum speed of raindrops (adjust as needed)
+    max_speed = 3.5
+    min_speed = 0.6
+
+    # Create a list to store the current position of each raindrop, a counter for the position fraction, and a direction for each raindrop
+    raindrop_positions = []
+    raindrop_fraction = []
+    raindrop_direction = []
+
+    # Create a table with LED positions
+    led_positions = list(range(config.led_count))
+
+    # Counter to keep track of the number of iterations for raindrops
+    raindrop_iteration_counter = 0
+
+    # Counter to keep track of the number of iterations for red flashes
+    red_flash_iteration_counter = 0
+
+    # Number of iterations between red flashes
+    next_red_flash = random.randint(5, 15)
+
+    while True:
+        if init.idle_counter <= init.idle_ticks:
+            return
+
+        for _ in range(init.idle_ticks):  # Run the animation for the duration of the idle mode
+            if init.idle_counter <= init.idle_ticks:
+                return
+
+            # Add a fixed number of new raindrops in each iteration
+            for _ in range(raindrops_per_iteration):
+                # Determine the direction of the new raindrop
+                direction = 1 if random.random() < 0.5 else -1
+                # Add a new raindrop at a random position from the table
+                rand_position = random.choice(led_positions)
+                raindrop_positions.append(rand_position)
+                raindrop_fraction.append(0)
+                raindrop_direction.append(direction)
+
+            # Clear all LEDs before showing the new raindrop positions
+            functions.pixels_fill((0, 0, 0))
+
+            # Update the position of each raindrop and remove raindrops that reach the end
+            for i in range(len(raindrop_positions) - 1, -1, -1):
+                if init.idle_counter <= init.idle_ticks:
+                    return
+                raindrop_fraction[i] += raindrop_direction[i] * random.uniform(min_speed, max_speed)
+                if raindrop_fraction[i] >= 1 or raindrop_fraction[i] <= 0:
+                    raindrop_positions.pop(i)
+                    raindrop_fraction.pop(i)
+                    raindrop_direction.pop(i)
+                else:
+                    # Calculate the faded color based on the raindrop fraction
+                    brightness = 255 - int(255 * raindrop_fraction[i])
+                    r, g, b = [c for c in raindrop_color]
+                    faded_color = (r, g, b, brightness)
+
+                    # Set the LED to the faded raindrop color
+                    functions.pixels_set(raindrop_positions[i], faded_color)
+
+            # Show the colors on the LED chain
+            functions.pixels_show(config.brightness_mod)
+
+            # Periodic flashes with fading effect
+            if red_flash_iteration_counter == next_red_flash:
+                next_red_flash = random.randint(2, 10)  # Generate a new random number
+
+                for brightness in range(255, -1, -40):
+                    if random.random() < 0.25:
+                        # Red flash
+                        flash_color = (brightness, 0, 0)
+                    elif random.random() < 0.5:
+                        # Yellow flash
+                        flash_color = (brightness, brightness, 0)
+                    elif random.random() < 0.75:
+                        # Purple flash
+                        flash_color = (brightness, 0, brightness)
+                    else:
+                        # Blue flash
+                        flash_color = (0, 0, brightness)
+
+                    functions.pixels_fill(flash_color)
+                    functions.pixels_show(config.brightness_mod)
+                    time.sleep(0.08)  # Adjust the delay to control the fade-in/fade-out speed
+
+            # Wait for a short time before updating raindrop positions
+            time.sleep(delay)
+
+            # Increment the iteration counters
+            raindrop_iteration_counter += 1
+            red_flash_iteration_counter += 1
+
+            # Reset the iteration counters to avoid overflow
+            if raindrop_iteration_counter >= 100:
+                raindrop_iteration_counter = 0
+            if red_flash_iteration_counter >= 100:
+                red_flash_iteration_counter = 0
+
+def idle_mode5():
+    fade_speed = 10
+    led_count = config.led_count
+    backwards = False
+    cnt = random.randint(0, 359)
+    sleep_time = 0.05
+    while init.idle_counter > init.idle_ticks:
+        cnt += 60
+        cnt = cnt % 359
+        hsv_col = (cnt, 100,100)
+        hsv_col2 = (360-cnt, 100, 100)
+        color = functions.HSVtoRGB(hsv_col)
+        for i, k in zip(range(led_count), range(led_count-1, -1, -1)):
+            if init.idle_counter <= init.idle_ticks:
+                return
+            #time.sleep_ms(400)
+            functions.pixels_set(i,color)
+            #functions.pixels_set(k,color2)
+            functions.pixels_show(config.brightness_mod)
             
+            for j in range(led_count):
+                if init.idle_counter <= init.idle_ticks:
+                    return
+                pxl_color = functions.get_pixelcolor(j)
+                hsv_color = functions.RGBtoHSV(pxl_color)
+                value = hsv_color[2]-fade_speed
+                if value < 10:
+                    value = 10
+                hsv_color = (hsv_color[0],hsv_color[1], value)
+                pxl_color = functions.HSVtoRGB(hsv_color)
+                functions.pixels_set(j,pxl_color)
+            
+            time.sleep(sleep_time)
+            if i == 0:
+                if not backwards:
+                    sleep_time -= 0.001
+                else:
+                    sleep_time += 0.001
+                if sleep_time <= 0:
+                    backwards = True
+                if sleep_time >= 0.05:
+                    backwards = False
+
+
 def color_change():
     for i in range(360):
         #time.sleep_ms(2)

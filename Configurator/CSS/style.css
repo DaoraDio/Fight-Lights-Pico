@@ -150,11 +150,8 @@ select
 #color_info
 {
     position: absolute;
-    top: 33px;
-    right: 200px;
-
- 
-    color: red;
+    top: 16px;
+    right: 260px;
 }
 
 /*TABLE*/
@@ -239,7 +236,10 @@ select
 /*button table*/
 #button_table
 {
-    padding-right: 2000px;
+    /*padding-right: 2000px;*/
+    position: absolute;
+    left: 21%;
+    
 }
 
 
@@ -291,9 +291,9 @@ select
 
 #refresh_button
 {
-    position: relative;
-    left: 295px;
-    top: 126px;
+    position: absolute;
+    left: 125px;
+    top: -2px;
     height: 31px;
     width: 35px;
     /*border: solid gray 1px;*/
@@ -950,4 +950,72 @@ select
     user-select: none;
     cursor: help;
     opacity: 40%;
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .delete_buttons
+  {
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    padding-bottom: 30px;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+  }
+
+  .reset_buttons
+  {
+    height: 50px;
+    width: 40px;
+    /*border: solid gray 1px;*/
+    border: none;
+    font-size: 30px;
+    background: transparent;
+    color: rgb(123, 123, 253);
+  }
+
+  #on_off_table
+  {
+    width: 100%;
+  }
+
+  #on_off_add
+  {
+    height: 30px;
+    width: 40px;
+  }
+
+  #on_off_select
+  {
+    height: 30px;
+    width: 110px;
+  }
+
+
+#on_off_table tr:not(:first-child)
+{
+    cursor: pointer;
+}
+
+#on_off_table tr:not(:first-child):hover
+{
+    background-color: #ddd;
+}
+
+.modal::backdrop
+{
+    background: black;
+    opacity: 70%;
+}
+
+.modal
+{
+    border: solid 1px;
+    border-radius: 5px;
 }

@@ -6,10 +6,10 @@ if __name__ == '__main__':
     exec(init.code)
 
 print("config")
-#Fight Lights Pico
+#Fight Lights Pico V2.4.0
 
 from machine import Pin
-from init import random, rainbow
+from init import random, rainbow, smooth
 import button
 import functions
 import init
@@ -46,8 +46,6 @@ input_reset_time = 50
 profile_color = (0,6,255)
 clear_background_on_press = False
 background = ((0.05,blue,1),(0.05,blue,2),(0.05,blue,3),(0.05,blue,4),(0.05,blue,5),(0.05,blue,6),(0.05,blue,7),(0.05,blue,8))
-fadeout_speed = 6
-fadein_speed = 20
 up_MyButton = button.MyButton(1, 'up', functions.clear_led)
 down_MyButton = button.MyButton(2, 'down', functions.clear_led)
 right_MyButton = button.MyButton(3, 'right', functions.clear_led)
@@ -68,22 +66,24 @@ button_list = [up_MyButton,down_MyButton,right_MyButton,left_MyButton,select_MyB
 init.button_list_length = len(button_list)
 
 
-up_MyButton.set_config((0,), random, False, 1)
-down_MyButton.set_config((0,), random, False, 1)
-right_MyButton.set_config((0,), random, False, 1)
-left_MyButton.set_config((0,), random, False, 1)
-select_MyButton.set_config((1,2,3,4,5,6,7,8,), violet, False, 1)
-ps_MyButton.set_config((1,2,3,4,5,6,7,8,), light_blue, False, 1)
-start_MyButton.set_config((1,2,3,4,5,6,7,8,), red, False, 1)
-square_MyButton.set_config((5,), random, True, 1)
-triangle_MyButton.set_config((6,), random, True, 1)
-r1_MyButton.set_config((8,), random, True, 1)
-l1_MyButton.set_config((7,), random, True, 1)
-circle_MyButton.set_config((3,), random, True, 1)
-x_MyButton.set_config((4,), green, True, 1)
-l2_MyButton.set_config((2,), random, True, 1)
-r2_MyButton.set_config((1,), random, True, 1)
+up_MyButton.set_config((0,), random, False, 1, 30, 7)
+down_MyButton.set_config((0,), random, False, 1, 30, 7)
+right_MyButton.set_config((0,), random, False, 1, 30, 7)
+left_MyButton.set_config((0,), random, False, 1, 30, 7)
+select_MyButton.set_config((1,2,3,4,5,6,7,8,), violet, False, 1, 30, 7)
+ps_MyButton.set_config((1,2,3,4,5,6,7,8,), light_blue, False, 1, 30, 7)
+start_MyButton.set_config((1,2,3,4,5,6,7,8,), red, False, 1, 30, 7)
+square_MyButton.set_config((5,), random, True, 1, 30, 7)
+triangle_MyButton.set_config((6,), random, True, 1, 30, 7)
+r1_MyButton.set_config((8,), random, True, 1, 30, 7)
+l1_MyButton.set_config((7,), random, True, 1, 30, 7)
+circle_MyButton.set_config((3,), random, True, 1, 30, 7)
+x_MyButton.set_config((4,), green, True, 1, 30, 7)
+l2_MyButton.set_config((2,), random, True, 1, 30, 7)
+r2_MyButton.set_config((1,), random, True, 1, 30, 7)
 
+ledOptions_color = (255,0,0)
+ledOptions_profile_color_use_all_LEDs = False
 ledOptions_led_buttons = [start_MyButton,select_MyButton]
 ledOptions_start_time = 3
 ledOptions_increase_brightness = [up_MyButton]
@@ -91,6 +91,7 @@ ledOptions_decrease_brightness = [down_MyButton]
 ledOptions_left_button = [left_MyButton]
 ledOptions_right_button = [right_MyButton]
 ledOptions_confirm = [x_MyButton]
+OnOff_button = []
 rainbow_speed = 1000
 activate_player_led = False
 playerLED_brightness = 1

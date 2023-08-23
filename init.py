@@ -31,7 +31,7 @@ idle_counter = 0
 #is set at program start by the function idle_after()
 idle_ticks = 0
 
-
+tmp_brightness = 1
 
 
 #frequency in hz at which the timer interrups happen
@@ -44,6 +44,7 @@ random_color = 0
 
 random = 'random'
 rainbow = 'rainbow'
+smooth = 'smooth'
 
 #initializations for fgc inputs
 current_input = ""

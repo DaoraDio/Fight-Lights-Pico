@@ -24,7 +24,6 @@ init.background = config.background
 init.idle_ticks = functions.idle_after()
 
 
-
 if config.save_stats == True:
     try: #check if file exists
         f = open(init.file_name, "r")
@@ -75,8 +74,12 @@ def main():
             led_options.append(button.is_pressed)
         
         if all(led_options):
-            V = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter))
-            col = (V,0,0)
+            R = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[0]))
+            G = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[1]))
+            B = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[2]))
+            #print("R:", R, "G:", G, "B:", B)
+            col = (R,G,B)
+            
             functions.pixels_fill(col)
             functions.pixels_show(config.brightness_mod)
 
@@ -101,6 +104,9 @@ def main():
             animation.idle_mode3()
         if config.idle_mode == 4:
             animation.idle_mode4()
+        if config.idle_mode == 5:
+            animation.idle_mode5()
+
     
     
     #checks if no buttons are pressed
@@ -165,8 +171,19 @@ def main():
         #displays the led colors
         functions.pixels_show(config.brightness_mod)
         
-
-
+    
+    #set a button or a combination of buttons as a complete on/off switch for the LEDs
+    if config.OnOff_button:
+        onoff_button = []
+        for button in config.OnOff_button:
+            onoff_button.append(button.was_pressed)
+        if all(onoff_button):
+            if config.brightness_mod > 0:
+              init.tmp_brightness = config.brightness_mod
+              config.brightness_mod = 0
+            elif config.brightness_mod == 0:
+              config.brightness_mod = init.tmp_brightness
+        
 #main loop
 while True:
     main()  

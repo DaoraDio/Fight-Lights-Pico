@@ -102,19 +102,18 @@ def debounce_brightness(pin):
 #    init.timer3.init(mode=machine.Timer.ONE_SHOT, period=50, callback=clear_led)
 
 
-def increase_brightness():
+def increase_brightness(steps_size):
     brightness = config.brightness_mod
-    while config.brightness_mod < (brightness + config.brightness_steps):
+    while config.brightness_mod < (brightness + steps_size):
         pixels_show(config.brightness_mod)
         config.brightness_mod += 0.005
         if config.brightness_mod >= 1:
             config.brightness_mod = 1
             return
 
-def decrease_brightness():
-    
+def decrease_brightness(steps_size):
     brightness = config.brightness_mod
-    while config.brightness_mod > (brightness - config.brightness_steps):
+    while config.brightness_mod > (brightness - steps_size):
         pixels_show(config.brightness_mod)
         config.brightness_mod -= 0.005
         if config.brightness_mod <= 0:
@@ -385,16 +384,16 @@ def RGBtoHSV(rgbcolor):
 #gets a value (usually the V of a HSV color)
 #decreses the value defined by config.fed_speed and returns it
 #if the value becomes negative it sets the value to 0
-def fade_val_dec(color_val):
+def fade_val_dec(color_val, speed):
     if color_val >= 0:
-        color_val -= config.fadeout_speed
+        color_val -= speed
         if color_val < 0:
             color_val = 0
     return color_val
 
-def fade_val_inc(color_val):
+def fade_val_inc(color_val, speed):
     if color_val <= 100:
-        color_val += config.fadein_speed
+        color_val += speed
         if color_val > 100:
             color_val = 100
     return color_val
@@ -576,6 +575,7 @@ def mode_select():
     config_name = 'config.py'
     epsilon = 0.00001
     delay = 25
+    bg_color = config.ledOptions_color
 
     #small animation at the beginning
     time.sleep_ms(delay)
@@ -583,7 +583,7 @@ def mode_select():
     pixels_show(config.brightness_mod)
     
     time.sleep_ms(delay)
-    pixels_fill(((255,0,0)))
+    pixels_fill(bg_color)
     pixels_show(config.brightness_mod)
     
     time.sleep_ms(delay)
@@ -591,18 +591,23 @@ def mode_select():
     pixels_show(config.brightness_mod)
     
     time.sleep_ms(delay)
-    pixels_fill(((255,0,0)))
+    pixels_fill(bg_color)
     pixels_show(config.brightness_mod)
     
     
     while True:
-        pixels_fill(((255,0,0)))
+        pixels_fill(bg_color)
         profile_color = get_profile_color(config_name)
-        pixels_set(init.mode_selector, profile_color)
+        
+        if config.ledOptions_profile_color_use_all_LEDs:
+            bg_color = profile_color
+        else:
+            pixels_set(init.mode_selector, profile_color)
+            
         if config.brightness_mod > 0:
             pixels_show(config.brightness_mod)
         if config.brightness_mod < epsilon:
-            pixels_show(0.004)
+            pixels_show(0.01)
             
         if config.ledOptions_increase_brightness:
             config.ledOptions_increase_brightness[0].run(0)
@@ -610,7 +615,7 @@ def mode_select():
         if config.ledOptions_decrease_brightness:
             config.ledOptions_decrease_brightness[0].run(0)
             
-        if config.ledOptions_confirm:
+        if config.ledOptions_confirm and config.ledOptions_confirm[0] not in config.ledOptions_led_buttons:
             config.ledOptions_confirm[0].run(0)
             
         if config.ledOptions_left_button:
@@ -619,17 +624,22 @@ def mode_select():
         if config.ledOptions_right_button:
             config.ledOptions_right_button[0].run(0)
             
-                
-        if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].was_pressed:
-            pixels_fill((255,0,0))
-            pixels_set(init.mode_selector, profile_color)
-            increase_brightness()
-            print("brightness:", config.brightness_mod)
-        if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].was_pressed:
-            pixels_fill((255,0,0))
-            pixels_set(init.mode_selector, profile_color)
-            decrease_brightness()
-            print("brightness:", config.brightness_mod)
+        if config.brightness_steps != 'smooth':
+            if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].was_pressed:
+                increase_brightness(config.brightness_steps)
+                #print("brightness:", config.brightness_mod)
+            if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].was_pressed:
+                decrease_brightness(config.brightness_steps)
+                #print("brightness:", config.brightness_mod)
+        else:
+            if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].is_pressed:
+                increase_brightness(0.01)
+                #print("brightness:", config.brightness_mod)
+            if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].is_pressed:
+                decrease_brightness(0.01)
+                #print("brightness:", config.brightness_mod)
+
+            
                 
         if config.ledOptions_right_button and config.ledOptions_right_button[0].was_pressed:
             init.mode_selector -= 1
@@ -709,9 +719,9 @@ def reset_background():
     
     
     
-def lerp(tstart,tend,t):
-    ystart = 0
-    yend = 255
+def lerp(tstart,tend,t, ystart, yend):
+    #ystart = 0
+    #yend = 255
     y = ystart + (yend - ystart) * ((t-tstart)/(tend-tstart))
     return y
     

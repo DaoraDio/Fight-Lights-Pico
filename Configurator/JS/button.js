@@ -99,6 +99,8 @@ function select_button_table()
         document.getElementById("button_name").value = this.cells[0].innerHTML;
         document.getElementById("button_brightness").value = parseInt(this.cells[5].innerHTML);
         document.getElementById("brightness_label").innerText = "Brightness: " + this.cells[5].innerHTML;
+        document.getElementById("fade_in").value = parseFloat(this.cells[6].innerHTML);
+        document.getElementById("fade_out").value = parseFloat(this.cells[7].innerHTML);
     }
   }
 }
@@ -144,6 +146,7 @@ function delete_button()
   }
 
   var led_options_table = document.getElementById("led_options_table");
+  var OnOff_table = document.getElementById("on_off_table");
   var button_table = document.getElementById("button_table");
   var row_id = parseInt(document.getElementById("button_row_id").innerHTML);
   
@@ -155,6 +158,16 @@ function delete_button()
     if(row.cells[0].innerHTML == button_name)
     {
       led_options_table.deleteRow(i);
+      i--;
+    }
+  }  
+
+
+  for (var i = 1, row; row = OnOff_table.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == button_name)
+    {
+      OnOff_table.deleteRow(i);
       i--;
     }
   }  
@@ -297,6 +310,8 @@ function add_button()
     var cell4 = row.insertCell(3);
     var cell5 = row.insertCell(4);
     var cell6 = row.insertCell(5);
+    var cell7 = row.insertCell(6);
+    var cell8 = row.insertCell(7);
     
     
     var fade = '<input type="checkbox" id="fade_cb" name="fade_cb" onchange="">';
@@ -340,8 +355,12 @@ function add_button()
     cell4.innerHTML = fade;
     cell5.innerHTML = gpio_pins;
     cell6.innerHTML = document.getElementById("button_brightness").value + "%";
+    cell7.innerHTML = 20;
+    cell8.innerHTML = 7;
+
 
     //update_color_button_table();
+    alert("Button: " + name + "has been added");
 }
 
 function set_color_from_select()
@@ -353,4 +372,46 @@ function set_color_from_select()
 
 
   button_table.rows[selected_row].cells[2].innerHTML = select_value;
+}
+
+function update_fadein()
+{
+  var table = document.getElementById("button_table");
+  var row_id = document.getElementById("button_row_id").innerHTML;
+
+  if(row_id == undefined)
+      return;
+
+  table.rows[row_id].cells[6].innerHTML = document.getElementById("fade_in").value;
+}
+
+function update_fadeout()
+{
+  var table = document.getElementById("button_table");
+  var row_id = document.getElementById("button_row_id").innerHTML;
+
+  if(row_id == undefined)
+      return;
+
+  table.rows[row_id].cells[7].innerHTML = document.getElementById("fade_out").value;
+}
+
+function set_fadein_for_all()
+{
+  var table = document.getElementById("button_table");
+
+  for (var i = 1, row; row = table.rows[i]; i++) 
+  {
+      table.rows[i].cells[6].innerHTML = document.getElementById("fade_in").value;
+  }
+}
+
+function set_fadeout_for_all()
+{
+  var table = document.getElementById("button_table");
+
+  for (var i = 1, row; row = table.rows[i]; i++) 
+  {
+      table.rows[i].cells[7].innerHTML = document.getElementById("fade_out").value;
+  }
 }
