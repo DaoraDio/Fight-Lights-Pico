@@ -146,7 +146,7 @@ def main():
     else:
         for i in range(init.start_pos, len(config.button_list)+init.start_pos):
             i = i % len(config.button_list)
-            button.button_list[i].run((time.ticks_cpu()) % len(config.colors))
+            config.button_list[i].run((time.ticks_cpu()) % len(config.colors))
 
     #create a list of all buttons currently pressed
     currently_pressed = []
