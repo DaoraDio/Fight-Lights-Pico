@@ -1,4 +1,4 @@
-print("functions")
+print("\033[32mfunctions\033[0m")
 import statemachine
 import config
 import array, time
@@ -11,6 +11,8 @@ import machine
 import os
 import micropython
 import animation
+import gc
+import sys
 
 micropython.alloc_emergency_exception_buf(100)
 
@@ -18,7 +20,7 @@ micropython.alloc_emergency_exception_buf(100)
 def measure_execution_time(func):
     def wrapper(*args, **kwargs):
         times = []
-        iterations = 100
+        iterations = 1
         for i in range(iterations):
             t1 = time.ticks_us()
             func(*args, **kwargs)
@@ -121,6 +123,7 @@ def decrease_brightness(steps_size):
             return
         
 def pixels_show(brightness_input):
+    #gc.collect()
     dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
     brightness_scale = int(255 * brightness_input)
     for ii, cc in enumerate(statemachine.ar):
@@ -633,10 +636,10 @@ def mode_select():
                 #print("brightness:", config.brightness_mod)
         else:
             if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].is_pressed:
-                increase_brightness(0.01)
+                increase_brightness(config.smooth_brightness_speed)
                 #print("brightness:", config.brightness_mod)
             if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].is_pressed:
-                decrease_brightness(0.01)
+                decrease_brightness(config.smooth_brightness_speed)
                 #print("brightness:", config.brightness_mod)
 
             
@@ -724,7 +727,6 @@ def lerp(tstart,tend,t, ystart, yend):
     #yend = 255
     y = ystart + (yend - ystart) * ((t-tstart)/(tend-tstart))
     return y
-    
     
     
 

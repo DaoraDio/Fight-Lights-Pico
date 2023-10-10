@@ -5,13 +5,15 @@
   <textarea id="code_box" name="code_box" hidden></textarea>
 
   <h2><a target="_blank" href="https://fight-lights.com">Fight Lights Pico</a></h2>
-  <h2>Configurator for V2.4.0</h2>
+  <h2>Configurator for V2.4.7</h2>
   <div id="file_wrapper">
     <div id="file_select_text">Open one or multiple config files:</div>
     <input type="file" id="open_button" onchange="get_names()" multiple accept=".py"><br>
     <button class="arrow" onclick="left_arrow()" disabled autocomplete="off">&#8592</button><input id="file_names" type="text" placeholder="Select a File" disabled><button class="arrow" onclick="right_arrow()" disabled autocomplete="off">&#8594</button>
     <button onclick="paste()" hidden id="load_from_clipboard">Load code from clipboard</button>
   </div>
+  <br>
+  <button onclick="fill_with_default_config()" hidden>Load default Config</button>
   <br>
   <br>
   <br>
@@ -32,6 +34,8 @@
         <script src="JS\gpio_config.js"></script>
         <script src="JS\dropHandler.js"></script>
         <script src="JS\on_off_modal.js"></script>
+        <script src="JS\dynamic_profile.js"></script>
+        <script src="JS\default_code.js"></script>
 
         <!--<button id=""  onclick="check_name('asd_')">TEST</button>-->
         
@@ -47,7 +51,7 @@
 
         <!--NUM LEDS-->
         <div>Number of LEDs </div>
-        <input id="led_count" name="led_count" type="number" value="8" min="1" onchange="set_bg_table()"> <div class="helper" title="Total number of LEDs in your LED chain">?</div>
+        <input id="led_count" name="led_count" type="number" value="8" min="1" onchange="set_bg_table()" oninput="remove_bigger_led_numbers()"> <div class="helper" title="Total number of LEDs in your LED chain">?</div>
         
         <!--GPIO PIN-->
         <div>LED Chain GPIO Pin</div>
@@ -83,6 +87,12 @@
           <option value="28">GP28</option>
         </select> <div class="helper" title="GPIO Pin that the LED chain connects to">?</div>
         <button onclick="open_gpio_modal(this)" name="LED Chain" hidden>SET GPIO PIN</button>
+        
+        <!--onboard LED-->
+        <br>
+        <input type="checkbox" id="onboard_LED">
+        <label for="onboard_LED">Enable Onboard LED</label>
+        <div class="helper" title="Enable or disable the Onboard LED of the Raspberry Pi Pico">?</div> <br>
 
         <!--PROFILE COLOR-->
         <div>Profile Color</div>
@@ -105,7 +115,7 @@
         
         <!--BRIGHTNESS STEPS-->
         <div>Brightness Steps:</div>
-        <select name="brightness_steps" id="brightness_steps">
+        <select name="brightness_steps" id="brightness_steps" onchange="show_smooth_slider()">
             <option value="10">10 Steps</option>
             <option value="5">5 Steps</option>
             <option value="4">4 Steps</option>
@@ -113,6 +123,8 @@
             <option value="1">Toggle On/Off</option>
             <option value="smooth">Smooth</option>
         </select> 
+        <input type="range" id="smooth_speed" name="smooth_speed" min="0.005" max="0.1" step="0.005" oninput="update_smooth_value()" value="0.01" hidden>
+        <label for="smooth_speed" id="smooth_label" hidden>Speed:</label>
         <div class="helper" title="When increasing or decreasing the brightness via LED options mode, the step size controls how much the brightness changes per instance.&#10;10 steps - 10% change per click&#10;5 steps - 20% change per click&#10;4 steps - 25% change per click&#10;2 steps - 50% change per click&#10;Toggle On/Off - 100% change per click&#10;Smooth - The change in brightness is no longer in steps but increases/decreases smoothly as long as the corresponding button is held &#10;&#10;Example: If your startup brightness is set to 50% and step size set to 4 steps, increasing the brightness once will set your LEDs brightness to 75% ">?</div>
         
         <!--IDLE MODE-->
@@ -152,6 +164,13 @@
         <br>
         <button id="led_options_button" onclick="show_onoff_modal()">Set On/Off Button</button>
         <div class="helper" title="Set a button or a combination of buttons as a ON/Off switch for the LEDs outside of LED Options mode.">?</div>
+        <br>
+´
+
+        <!--Dynamic Profile Selection-->
+        <br>
+        <button id="dynamic_profile" onclick="show_dynamic_profile_modal()">Quick Profile Selection</button>
+        <div class="helper" title="Set a button or a combination of buttons to instantly display the next profile.&#10;&#10;Unlike changing the profile from LED option mode, the selected profile is not saved for the next restart">?</div>
         <br>
 
 
@@ -406,7 +425,7 @@
   <dialog id="player_led_modal">
     <h3>Player LED Configuration</h3>
     Player LED GPIO PIN:
-    <select name="playerLED_pin_num" id="playerLED_pin_num">
+    <select name="playerLED_pin_num" id="playerLED_pin_num" value="16">
       <option value="0">GP0</option>
       <option value="1">GP1</option>
       <option value="2">GP2</option>
@@ -536,5 +555,40 @@
     <button class="modal_button" id="" onclick="close_onoff_modal()">Close</button>
   </dialog>
 
+  <dialog class="modal" id="dynamic_profile_modal">
+    <div style="color:rgb(179, 3, 3)">Do not use profiles with different Number of LEDs!</div>
+    <br>
+    Set buttons to select the next profile
+    <br>
+    <button id="dynamic_profile_next_delete" onclick="delete_dynamic_profile_next()" class="delete_buttons" title="Delete" disabled>&#128465</button>
+    <button id="dynamic_profile_next_add" onclick="dynamic_profile_next_add()">Add</button>
+    <select id="dynamic_profile_next_select" onmouseenter=""></select>
+    <button id="dynamic_profile_next_reset" onclick="reset_next_table()" title="reset inputs" class="reset_buttons">&#10227</button>
+    <div id="dynamic_profile_next_row_id" hidden></div>
+    <table class="tg" id="dynamic_profile_table_next" onmouseover="select_dynamic_profile_next_table()">
+      <thead>
+        <tr>
+          <th style="font-weight: bold;">Buttons</th>
+        </tr>
+      </thead>
+    </table>
+    <br>
+    Set buttons to select the previous profile
+    <br>
+    <button id="dynamic_profile_prev_delete" onclick="delete_dynamic_profile_prev()" class="delete_buttons" title="Delete" disabled>&#128465</button>
+    <button id="dynamic_profile_prev_add" onclick="dynamic_profile_prev_add()">Add</button>
+    <select id="dynamic_profile_prev_select" onmouseenter=""></select>
+    <button id="dynamic_profile_next_prev" onclick="reset_prev_table()" title="reset inputs" class="reset_buttons">&#10227</button>
+    <div id="dynamic_profile_prev_row_id" hidden></div>
+    <table class="tg" id="dynamic_profile_table_prev" onmouseover="select_dynamic_profile_prev_table()">
+      <thead>
+        <tr>
+          <th style="font-weight: bold;">Buttons</th>
+        </tr>
+      </thead>
+    </table>
+    <br>
+    <button onclick="close_dynamic_profile_modal()">close</button>
+  </dialog>
 </body>
 </html> 

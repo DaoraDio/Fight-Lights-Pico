@@ -1,4 +1,4 @@
-print("statemachine")
+print("\033[32mstatemachine\033[0m")
 import rp2
 import sys
 try:

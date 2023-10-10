@@ -1,4 +1,4 @@
-print("playerLED")
+print("\033[32mplayerLED\033[0m")
 import rp2
 import sys
 import config

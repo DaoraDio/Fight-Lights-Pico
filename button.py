@@ -1,4 +1,4 @@
-print("button")
+print("\033[32mbutton\033[0m")
 from machine import Pin
 import config
 import functions

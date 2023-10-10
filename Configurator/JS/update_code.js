@@ -1,7 +1,7 @@
 function set_code()
 {
   var failsave = "#when launching this module by accident it will launch the main.py instead\nif __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
-  var header = "print(\"config\")\n\#Fight Lights Pico V2.4.0\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth\nimport button\nimport functions\nimport init\n\n";
+  var header = "print(\"\\033[32mconfig\\033[0m\")\n\#Fight Lights Pico V2.4.7\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth\nimport button\nimport functions\nimport init\n\n";
 
   //profile name
   var profile_name = document.getElementById("profile_name").value;
@@ -244,7 +244,7 @@ function set_code()
   player3_led = "P3_color = " + player3_led;
   player4_led = "P4_color = " + player4_led;
 
-  //led_options
+  //onOff button
   var OnOff_button = "OnOff_button = [";
   var OnOff_table = document.getElementById("on_off_table");
   for (var i = 1, row; row = OnOff_table.rows[i]; i++) 
@@ -269,7 +269,47 @@ function set_code()
   else
     var led_options_color_cb = "ledOptions_profile_color_use_all_LEDs = False"
 
-  
+  //onboard LED
+  if(document.getElementById("onboard_LED").checked)
+    var onboard_led_on  = "onboard_led_on = True"
+  else
+    var onboard_led_on  = "onboard_led_on = False"
+
+  //dynamic profile next
+  var dynamic_profile_next = "next_config = [";
+  var dynamic_profile_next_table = document.getElementById("dynamic_profile_table_next");
+  for (var i = 1, row; row = dynamic_profile_next_table.rows[i]; i++) 
+  {
+      var col = row.innerText;
+      col = col.trim();
+      //console.log(col);
+      dynamic_profile_next += col + '_MyButton' + ',';
+  }
+  dynamic_profile_next = dynamic_profile_next.slice(0,-1);
+  dynamic_profile_next += "]";
+  if(dynamic_profile_next == "next_config = ]")
+    dynamic_profile_next = "next_config = []";
+
+  //dynamic profile prev
+  var dynamic_profile_prev = "prev_config = [";
+  var dynamic_profile_prev_table = document.getElementById("dynamic_profile_table_prev");
+  for (var i = 1, row; row = dynamic_profile_prev_table.rows[i]; i++) 
+  {
+      var col = row.innerText;
+      col = col.trim();
+      //console.log(col);
+      dynamic_profile_prev += col + '_MyButton' + ',';
+  }
+  dynamic_profile_prev = dynamic_profile_prev.slice(0,-1);
+  dynamic_profile_prev += "]";
+  if(dynamic_profile_prev == "prev_config = ]")
+    dynamic_profile_prev = "prev_config = []";
+
+
+  //smooth slider
+  var smooth_speed = document.getElementById("smooth_speed").value;
+  smooth_speed = "smooth_brightness_speed = " + smooth_speed;
+
 
   //output
   document.getElementById("code_box").value = failsave + header 
@@ -313,6 +353,10 @@ function set_code()
                                               + player2_led + '\n'
                                               + player3_led + '\n'
                                               + player4_led + '\n'
+                                              + dynamic_profile_next + '\n'
+                                              + dynamic_profile_prev + '\n'
+                                              + onboard_led_on + '\n'
+                                              + smooth_speed + '\n'
                                               + "############do not delete this line#######################";
 }
 

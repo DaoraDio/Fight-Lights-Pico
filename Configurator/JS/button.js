@@ -148,7 +148,10 @@ function delete_button()
   var led_options_table = document.getElementById("led_options_table");
   var OnOff_table = document.getElementById("on_off_table");
   var button_table = document.getElementById("button_table");
+  var dynamic_table_next = document.getElementById("dynamic_profile_table_next");
+  var dynamic_table_prev = document.getElementById("dynamic_profile_table_prev");
   var row_id = parseInt(document.getElementById("button_row_id").innerHTML);
+  
   
 
   
@@ -171,6 +174,26 @@ function delete_button()
       i--;
     }
   }  
+
+  for (var i = 1, row; row = dynamic_table_next.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == button_name)
+    {
+      dynamic_table_next.deleteRow(i);
+      i--;
+    }
+  }  
+
+  for (var i = 1, row; row = dynamic_table_prev.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == button_name)
+    {
+      dynamic_table_prev.deleteRow(i);
+      i--;
+    }
+  } 
+
+
 
   button_table.deleteRow(row_id);
   reset_all();
@@ -218,6 +241,27 @@ function update_button()
   //update other tables/selects
   var led_options_table = document.getElementById("led_options_table");
   for (var i = 1, row; row = led_options_table.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == old_name)
+      row.cells[0].innerHTML = name;
+  } 
+
+  var dynamic_profile_table_prev = document.getElementById("dynamic_profile_table_prev");
+  for (var i = 1, row; row = dynamic_profile_table_prev.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == old_name)
+      row.cells[0].innerHTML = name;
+  } 
+
+  var dynamic_profile_table_next = document.getElementById("dynamic_profile_table_next");
+  for (var i = 1, row; row = dynamic_profile_table_next.rows[i]; i++) 
+  {
+    if(row.cells[0].innerHTML == old_name)
+      row.cells[0].innerHTML = name;
+  } 
+
+  var on_off_table = document.getElementById("on_off_table");
+  for (var i = 1, row; row = on_off_table.rows[i]; i++) 
   {
     if(row.cells[0].innerHTML == old_name)
       row.cells[0].innerHTML = name;
@@ -360,7 +404,7 @@ function add_button()
 
 
     //update_color_button_table();
-    alert("Button: " + name + "has been added");
+    alert("Button: " + name + " has been added");
 }
 
 function set_color_from_select()
@@ -414,4 +458,27 @@ function set_fadeout_for_all()
   {
       table.rows[i].cells[7].innerHTML = document.getElementById("fade_out").value;
   }
+}
+
+function remove_bigger_led_numbers()
+{
+  var numleds = document.getElementById("led_count").value;
+  numleds = parseInt(numleds);
+  var table = document.getElementById("button_table");
+  for (var i = 1, row; row = table.rows[i]; i++) 
+  {
+      var led_pos = table.rows[i].cells[1].innerHTML;
+      var arr = led_pos.split(" ");
+      for(var j = 0; j < arr.length; j++)
+      {
+        if(parseInt(arr[j]) > numleds)
+          delete arr[j];
+      }
+      var collapsedString = arr.join(" ");
+      if (collapsedString.trim().length === 0)
+          collapsedString = "Not Set";
+      table.rows[i].cells[1].innerHTML = collapsedString;
+      console.log(collapsedString);
+  }
+      //console.log(arr);
 }

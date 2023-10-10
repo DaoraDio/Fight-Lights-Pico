@@ -1,4 +1,4 @@
-print("animation")
+print("\033[32manimation\033[0m")
 import init
 import functions
 import config

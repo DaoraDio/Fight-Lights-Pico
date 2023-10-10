@@ -5,8 +5,8 @@ if __name__ == '__main__':
         init.code = f.read()
     exec(init.code)
 
-print("config")
-#Fight Lights Pico V2.4.0
+print("\033[32mconfig\033[0m")
+#Fight Lights Pico V2.4.7
 
 from machine import Pin
 from init import random, rainbow, smooth
@@ -100,4 +100,8 @@ P1_color = yellow
 P2_color = yellow
 P3_color = yellow
 P4_color = yellow
+next_config = []
+prev_config = []
+onboard_led_on = True
+smooth_brightness_speed = 0.01
 ############do not delete this line#######################

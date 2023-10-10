@@ -1,4 +1,4 @@
-print("init")
+print("\033[32minit\033[0m")
 import machine
 code = "" #hold the code for main.py when launching from config
 
@@ -86,3 +86,12 @@ p1_active = False
 p2_active = False
 p3_active = False
 p4_active = False
+
+#quick load variables
+config_names = []
+current_config_index = 0
+
+#onoff button and dynamic profile counter
+on_off_cnt = 0
+prof_next_cnt = 0
+prof_prev_cnt = 0

@@ -558,7 +558,73 @@ function get_code()
     var playerled_pinnum = get_value("playerLED_PIN_NUM = ");
     document.getElementById("playerLED_pin_num").value = playerled_pinnum;
 
+    var onboardled = get_value("onboard_led_on = ");
+    if(onboardled == "True")
+        document.getElementById("onboard_LED").checked = true;
+    else
+        document.getElementById("onboard_LED").checked = false;
 
+    //dynamic profile next
+    var next_config = get_variable_line("next_config = [");
+
+        
+    next_config = next_config.replace("next_config = [", '');
+    next_config = next_config.slice(0,-1);
+    next_config = next_config.replaceAll("_MyButton", '');
+    next_config = next_config.split(',');
+    console.log(next_config)
+    var table_replace = '<table class="tg" id="dynamic_profile_table_next" onmouseover="">\
+                            <thead>\
+                            <tr>\
+                                <th style="font-weight: bold;">Buttons</th>\
+                            </tr>\
+                            </thead>\
+                        </table>';
+    var next_config_table = document.getElementById("dynamic_profile_table_next");
+    next_config_table.innerHTML = table_replace;
+    if(next_config.length !== 1)
+    {
+        for(var i = 0; i < next_config.length; i++)
+        {
+            var row = next_config_table.insertRow();
+            var cell1 = row.insertCell(0);
+            cell1.innerHTML = next_config[i];
+        }
+    }
+
+    //dynamic profile prev
+    var prev_config = get_variable_line("prev_config = [");
+
+        
+    prev_config = prev_config.replace("prev_config = [", '');
+    prev_config = prev_config.slice(0,-1);
+    prev_config = prev_config.replaceAll("_MyButton", '');
+    prev_config = prev_config.split(',');
+    console.log(prev_config)
+    var table_replace = '<table class="tg" id="dynamic_profile_table_prev" onmouseover="">\
+                            <thead>\
+                            <tr>\
+                                <th style="font-weight: bold;">Buttons</th>\
+                            </tr>\
+                            </thead>\
+                        </table>';
+    var prev_config_table = document.getElementById("dynamic_profile_table_prev");
+    prev_config_table.innerHTML = table_replace;
+    if(prev_config.length !== 1)
+    {
+        for(var i = 0; i < prev_config.length; i++)
+        {
+            var row = prev_config_table.insertRow();
+            var cell1 = row.insertCell(0);
+            cell1.innerHTML = prev_config[i];
+        }
+    }
+
+    //smooth speed
+    var smooth_brightness_speed = get_value("smooth_brightness_speed = ");
+    document.getElementById("smooth_speed").value = smooth_brightness_speed;
+    document.getElementById("smooth_label").innerText = "Speed: " + smooth_brightness_speed;
+    show_smooth_slider();
 
 }
 

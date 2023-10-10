@@ -14,7 +14,8 @@ function call_on_start()
     set_code();
     set_bg_table();
     show_idle1_config();
-
+    update_smooth_value()
+    show_smooth_slider()
 
     var browser = navigator.sayswho;
     browser = browser.split(" ");
