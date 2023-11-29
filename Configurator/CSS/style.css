@@ -1,6 +1,7 @@
 html *
 {
     font-family: Arial;
+
 }
 
 h2
@@ -16,27 +17,24 @@ h2
 
 .flex_child
 {
-    width: 30%;
+    width: 100%;
 }
 
 #left_flex
 {
     position: relative;
-    width: 34%;
+
     
 }
 #middle_flex
 {
     position: inherit;
-    width: 90%;
-    padding-left: 7%;
     
+
 }
 #right_flex
 {
-    position: inherit;
-    
-    
+    position: inherit; 
 }
 
 input
@@ -236,9 +234,9 @@ select
 /*button table*/
 #button_table
 {
-    /*padding-right: 2000px;*/
     position: absolute;
-    left: 21%;
+    left: 25%;
+    width: 45%;
     
 }
 
@@ -278,30 +276,36 @@ select
     width: 55px;
 }
 
-#button_name
-{
-    height: 25px;
-}
-
 #color_select
 {
     height: 30px;
     width: 70px;
 }
 
+
+.input-container 
+{
+    position: relative;
+    display: inline-block;
+}
+
+#button_name
+{
+    height: 25px;
+    box-sizing: border-box;
+}
+
+
 #refresh_button
 {
     position: absolute;
-    left: 125px;
-    top: -2px;
-    height: 31px;
-    width: 35px;
-    /*border: solid gray 1px;*/
-    border: none;
-    z-index: 1;
-    font-size: 20px;
+    right: 5px; /* Adjust the value based on the desired spacing */
+    top: 34%;
+    font-size: large;
     background: transparent;
     color: rgb(123, 123, 253);
+    transform: translateY(-50%);
+    border: none;
     
 }
 
@@ -336,7 +340,7 @@ select
 
 #background_conf
 {   
-    width: 60%;
+    width: 90%;
     margin-left: 20px;
 
     box-shadow: 0px 1px 0px 0px #1c1b18;
@@ -951,11 +955,6 @@ select
     cursor: help;
     opacity: 40%;
 }
-
-.input-container {
-    position: relative;
-    display: inline-block;
-  }
   
   .delete_buttons
   {
