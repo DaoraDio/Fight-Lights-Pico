@@ -28,7 +28,6 @@ function select_color_table()
 
     
         rIndex = this.rowIndex;
-        console.log(rIndex);
         document.getElementById("row_id").innerHTML = rIndex;
         document.getElementById("color_name").value = this.cells[0].innerHTML;
         var R = parseInt(this.cells[1].innerHTML);
@@ -234,7 +233,12 @@ function update_color()
     } 
 
 
-
+    var arrowElements = document.querySelectorAll('.arrow');
+    arrowElements.forEach(function(element) {
+      if(element.getAttribute('directioncolor') == old_name)
+        element.setAttribute('directioncolor', name);
+    });
+  
     reset();
 }
 
@@ -243,6 +247,7 @@ function delete_color()
   var button_uses_color = false;
   var background_uses_color = false;
   var playerled_uses_color = false;
+  var eightway_uses_color = false;
   var button_table = document.getElementById("button_table");
   var bg_table = document.getElementById("background_table");
   var name = document.getElementById("color_name");
@@ -270,19 +275,69 @@ function delete_color()
       break;
     }
   }  
-  //console.log("button Color: ", button_uses_color);
-  //console.log("background Color: ", background_uses_color);
   var p1_col = document.getElementById("player_led1").getAttribute("colorname");
   var p2_col = document.getElementById("player_led2").getAttribute("colorname");
   var p3_col = document.getElementById("player_led3").getAttribute("colorname");
   var p4_col = document.getElementById("player_led4").getAttribute("colorname");
+
+
+    var arrow_up = document.getElementsByClassName("arrow arrow-up")[0];
+    var arrow_down = document.getElementsByClassName("arrow arrow-down")[0];
+    var arrow_left = document.getElementsByClassName("arrow arrow-left")[0];
+    var arrow_right = document.getElementsByClassName("arrow arrow-right")[0];
+    var arrow_up_left = document.getElementsByClassName("arrow arrow-up-left")[0];
+    var arrow_up_right = document.getElementsByClassName("arrow arrow-up-right")[0];
+    var arrow_down_left = document.getElementsByClassName("arrow arrow-down-left")[0];
+    var arrow_down_right = document.getElementsByClassName("arrow arrow-down-right")[0];
+
+    if(arrow_up.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_up.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_down.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_down.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_left.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_left.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_right.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_right.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_up_left.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_up_left.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_up_right.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_up_right.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_down_left.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_down_left.setAttribute("directioncolor", "blank");
+    }
+    if(arrow_down_right.getAttribute("directioncolor") === name.value)
+    {
+      eightway_uses_color = true;
+      arrow_down_right.setAttribute("directioncolor", "blank");
+    }
+    
 
   if(name.value == p1_col || name.value == p2_col || name.value == p3_col || name.value == p4_col)
   {
     playerled_uses_color = true;
   }
 
-  if(background_uses_color || button_uses_color || playerled_uses_color)
+  if(background_uses_color || button_uses_color || playerled_uses_color || eightway_uses_color)
   {
     if (confirm("This color is used as button, background or playerLED color, do you still want to delete it? Colors will be set to blank")) 
     {

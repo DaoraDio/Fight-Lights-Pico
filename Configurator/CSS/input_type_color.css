@@ -1,0 +1,11 @@
+input[type="color"] 
+{
+    padding: 0;
+    margin: 0;
+    border: none;
+    width: 45px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    
+    cursor: pointer;
+}
+	

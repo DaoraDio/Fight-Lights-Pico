@@ -1,7 +1,23 @@
+function pythonArrayStringSubtractOne(inputString) //subtracts 1 from a python tuble as a string
+{
+  var numbersArray = inputString.replace(/[()]/g, "").split(",");
+  var modifiedNumbers = numbersArray
+    .filter(function(number) {
+      return number !== ""; 
+    })
+    .map(function(number) {
+      return parseInt(number) - 1;
+    });
+
+  var resultString = "(" + modifiedNumbers.join(",") + (modifiedNumbers.length > 0 ? ',' : '') + ")";
+  return resultString
+}
+
 function set_code()
 {
-  var failsave = "#when launching this module by accident it will launch the main.py instead\nif __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
-  var header = "print(\"\\033[32mconfig\\033[0m\")\n\#Fight Lights Pico V2.4.7\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth\nimport button\nimport functions\nimport init\n\n";
+  var version = "V2.5.2"
+  var failsave = "if __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
+  var header = "print(\"\\033[32mconfig\\033[0m\")\n\#Fight Lights Pico " + version +"\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth, notSet\nimport button\nimport functions\nimport init\n\n";
 
   //profile name
   var profile_name = document.getElementById("profile_name").value;
@@ -15,7 +31,6 @@ function set_code()
   {
       var col = row.innerText;
       col = col.split("\t");
-      //console.log(col);
       colors += col[0] + ' = (' + col[1] + ',' + col[2] + ',' + col[3] + ')\n';
 
       if(col[0] != 'blank')
@@ -188,7 +203,6 @@ function set_code()
   {
       var col = row.innerText;
       col = col.trim();
-      //console.log(col);
       led_options += col + '_MyButton' + ',';
   }
   led_options = led_options.slice(0,-1);
@@ -218,7 +232,7 @@ function set_code()
   var led_options_confirm = "ledOptions_confirm = [" + document.getElementById("led_options_confirm").value + '_MyButton]'; 
   if(led_options_confirm == "ledOptions_confirm = [_MyButton]")
     led_options_confirm = "ledOptions_confirm = []"
-  //console.log(led_options);
+ 
 
   var rainbow_speed = "rainbow_speed = " + document.getElementById("rainbow_speed").value;
 
@@ -251,7 +265,6 @@ function set_code()
   {
       var col = row.innerText;
       col = col.trim();
-      //console.log(col);
       OnOff_button += col + '_MyButton' + ',';
   }
   OnOff_button = OnOff_button.slice(0,-1);
@@ -282,7 +295,6 @@ function set_code()
   {
       var col = row.innerText;
       col = col.trim();
-      //console.log(col);
       dynamic_profile_next += col + '_MyButton' + ',';
   }
   dynamic_profile_next = dynamic_profile_next.slice(0,-1);
@@ -297,7 +309,6 @@ function set_code()
   {
       var col = row.innerText;
       col = col.trim();
-      //console.log(col);
       dynamic_profile_prev += col + '_MyButton' + ',';
   }
   dynamic_profile_prev = dynamic_profile_prev.slice(0,-1);
@@ -310,6 +321,131 @@ function set_code()
   var smooth_speed = document.getElementById("smooth_speed").value;
   smooth_speed = "smooth_brightness_speed = " + smooth_speed;
 
+  //LED Exclude
+  var modal_body = document.getElementById("idle_exlude_modal_body");
+  var checkedCheckboxIds = [];
+  
+  if (modal_body) 
+  {
+    var checkboxes = modal_body.querySelectorAll('.idle_modal_led_cb');
+  
+    checkboxes.forEach(function (checkbox) {
+      if (checkbox.checked) {
+        var checkboxId = checkbox.closest('span').id;
+        checkedCheckboxIds.push(checkboxId);
+      }
+    });
+
+    var modifiedArray = checkedCheckboxIds.map(function (element) {
+      var stringWithoutPrefix = element.replace('led_num', '');
+
+      return (parseInt(stringWithoutPrefix, 10)-1);
+    });
+  }
+
+  skip_leds_in_idle = "skip_leds_in_idle = [";
+  for(i = 0; i < modifiedArray.length;i++)
+    skip_leds_in_idle += modifiedArray[i] + ",";
+  skip_leds_in_idle += "]"
+
+  idlemode_leds = "idlemode_leds = functions.remove_idle_skips()";
+
+  //eightway 
+  var arrow_up = document.getElementsByClassName("arrow arrow-up")[0];
+  var arrow_down = document.getElementsByClassName("arrow arrow-down")[0];
+  var arrow_left = document.getElementsByClassName("arrow arrow-left")[0];
+  var arrow_right = document.getElementsByClassName("arrow arrow-right")[0];
+  var arrow_up_left = document.getElementsByClassName("arrow arrow-up-left")[0];
+  var arrow_up_right = document.getElementsByClassName("arrow arrow-up-right")[0];
+  var arrow_down_left = document.getElementsByClassName("arrow arrow-down-left")[0];
+  var arrow_down_right = document.getElementsByClassName("arrow arrow-down-right")[0];
+
+  var up_positions = "(" + arrow_up.getAttribute("led_pos") + ")";
+  up_positions = up_positions.replaceAll(' ', ',');
+  if(up_positions == "(not,Set)")
+    up_positions= "(-1,)";
+  else
+    up_positions = pythonArrayStringSubtractOne(up_positions);
+  var up_color = arrow_up.getAttribute("directioncolor");
+  var eightway_select_up_button = document.getElementById("eightway_select-up").options[document.getElementById("eightway_select-up").selectedIndex].text + "_MyButton";
+  if(eightway_select_up_button == "Set UP Button_MyButton")
+    eightway_select_up_button = "notSet";
+  var eight_way_up = "eight_way_up = [" + up_positions + ","+ up_color + ","+ eightway_select_up_button + "]";
+
+  var down_positions = "(" + arrow_down.getAttribute("led_pos")+")";
+  down_positions = down_positions.replaceAll(' ',',');
+  if(down_positions == "(not,Set)")
+    down_positions= "(-1,)";
+  else
+    down_positions = pythonArrayStringSubtractOne(down_positions);
+  var down_color = arrow_down.getAttribute("directioncolor");
+  var eightway_select_down_button = document.getElementById("eightway_select-down").options[document.getElementById("eightway_select-down").selectedIndex].text + "_MyButton";
+  if(eightway_select_down_button == "Set DOWN Button_MyButton")
+      eightway_select_down_button = "notSet";
+  var eight_way_down = "eight_way_down = [" + down_positions + ","+ down_color + ","+ eightway_select_down_button + "]";
+  
+  var left_positions = "(" + arrow_left.getAttribute("led_pos")+")";
+  left_positions = left_positions.replaceAll(' ',',');
+  if(left_positions == "(not,Set)")
+    left_positions= "(-1,)";
+  else
+    left_positions = pythonArrayStringSubtractOne(left_positions);
+  var left_color = arrow_left.getAttribute("directioncolor");
+  var eightway_select_left_button = document.getElementById("eightway_select-left").options[document.getElementById("eightway_select-left").selectedIndex].text + "_MyButton";
+  if(eightway_select_left_button == "Set LEFT Button_MyButton")
+      eightway_select_left_button = "notSet";
+  var eight_way_left = "eight_way_left = [" + left_positions + ","+ left_color + ","+ eightway_select_left_button + "]";
+
+  var right_positions = "(" + arrow_right.getAttribute("led_pos")+")";
+  right_positions = right_positions.replaceAll(' ',',');
+  if(right_positions == "(not,Set)")
+    right_positions= "(-1,)";
+  else
+    right_positions = pythonArrayStringSubtractOne(right_positions);
+  var right_color = arrow_right.getAttribute("directioncolor");
+  var eightway_select_right_button = document.getElementById("eightway_select-right").options[document.getElementById("eightway_select-right").selectedIndex].text + "_MyButton";
+  if(eightway_select_right_button == "Set RIGHT Button_MyButton")
+      eightway_select_right_button = "notSet";
+  var eight_way_right = "eight_way_right = [" + right_positions + ","+ right_color + ","+ eightway_select_right_button + "]";
+  
+
+  var up_left_positions = "(" + arrow_up_left.getAttribute("led_pos")+")";
+  up_left_positions = up_left_positions.replaceAll(' ',',');
+  if(up_left_positions == "(not,Set)")
+    up_left_positions= "(-1,)";
+  else
+    up_left_positions = pythonArrayStringSubtractOne(up_left_positions);
+  var up_left_color = arrow_up_left.getAttribute("directioncolor");
+  var eight_way_up_left = "eight_way_upleft = [" + up_left_positions + ","+ up_left_color + "]";
+
+  var up_right_positions = "(" + arrow_up_right.getAttribute("led_pos")+")";
+  up_right_positions = up_right_positions.replaceAll(' ',',');
+  if(up_right_positions == "(not,Set)")
+    up_right_positions= "(-1,)";
+  else
+    up_right_positions = pythonArrayStringSubtractOne(up_right_positions);
+  var up_right_color = arrow_up_right.getAttribute("directioncolor");
+  var eight_way_up_right = "eight_way_upright = [" + up_right_positions + ","+ up_right_color + "]";
+
+  var down_left_positions = "(" + arrow_down_left.getAttribute("led_pos")+")";
+  down_left_positions = down_left_positions.replaceAll(' ',',');
+  if(down_left_positions == "(not,Set)")
+    down_left_positions= "(-1,)";
+  else
+    down_left_positions = pythonArrayStringSubtractOne(down_left_positions);
+  var down_left_color = arrow_down_left.getAttribute("directioncolor");
+  var eight_way_down_left = "eight_way_leftdown = [" + down_left_positions + ","+ down_left_color + "]";
+
+  var down_right_positions = "(" + arrow_down_right.getAttribute("led_pos")+")";
+  down_right_positions = down_right_positions.replaceAll(' ',',');
+  if(down_right_positions == "(not,Set)")
+    down_right_positions= "(-1,)";
+  else
+    down_right_positions = pythonArrayStringSubtractOne(down_right_positions);
+  var down_right_color = arrow_down_right.getAttribute("directioncolor");
+  var eight_way_down_right = "eight_way_rightdown = [" + down_right_positions + ","+ down_right_color + "]";
+
+  
 
   //output
   document.getElementById("code_box").value = failsave + header 
@@ -357,6 +493,16 @@ function set_code()
                                               + dynamic_profile_prev + '\n'
                                               + onboard_led_on + '\n'
                                               + smooth_speed + '\n'
+                                              + eight_way_up + '\n'
+                                              + eight_way_down + '\n'
+                                              + eight_way_left + '\n'
+                                              + eight_way_right + '\n'
+                                              + eight_way_up_left + '\n'
+                                              + eight_way_up_right + '\n'
+                                              + eight_way_down_left + '\n'
+                                              + eight_way_down_right + '\n'
+                                              + skip_leds_in_idle + '\n'
+                                              + idlemode_leds + '\n'
                                               + "############do not delete this line#######################";
 }
 

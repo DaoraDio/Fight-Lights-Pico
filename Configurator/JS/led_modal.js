@@ -18,10 +18,12 @@ function led_open_modal()
 
     table_led_positions = table_led_positions.trim().split(/\s+/) //led positions to in selected row to array
     
-    var cnt = 0;
     var found = false;
     for(var i = 0; i < led_num; i++)
     {
+        if ((i % 3) == 0 && i != 0) 
+            body_string += '<br>';
+
         found = false;
         for(var j = 0; j < table_led_positions.length; j++)
         {
@@ -34,13 +36,7 @@ function led_open_modal()
         }
         if(!found)
             body_string += '<label><input class="modal_led_cb" type="checkbox">' + 'LED ' + (i+1) + '</label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-    
-        cnt++;
-        if(cnt == 3)
-        {
-            body_string += '<br>'
-            cnt = 0;
-        }
+
     }
     
 

@@ -1,3 +1,8 @@
+if __name__ == '__main__':
+    with open('main.py', 'r') as f:
+        code = f.read()
+    exec(code)
+
 print("\033[32minit\033[0m")
 import machine
 code = "" #hold the code for main.py when launching from config
@@ -33,6 +38,7 @@ idle_ticks = 0
 
 tmp_brightness = 1
 
+random_color_id = 0
 
 #frequency in hz at which the timer interrups happen
 frequency = 60
@@ -45,6 +51,7 @@ random_color = 0
 random = 'random'
 rainbow = 'rainbow'
 smooth = 'smooth'
+notSet = 'notSet'
 
 #initializations for fgc inputs
 current_input = ""
@@ -95,3 +102,9 @@ current_config_index = 0
 on_off_cnt = 0
 prof_next_cnt = 0
 prof_prev_cnt = 0
+
+#8 Way-Joystick random color
+saved_RGB = (0,0,0)
+last_color_id = 0
+
+run_savestats = False

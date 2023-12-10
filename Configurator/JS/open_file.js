@@ -2,10 +2,67 @@ var files;
 var i = 0;
 const file_name_textbox = document.getElementById("file_names");
 
+function set_eighway_directions(variable_line, arrow_classname, select_idname)
+{
+    var eightway_direction = get_value(variable_line);
+    eightway_direction = eightway_direction.replaceAll('(','');
+    eightway_direction = eightway_direction.replaceAll(')','');
+    eightway_direction = eightway_direction.replaceAll('[','');
+    eightway_direction = eightway_direction.replaceAll(']','');
+    eightway_direction = eightway_direction.split(',');
+    var eighway_direction_button = eightway_direction.pop();
+    eighway_direction_button = eighway_direction_button.replaceAll('_MyButton', '');
+    var eighway_direction_color = eightway_direction.pop();
+    if(eightway_direction[eightway_direction.length-1] == "")
+        eightway_direction.pop();
+
+    var led_pos_string = "";
+    for(i = 0; i < eightway_direction.length; i++)
+    {
+        if(eightway_direction[0] == "-1" )
+            led_pos_string = "not Set"
+        else
+            led_pos_string += (Number(eightway_direction[i])+1) + " ";
+    }
+    
+    document.getElementsByClassName(arrow_classname)[0].setAttribute("directioncolor", eighway_direction_color);
+    document.getElementsByClassName(arrow_classname)[0].setAttribute("led_pos", led_pos_string);
+    console.log(eighway_direction_button);
+    if(eighway_direction_button == "notSet")
+        document.getElementById(select_idname).value = -1;
+    else
+        document.getElementById(select_idname).value = eighway_direction_button;
+}
+
+function set_eighway_arrows(variable_line, arrow_classname)
+{
+    var eightway_direction = get_value(variable_line);
+    eightway_direction = eightway_direction.replaceAll('(','');
+    eightway_direction = eightway_direction.replaceAll(')','');
+    eightway_direction = eightway_direction.replaceAll('[','');
+    eightway_direction = eightway_direction.replaceAll(']','');
+    eightway_direction = eightway_direction.split(',');
+
+    var eighway_direction_color = eightway_direction.pop();
+    if(eightway_direction[eightway_direction.length-1] == "")
+        eightway_direction.pop();
+
+    var led_pos_string = "";
+    for(i = 0; i < eightway_direction.length; i++)
+    {
+        if(eightway_direction[0] == "-1" )
+            led_pos_string = "not Set"
+        else
+            led_pos_string += (Number(eightway_direction[i])+1) + " ";
+    }
+    
+    document.getElementsByClassName(arrow_classname)[0].setAttribute("directioncolor", eighway_direction_color);
+    document.getElementsByClassName(arrow_classname)[0].setAttribute("led_pos", led_pos_string);
+}
 //returns the line of code of str from the loaded file
 function set_brightness_slider(that)
 {
-    //console.log(that.value);
+    
     var brightness_label = document.getElementById("brightness_label");
     brightness_label.innerText = "Brightness: " + that.value + "%";
     
@@ -26,18 +83,30 @@ function set_brightness_slider(that)
 function get_variable_line(str)
 {
     var code = document.getElementById("new_codebox").value;
+    var indexOfStr = code.indexOf(str);
 
-    var substring = code.substring(code.indexOf(str), code.length);
-    substring = substring.substring(0,substring.indexOf('\n'));
-
-    return substring;
+    if (indexOfStr !== -1) 
+    {
+        var substring = code.substring(indexOfStr, code.length);
+        substring = substring.substring(0, substring.indexOf('\n'));
+        return substring;
+    } else 
+    {
+        return false;
+    }
 }
 
 function get_value(str)
 {
-    var string = get_variable_line(str);
-    string = string.split(' ');
-    return string[string.length-1]
+    if(get_variable_line(str))
+    {
+        var string = get_variable_line(str);
+        string = string.split(' ');
+        return string[string.length-1]
+    }
+    else
+        return false;
+
 }
 
 function py_tuple_to_rgb_array(tuple)
@@ -105,7 +174,6 @@ function get_code()
         cell4.innerHTML = col_arr[2];
         cell5.style.backgroundColor = cell_color;
     }
-    //console.log(color_list);
 
     //get led_count
     var led_count = get_value("led_count = ");
@@ -139,7 +207,6 @@ function get_code()
     brightness_mod = parseFloat(brightness_mod) * 100;
     document.getElementById("myRange").value = brightness_mod;
     document.getElementById("brightness").innerText = brightness_mod;
-    console.log("brightness_mod:", brightness_mod);
 
     //get brightness_steps  
     var brightness_steps = get_value("brightness_steps = ");
@@ -153,7 +220,7 @@ function get_code()
         document.getElementById("brightness_steps").value = "smooth";
     }
 
-    console.log(brightness_steps);
+    
 
     //get idle_mode  
     var idle_mode = get_value("idle_mode = ");
@@ -185,11 +252,11 @@ function get_code()
         stats_cb.checked = true;
     else
         stats_cb.checked = false;
-    console.log(save_stats);
+    
 
     //get input_reset_time   
     var input_reset_time = get_value("input_reset_time = ");
-    console.log(input_reset_time);
+    
 
     //get profile_color   
     var profile_color = get_value("profile_color = ");
@@ -198,7 +265,7 @@ function get_code()
     profile_color = profile_color.split(',');
     var hex_value = rgbToHex(parseInt(profile_color[0]),parseInt(profile_color[1]),parseInt(profile_color[2]))
     document.getElementById("profile_color").value = hex_value;
-    console.log(hex_value);
+    
 
     //get clear_background_on_press   
     var clear_background_on_press = get_value("clear_background_on_press = ");
@@ -206,28 +273,17 @@ function get_code()
         document.getElementById("clear_bg_on_press").checked = true;
     else
     document.getElementById("clear_bg_on_press").checked = false;
-    console.log(clear_background_on_press);
+    
 
     //set background table
     set_bg_table();
-    //console.log("bg:", background);
-
-    //get fadeout_speed   
-    //var fadeout_speed = get_value("fadeout_speed = ");
-    //document.getElementById("fade_out").value = fadeout_speed;
-    //console.log("fadeout:", fadeout_speed);
-
-    //get fadein_speed   
-    //var fadein_speed = get_value("fadein_speed = ");
-    //document.getElementById("fade_in").value = fadein_speed;
-    //console.log("fadein:", fadein_speed);
 
     //get button_list   
     var button_list = get_value("button_list = ");
     button_list = button_list.substring(1);
     button_list = button_list.slice(0,-1);
     button_list = button_list.split(',');
-    console.log("button_list:", button_list);
+    
 
     //set button table
     //var button = get_value(button_list[0] + " = ");
@@ -295,7 +351,6 @@ function get_code()
         var button_conf = get_variable_line(button_list[i]+'.set_config(');
         button_conf = button_conf.replace(button_list[i]+'.set_config(', '');
         button_conf = button_conf.split(' ');
-        console.log(button_conf)
         
     
         var button_color = button_conf[1].slice(0,-1);
@@ -347,7 +402,6 @@ function get_code()
 
         n_row.cells[4].childNodes[1].value = button_gpio;
 
-        //console.log(gpio_pins);
     }
     show_idle1_config();
     //get idle 1 config
@@ -384,7 +438,6 @@ function get_code()
             cell1.innerHTML = idle_mode1_colors[i];
         }
 
-        console.log(idle_mode1_colors);
     }
         
     //get led_options
@@ -399,7 +452,7 @@ function get_code()
     led_options_button = led_options_button.slice(0,-1);
     led_options_button = led_options_button.replaceAll("_MyButton", '');
     led_options_button = led_options_button.split(',');
-    console.log(led_options_button)
+    
     var table_replace = '<table class="tg" id="led_options_table" onmouseover="">\
                             <thead>\
                             <tr>\
@@ -454,7 +507,7 @@ function get_code()
     led_options_confirm = led_options_confirm.slice(0,-1);
     led_options_confirm = led_options_confirm.replace('_MyButton', '');
     document.getElementById("led_options_confirm").value = led_options_confirm;
-    //console.log(led_option_increase_brightness);
+    
 
     //led options color
     var ledOptions_color = get_value("ledOptions_color = ");
@@ -478,7 +531,7 @@ function get_code()
     OnOff_button = OnOff_button.slice(0,-1);
     OnOff_button = OnOff_button.replaceAll("_MyButton", '');
     OnOff_button = OnOff_button.split(',');
-    console.log(OnOff_button)
+    
     var table_replace = '<table class="tg" id="on_off_table" onmouseover="">\
                             <thead>\
                             <tr>\
@@ -572,7 +625,7 @@ function get_code()
     next_config = next_config.slice(0,-1);
     next_config = next_config.replaceAll("_MyButton", '');
     next_config = next_config.split(',');
-    console.log(next_config)
+    
     var table_replace = '<table class="tg" id="dynamic_profile_table_next" onmouseover="">\
                             <thead>\
                             <tr>\
@@ -600,7 +653,7 @@ function get_code()
     prev_config = prev_config.slice(0,-1);
     prev_config = prev_config.replaceAll("_MyButton", '');
     prev_config = prev_config.split(',');
-    console.log(prev_config)
+    
     var table_replace = '<table class="tg" id="dynamic_profile_table_prev" onmouseover="">\
                             <thead>\
                             <tr>\
@@ -626,6 +679,28 @@ function get_code()
     document.getElementById("smooth_label").innerText = "Speed: " + smooth_brightness_speed;
     show_smooth_slider();
 
+    //exclude idle leds
+    var skip_leds_in_idle = get_value("skip_leds_in_idle = ");
+    var parsedArray = skip_leds_in_idle.slice(1, -2).split(',').map(function(item) {
+        return parseInt(item, 10)+1;
+    });
+    checkedCheckboxIds = []
+    for(var i = 0; i < parsedArray.length; i++)
+    {
+        checkedCheckboxIds.push("led_num"+parsedArray[i])
+    }
+
+    //eightway 
+    show_eightway_modal(false);
+    set_eighway_directions("eight_way_up = [", "arrow arrow-up", "eightway_select-up");
+    set_eighway_directions("eight_way_down = [", "arrow arrow-down", "eightway_select-down");
+    set_eighway_directions("eight_way_left = [", "arrow arrow-left", "eightway_select-left");
+    set_eighway_directions("eight_way_right = [", "arrow arrow-right", "eightway_select-right");
+
+    set_eighway_arrows("eight_way_upleft = [", "arrow arrow-up-left");
+    set_eighway_arrows("eight_way_upright = [", "arrow arrow-up-right");
+    set_eighway_arrows("eight_way_leftdown = [", "arrow arrow-down-left");
+    set_eighway_arrows("eight_way_rightdown = [", "arrow arrow-down-right");
 }
 
 
@@ -700,6 +775,3 @@ function left_arrow()
         get_code();
     }, 50);
 }
-
-
-

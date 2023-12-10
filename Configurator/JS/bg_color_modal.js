@@ -1,25 +1,27 @@
 function fill_bg_table_from_loaded_box()
 {
-    var background = get_value("background = ");
-    background = background.substring(1);
-    background = background.slice(0,-1);
-    background = background.split('),(');
-    background[0] = background[0].substring(1);
-    background[background.length-1] = background[background.length-1].slice(0,-1);
-    //console.log("BACKGROUND:", background);
-
-    var codebox2 = document.getElementById("new_codebox");
-    if(codebox2.value != "")
+    if(get_value("background = "))
     {
-        for(var i = 0; i < document.getElementById("led_count").value; i++)
+        var background = get_value("background = ");
+        background = background.substring(1);
+        background = background.slice(0,-1);
+        background = background.split('),(');
+        background[0] = background[0].substring(1);
+        background[background.length-1] = background[background.length-1].slice(0,-1);
+    
+        var codebox2 = document.getElementById("new_codebox");
+        if(codebox2.value != "")
         {
-            var row = background_table.rows[i+1];
-    
-            var split_arr = background[i].split(',');
-    
-            row.cells[0].innerHTML = parseInt(split_arr[2])
-            row.cells[1].innerHTML = split_arr[1];
-            row.cells[2].innerHTML = parseFloat(split_arr[0])*100 + "%";
+            for(var i = 0; i < document.getElementById("led_count").value; i++)
+            {
+                var row = background_table.rows[i+1];
+        
+                var split_arr = background[i].split(',');
+        
+                row.cells[0].innerHTML = parseInt(split_arr[2])
+                row.cells[1].innerHTML = split_arr[1];
+                row.cells[2].innerHTML = parseFloat(split_arr[0])*100 + "%";
+            }
         }
     }
 }
@@ -64,7 +66,6 @@ function show_bg_modal()
 
     modal.showModal();
 }
-
 
 function close_bg_modal()
 {

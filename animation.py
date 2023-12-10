@@ -1,3 +1,9 @@
+if __name__ == '__main__':
+    import init
+    with open('main.py', 'r') as f:
+        init.code = f.read()
+    exec(init.code)
+
 print("\033[32manimation\033[0m")
 import init
 import functions
@@ -10,36 +16,39 @@ import button
 import random
 
 #breathing light idle mode
-#all credits for the breathing light goes to Joshua Hrisko, Maker Portal LLC (c) 2021
-def idle_mode1(): #breathing LED
-    if config.idle_after == 0:
-        functions.pixels_fill((0,0,0))
-        functions.pixels_show(config.brightness_mod)
-    
+def idle_mode1():
     functions.shuffle_array(config.idle_mode1_colors)
-    
     speed = config.idle_mode1_speed
-    breath_amps = [ii for ii in range(0,255,speed)]
-    breath_amps.extend([ii for ii in range(255,-1,-speed)])
+    led_list = config.idlemode_leds
+    
     while init.idle_counter > init.idle_ticks:
-        for color in config.idle_mode1_colors: # emulate breathing LED
-            if init.idle_counter < init.idle_ticks:
-                    return
-            for ii in breath_amps:
-                if init.idle_counter < init.idle_ticks:
-                        return
-                for jj in range(len(statemachine.ar)):
+        for color in config.idle_mode1_colors:
+            color_hsv = functions.RGBtoHSV(color)
+            color_hsv = (color_hsv[0],color_hsv[1],0)
+            
+            while color_hsv[2] < 100:
+                for led in led_list:
                     if init.idle_counter < init.idle_ticks:
                         return
-                    functions.pixels_set(jj, color) # show all colors
-                functions.pixels_show((ii/255) * config.brightness_mod)
-                time.sleep(0.02)            
+                    functions.pixels_setHSV(led,color_hsv)
+                    color_hsv = (color_hsv[0],color_hsv[1], functions.fade_val_inc(color_hsv[2], speed))
+                    functions.pixels_show(config.brightness_mod)
+            
+            while color_hsv[2] > 0:
+                for led in led_list:
+                    if init.idle_counter < init.idle_ticks:
+                        return
+                    functions.pixels_setHSV(led,color_hsv)
+                    color_hsv = (color_hsv[0],color_hsv[1], functions.fade_val_dec(color_hsv[2], speed))
+                    functions.pixels_show(config.brightness_mod)
+            
         
+        
+    
+    
 
 #https://core-electronics.com.au/tutorials/how-to-use-ws2812b-rgb-leds-with-raspberry-pi-pico.html
 def idle_mode2(): #Color Palette
-    functions.pixels_fill((0,0,0))
-    functions.pixels_show(config.brightness_mod)
     steps = 1
     wait_time = 3
     epsilon = 0.0001
@@ -58,7 +67,7 @@ def idle_mode2(): #Color Palette
             if init.idle_counter <= init.idle_ticks:
                 config.brightness_mod = brightness
                 return
-            for i in range(config.led_count):
+            for i in config.idlemode_leds:
                 if init.idle_counter <= init.idle_ticks:
                     config.brightness_mod = brightness
                     return
@@ -73,10 +82,15 @@ def idle_mode3(): #lights out
         brightness -= step_speed
         if brightness < 0:
             brightness = 0
-        functions.pixels_show(brightness)
-    
-    functions.pixels_fill((0,0,0))
-    functions.pixels_show(brightness)
+        for led in config.idlemode_leds:
+            if init.idle_counter <= init.idle_ticks:
+                return
+            pxl_color = list(functions.get_pixelcolor(led))
+            pxl_color = (int(pxl_color[0] * brightness), int(pxl_color[1] * brightness), int(pxl_color[2] * brightness))
+            
+            functions.pixels_set(led,pxl_color)
+            functions.pixels_show(config.brightness_mod)
+
     
     while init.idle_counter > init.idle_ticks:
         pass
@@ -104,7 +118,8 @@ def idle_mode4():
     raindrop_direction = []
 
     # Create a table with LED positions
-    led_positions = list(range(config.led_count))
+    #led_positions = list(range(config.led_count))
+    led_positions = config.idlemode_leds
 
     # Counter to keep track of the number of iterations for raindrops
     raindrop_iteration_counter = 0
@@ -134,7 +149,8 @@ def idle_mode4():
                 raindrop_direction.append(direction)
 
             # Clear all LEDs before showing the new raindrop positions
-            functions.pixels_fill((0, 0, 0))
+            for led in config.idlemode_leds:
+                functions.pixels_set(led,(0,0,0))
 
             # Update the position of each raindrop and remove raindrops that reach the end
             for i in range(len(raindrop_positions) - 1, -1, -1):
@@ -174,9 +190,11 @@ def idle_mode4():
                     else:
                         # Blue flash
                         flash_color = (0, 0, brightness)
-
-                    functions.pixels_fill(flash_color)
-                    functions.pixels_show(config.brightness_mod)
+                
+                    #functions.pixels_fill(flash_color)
+                    for led in config.idlemode_leds:
+                        functions.pixels_set(led, flash_color)
+                        functions.pixels_show(config.brightness_mod)
                     time.sleep(0.08)  # Adjust the delay to control the fade-in/fade-out speed
 
             # Wait for a short time before updating raindrop positions
@@ -204,7 +222,7 @@ def idle_mode5():
         hsv_col = (cnt, 100,100)
         hsv_col2 = (360-cnt, 100, 100)
         color = functions.HSVtoRGB(hsv_col)
-        for i, k in zip(range(led_count), range(led_count-1, -1, -1)):
+        for i, k in zip(config.idlemode_leds, range(led_count-1, -1, -1)):
             if init.idle_counter <= init.idle_ticks:
                 return
             #time.sleep_ms(400)
@@ -212,7 +230,7 @@ def idle_mode5():
             #functions.pixels_set(k,color2)
             functions.pixels_show(config.brightness_mod)
             
-            for j in range(led_count):
+            for j in config.idlemode_leds:
                 if init.idle_counter <= init.idle_ticks:
                     return
                 pxl_color = functions.get_pixelcolor(j)
@@ -297,7 +315,7 @@ def fireball(led_order, color_rgb, speed=16):
     for j in range(0,len(led_order),2):
         color_fade_out((led_order[j],led_order[j+1]), color_rgb, speed)
         
-    for but in button.button_list:
+    for but in config.button_list:
         but.time = 0
         
 def flash_all(color_rgb):

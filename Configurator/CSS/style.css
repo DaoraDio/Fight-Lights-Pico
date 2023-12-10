@@ -1,7 +1,14 @@
 html *
 {
-    font-family: Arial;
-
+    font-family: Arial, Helvetica, sans-serif;
+    
+    color: #000000;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    user-select: none;
 }
 
 h2
@@ -23,14 +30,11 @@ h2
 #left_flex
 {
     position: relative;
-
     
 }
 #middle_flex
 {
     position: inherit;
-    
-
 }
 #right_flex
 {
@@ -61,64 +65,6 @@ select
 
 }
 
-#color_adder
-{
-    position:absolute; 
-    top: 60px; 
-    right: 300px;
-}
-
-#add_color_button
-{
-    position:absolute; 
-    top: 60px; 
-    right: 182px;
-    height: 31px;
-    width: 55px;
-}
-#clean_color_inputs
-{
-    position:absolute; 
-    top: 58px; 
-    right: 5px;
-
-    height: 31px;
-    width: 35px;
-    /*border: solid gray 1px;*/
-    border: none;
-    z-index: 1;
-    font-size: 20px;
-    background: transparent;
-    color: rgb(123, 123, 253);
-}
-
-#delete_color
-{
-    position:absolute; 
-    top: 45px; 
-    right: 370px;
-
-    height: 31px;
-    width: 35px;
-    font-size: 43px;
-    border: none;
-    padding-bottom: 30px;
-    background: transparent;
-    font-weight: bolder;
-    color: rgb(182, 182, 182);
-}
-
-#update_color
-{
-    position:absolute; 
-    top: 60px; 
-    right: 240px;
-    height: 31px;
-    width: 55px;
-    /*display: none;*/
-}
-
-
 #color_name
 {
     position:absolute; 
@@ -127,23 +73,7 @@ select
     height: 25px;
 }
 
-#save_button
-{
-    cursor: alias;
-    position:fixed;
-    top:5px; 
-    right: 5px;
 
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 5px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    z-index: 2;
-}
 
 #color_info
 {
@@ -263,18 +193,6 @@ select
     color: rgb(182, 182, 182);
 }
 
-#update_button
-{
-    height: 31px;
-    width: 55px;
-}
-
-
-#add_button
-{
-    height: 31px;
-    width: 55px;
-}
 
 #color_select
 {
@@ -319,24 +237,6 @@ select
     height: 30px;
 }
 
-#led_conf_modal::backdrop
-{
-    background: black;
-    opacity: 70%;
-}
-
-#led_conf_modal
-{
-    border: solid 1px;
-    border-radius: 5px;
-    top: 10%
-}
-
-
-.modal_button
-{
-    margin-top: 10px;
-}
 
 #background_conf
 {   
@@ -368,19 +268,6 @@ select
 	top:1px;
 }
 
-#set_background_modal::backdrop
-{
-    background: black;
-    opacity: 70%;
-}
-
-#set_background_modal
-{
-    border: solid 1px;
-    border-radius: 5px;
-    
-
-}
 
 #bg_brightness
 {
@@ -434,11 +321,6 @@ select
     width: 90%;
 }
 
-#idle_mode1_config::backdrop
-{
-    background: black;
-    opacity: 70%;
-}
 
 #circle_table
 {
@@ -464,12 +346,6 @@ select
     color: rgb(182, 182, 182);
 }
 
-#add_idle_table
-{
-    height: 31px;
-    width: 35px;
-}
-
 #circle_table tr:not(:first-child)
 {
     cursor: pointer;
@@ -489,42 +365,6 @@ select
     font-size: 30px;
     background: transparent;
     color: rgb(123, 123, 253);
-}
-
-#led_options_button
-{
-    box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
-	background-color:#ffffff;
-	border-radius:6px;
-	border:1px solid #dcdcdc;
-	display:inline-block;
-	cursor:pointer;
-	color:#666666;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 24px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #ffffff;
-}
-
-#led_options_button:hover
-{
-	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
-	background-color:#f6f6f6;
-}
-
-#led_options_button:active
-{
-	position:relative;
-	top:1px;
-}
-
-#led_options_configuration::backdrop
-{
-    background: black;
-    opacity: 70%;
 }
 
 #led_options_table
@@ -560,12 +400,6 @@ select
     background: transparent;
     font-weight: bolder;
     color: rgb(182, 182, 182);
-}
-
-#add_led_options_table
-{
-    height: 31px;
-    width: 35px;
 }
 
 #led_options_table tr:not(:first-child)
@@ -615,18 +449,6 @@ select
     color: rgb(75, 75, 75);
 }
 
-#player_led_modal::backdrop
-{
-    background: black;
-    opacity: 70%;
-}
-
-#player_led_modal
-{
-    border: solid 1px;
-    border-radius: 5px;
-}
-
 .player_LED_circle {
     display: inline-block;
     width: 28px;
@@ -667,39 +489,7 @@ select
     text-align: center;
 }
 
-#playerled_button
-{
-    box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
-	background-color:#ffffff;
-	border-radius:6px;
-	border:1px solid #dcdcdc;
-	display:inline-block;
-	cursor:pointer;
-	color:#666666;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 24px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #ffffff;
-}
-
-#playerled_button:hover
-{
-	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
-	background-color:#f6f6f6;
-}
   
-  #playerled_button:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-
-  #playerled_button:disabled:hover {
-    background: none;
-    background-color: #ffffff;
-  }
 
 #gpio_config_head
 {
@@ -708,19 +498,6 @@ select
     font-size: 25px;
 }
 
-
-/***************************************************/
-#gpio_config_modal::backdrop
-{
-    background: black;
-    opacity: 70%;
-}
-
-#gpio_config_modal
-{
-    border: solid 1px;
-    border-radius: 5px;
-}
 
 
 #pico-image {
@@ -953,41 +730,19 @@ select
     text-align: center;
     user-select: none;
     cursor: help;
-    opacity: 40%;
+    opacity: 50%;
 }
-  
-  .delete_buttons
-  {
-    height: 31px;
-    width: 35px;
-    font-size: 43px;
-    border: none;
-    padding-bottom: 30px;
-    background: transparent;
-    font-weight: bolder;
-    color: rgb(182, 182, 182);
-  }
 
-  .reset_buttons
-  {
-    height: 50px;
-    width: 40px;
-    /*border: solid gray 1px;*/
-    border: none;
-    font-size: 30px;
-    background: transparent;
-    color: rgb(123, 123, 253);
-  }
+#pf_color_container {
+    display: flex;
+}
+
+  
+
 
   #on_off_table
   {
     width: 100%;
-  }
-
-  #on_off_add
-  {
-    height: 30px;
-    width: 40px;
   }
 
   #on_off_select
@@ -1019,48 +774,6 @@ select
     border-radius: 5px;
 }
 
-#dynamic_profile
-{
-    box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
-	background-color:#ffffff;
-	border-radius:6px;
-	border:1px solid #dcdcdc;
-	display:inline-block;
-	cursor:pointer;
-	color:#666666;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 24px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #ffffff;
-}
-
-#dynamic_profile:hover
-{
-	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
-	background-color:#f6f6f6;
-}
-
-#dynamic_profile:active
-{
-	position:relative;
-	top:1px;
-}
-
-
-#dynamic_profile_next_add
-{
-    height: 25px;
-    width: 45px;
-}
-
-#dynamic_profile_prev_add
-{
-    height: 25px;
-    width: 45px;
-}
 
 #dynamic_profile_next_select
 {
@@ -1111,4 +824,23 @@ select
     top: 20px; 
     width: 80px;
     
+}
+
+#idlemode_container
+{
+    border: 1px solid rgb(128, 128, 128);
+    padding: 10px;
+    width: 270px;
+    border-radius: 4px;
+}
+
+#idlemode_tx, #idle_cb, #idle_cb_label {
+    display: inline-block;
+    margin: 1px;
+    padding-right: 10px;
+}
+
+#player_led_modal
+{
+    width: 270px;
 }

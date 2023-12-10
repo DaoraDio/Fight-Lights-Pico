@@ -60,18 +60,24 @@ function update_idle_mode()
 
         document.getElementById("idlemode_tx").style.color = "grey";
         document.getElementById("idleseconds_tx").style.color = "grey";
+        document.getElementById("idlemode_container").style.borderColor  = "rgb(192, 192, 192)";
 
         document.getElementById("idle1_config").disabled = true;
+        document.getElementById("idle_led_exlude_button").disabled = true;
+        
+
     }
     else
     {
         document.getElementById("idle_select").disabled = false;
         document.getElementById("idle_tb").disabled = false;
+        document.getElementById("idle_led_exlude_button").disabled = false;
 
         document.getElementById("idlemode_tx").style.color = "black";
         document.getElementById("idleseconds_tx").style.color = "black";
 
         document.getElementById("idle1_config").disabled = false;
+        document.getElementById("idlemode_container").style.borderColor  = "rgb(128, 128, 128)";
     }
 }
 

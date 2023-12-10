@@ -1,3 +1,9 @@
+if __name__ == '__main__':
+    import init
+    with open('main.py', 'r') as f:
+        init.code = f.read()
+    exec(init.code)
+
 print("\033[32mstatemachine\033[0m")
 import rp2
 import sys

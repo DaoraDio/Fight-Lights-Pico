@@ -26,4 +26,3 @@ droppable.addEventListener("drop", (event) =>
     reader.readAsText(file);
   }
 });
-

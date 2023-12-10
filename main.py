@@ -15,10 +15,10 @@ if config.activate_player_led:
     
 
 
-#clear the init.code variable to free up the memory if the main has been started from another config
-init.code = ""
+#clear the init.code variable to free up the memory, if main was executed from a config file
+del init.code
 
-#lights up the onborad led to have an indication of wether the board is running or not
+#lights up the onborad led
 onboard_led = Pin(25, Pin.OUT)
 onboard_led.value(config.onboard_led_on)
 
@@ -46,6 +46,7 @@ if config.save_stats == True:
 file_list = os.listdir()
 init.config_names = [s for s in file_list if "config" in s]
 init.current_config_index = 0
+
 
 def load_config(importfile):
     if importfile is 'config.py':
@@ -98,11 +99,14 @@ def load_config(importfile):
         config.P2_color = sys.modules[module_name].P2_color
         config.P3_color = sys.modules[module_name].P3_color
         config.P4_color = sys.modules[module_name].P4_color
+        config.smooth_brightness_speed = sys.modules[module_name].smooth_brightness_speed
     
         del sys.modules[module_name] # Remove reference    
-
+    
 #--------------------------main program-------------------------------------------------------
+#@functions.measure_execution_time
 def main():
+    #print(config.idlemode_leds)
     #print(init.current_input)
     #print(init.p1_active)
     #print(init.p2_active)
@@ -117,14 +121,7 @@ def main():
     if init.leniency_counter == config.leniency:    
         init.i = init.i + 1
         init.leniency_counter = 0
-    
-    #access led options when led_option button is pressed
-    try:
-        if config.led_option.was_pressed:
-            functions.mode_select()
-    except:
-        pass
-    
+
     
     #access led options when buttons in config.led_options are pressed for config.led_options_start_time seconds
     if(config.ledOptions_led_buttons):
@@ -148,7 +145,7 @@ def main():
                 init.timer_lock = True
            
             if init.timer_counter >= init.timer_target:
-                functions.mode_select()
+                functions.mode_select(config.brightness_steps)
         else:
             init.timer_lock = False
     
@@ -173,7 +170,7 @@ def main():
     #print(init.no_buttons_pressed)
     
     #chooses a "random" color from the color array 'colors'
-    random_color_id = init.i % len(config.colors)
+    init.random_color_id = init.i % len(config.colors)
      
     #sets the background colors
     if not init.timer_lock:
@@ -201,11 +198,15 @@ def main():
     if config.leniency >= 1:
         for i in range(init.start_pos, len(config.button_list)+init.start_pos):
             i = i % len(config.button_list)
-            config.button_list[i].run(random_color_id)
+            config.button_list[i].run(init.random_color_id)
     else:
         for i in range(init.start_pos, len(config.button_list)+init.start_pos):
             i = i % len(config.button_list)
             config.button_list[i].run((time.ticks_cpu()) % len(config.colors))
+          
+
+    functions.run_eight_way_joystick()
+        
 
     #create a list of all buttons currently pressed
     currently_pressed = []
@@ -218,17 +219,9 @@ def main():
         init.current_input = 'n'
     else:
         init.current_input = functions.list_to_string(currently_pressed)
-        
-    functions.check_fgc_string()
     
-
-    #give a nice ramp up at the beginning of the program
-    if init.temp_brightness < config.brightness_mod:
-        functions.pixels_show(init.temp_brightness)
-        init.temp_brightness += 0.04
-    else:
-        #displays the led colors
-        functions.pixels_show(config.brightness_mod)
+    if init.fgc_strings_length != 0:
+        functions.check_fgc_string()
         
     
     #set a button or a combination of buttons as a complete on/off switch for the LEDs
@@ -278,7 +271,18 @@ def main():
         else:
             init.prof_prev_cnt = 0
 
-    
+    #give a nice ramp up at the beginning of the program
+    if init.temp_brightness < config.brightness_mod:
+        functions.pixels_show(init.temp_brightness)
+        init.temp_brightness += 0.04
+    else:
+        #displays the led colors
+        functions.pixels_show(config.brightness_mod)
+        
+    if init.run_savestats:
+        functions.save_stats()
+        init.run_savestats = False
+        
     
         
 #main loop

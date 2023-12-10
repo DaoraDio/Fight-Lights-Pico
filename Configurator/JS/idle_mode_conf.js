@@ -126,4 +126,47 @@ function add_idle_color()
     cell1.innerHTML = document.getElementById("idle_circle_select").value;
     reset_idle_selection();
 }
+var checkedCheckboxIds = [];
+function show_idle_exlude_modal(showmodal = true)
+{
+    var led_count = document.getElementById("led_count").value;
+    var modal_body = document.getElementById("idle_exlude_modal_body");
+    var checkboxes = modal_body.querySelectorAll('.idle_modal_led_cb');
+    
+    checkedCheckboxIds = []
+    checkboxes.forEach(function(checkbox) 
+    {
+        if (checkbox.checked) {
+             var checkboxId = checkbox.closest('span').id;
+            checkedCheckboxIds.push(checkboxId);
+        }
+    });
 
+    var body_string = "";
+    for (var i = 0; i < led_count; i++) 
+    {
+        if ((i % 3) == 0 && i != 0) 
+            body_string += '<br>';
+            
+        var checkboxId = 'led_num' + (i + 1);
+        if (checkedCheckboxIds.includes(checkboxId)) 
+        {
+            body_string += '<span id="' + checkboxId + '"><label><input class="idle_modal_led_cb" type="checkbox" checked>' + 'LED ' + (i + 1) + '</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+        }
+        else
+        {
+            body_string += '<span id="' + checkboxId + '"><label><input class="idle_modal_led_cb" type="checkbox">' + 'LED ' + (i + 1) + '</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+        }
+            
+    }
+    modal_body.innerHTML = body_string;
+    var idle_exclude_modal = document.getElementById("idle_led_exlude");
+    if(showmodal)
+        idle_exclude_modal.showModal();
+}
+
+function close_idle_exlude_modal()
+{
+    var idle_exclude_modal = document.getElementById("idle_led_exlude");
+    idle_exclude_modal.close();
+}

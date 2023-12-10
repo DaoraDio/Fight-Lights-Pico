@@ -1,3 +1,9 @@
+if __name__ == '__main__':
+    import init
+    with open('main.py', 'r') as f:
+        init.code = f.read()
+    exec(init.code)
+
 print("\033[32mbutton\033[0m")
 from machine import Pin
 import config
@@ -48,7 +54,7 @@ class MyButton:
         
         
     #run function, controls all behaviour of a button, on press, when released and when currently not pressed
-    #gets permanently called from the main loop
+    #gets continuously called from the main loop
     def run(self, random_color_id):
         self.released = False
         if self.config[0][0] > -1: #do nothing if the button is set to -1 in config.py

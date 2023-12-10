@@ -1,5 +1,5 @@
-  function save_code(filename, type) 
-  {
+function save_code(filename, type) 
+{
     var data = document.getElementById("code_box").value;
     var file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
@@ -31,13 +31,10 @@ function update_color_button_table()
             var select = col.children[0];
             selected_arr.push(select.options[select.selectedIndex].text);
 
-            //console.log(select.options[select.selectedIndex].text);
-            //select.value = "blank";
           }
         }  
      }
     
-    console.log(selected_arr);
 
     //fill color array with colors of color_table
     var color_arr = ['random']
@@ -63,8 +60,6 @@ function update_color_button_table()
     for (var j = 0, col; col = row.cells[j]; j++) {
       if(j == 2)
       {
-        //console.log(col.innerHTML);
-        //col.innerHTML = color;
         continue;
       }
     }  
@@ -94,7 +89,6 @@ function select_button_table()
         this.style.backgroundColor = "#ddd";
 
         rIndex = this.rowIndex;
-        //console.log(rIndex);
         document.getElementById("button_row_id").innerHTML = rIndex;
         document.getElementById("button_name").value = this.cells[0].innerHTML;
         document.getElementById("button_brightness").value = parseInt(this.cells[5].innerHTML);
@@ -197,6 +191,7 @@ function delete_button()
 
   button_table.deleteRow(row_id);
   reset_all();
+  show_eightway_modal(false);
   show_led_options(false); //open led_options function to update the selects 
 
 }
@@ -292,7 +287,23 @@ function update_button()
     led_options_right.value = name;
   if(led_options_confirm_old == old_name)
     led_options_confirm.value = name;
-  
+
+
+  var eightway_select_up_old = document.getElementById("eightway_select-up").value;
+  var eightway_select_down_old = document.getElementById("eightway_select-down").value;
+  var eightway_select_left_old = document.getElementById("eightway_select-left").value;
+  var eightway_select_right_old = document.getElementById("eightway_select-right").value;
+
+  show_eightway_modal(false);
+
+  if(eightway_select_up_old == old_name)
+    document.getElementById("eightway_select-up").value = name;
+  if(eightway_select_down_old == old_name)
+    document.getElementById("eightway_select-down").value = name;
+  if(eightway_select_left_old == old_name)
+    document.getElementById("eightway_select-left").value = name;
+  if(eightway_select_right_old == old_name)
+    document.getElementById("eightway_select-right").value = name;
 }
 
 
@@ -308,7 +319,6 @@ function update_color_select()
     var col_name = row.innerText;
     col_name = col_name.split("\t");
     select += '<option>' + col_name[0] + '</option>';
-    //console.log(col_name[0]);
   }
   select += '</select>';
 
@@ -458,27 +468,4 @@ function set_fadeout_for_all()
   {
       table.rows[i].cells[7].innerHTML = document.getElementById("fade_out").value;
   }
-}
-
-function remove_bigger_led_numbers()
-{
-  var numleds = document.getElementById("led_count").value;
-  numleds = parseInt(numleds);
-  var table = document.getElementById("button_table");
-  for (var i = 1, row; row = table.rows[i]; i++) 
-  {
-      var led_pos = table.rows[i].cells[1].innerHTML;
-      var arr = led_pos.split(" ");
-      for(var j = 0; j < arr.length; j++)
-      {
-        if(parseInt(arr[j]) > numleds)
-          delete arr[j];
-      }
-      var collapsedString = arr.join(" ");
-      if (collapsedString.trim().length === 0)
-          collapsedString = "Not Set";
-      table.rows[i].cells[1].innerHTML = collapsedString;
-      console.log(collapsedString);
-  }
-      //console.log(arr);
 }

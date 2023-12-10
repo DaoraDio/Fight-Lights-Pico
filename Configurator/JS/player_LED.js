@@ -59,8 +59,6 @@ function on_playerled_click(player_num)
     led_label.innerText = "Player LED " + player_led + " Color:";
 
     document.getElementById("playerled_color_select").value = player.getAttribute('colorname');
-    //console.log(rgbValues);
-    console.log(player.getAttribute('colorname'));
 }
 
 function select_playerled_color(that)
@@ -74,8 +72,6 @@ function select_playerled_color(that)
         if(that.value == row.cells[0].innerHTML)
         {
             index = i;
-            //console.log(row.cells[0].innerHTML);
-            //console.log(index);
         }
         
     }
@@ -94,13 +90,8 @@ function select_playerled_color(that)
     else if(player_led == 4)
         player = document.getElementById("player_led4");
 
-    //console.log(color_table.rows[index].cells[1].innerHTML);
-    //var rgb = "rgb(" + r + ',' + g + ',' + b + ');';
     player.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
     player.setAttribute('colorname', name);
-    //console.log(name, r,g,b);
-    //console.log(rgb);
-    //console.log(that.value);
 }
 
 function enable_disbale_cb(that)

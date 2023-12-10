@@ -1,0 +1,217 @@
+/*************************************************MODAL CLOSE BUTTON******************************************/
+.close_button {
+	box-shadow:inset 0px 1px 0px 0px #cf866c;
+	background:linear-gradient(to bottom, #d0451b 5%, #bc3315 100%);
+	background-color:#d0451b;
+	border-radius:3px;
+	border:1px solid #942911;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-size:13px;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #854629;
+}
+.close_button:hover {
+	background:linear-gradient(to bottom, #bc3315 5%, #d0451b 100%);
+	background-color:#bc3315;
+}
+.close_button:active {
+	position:relative;
+	top:1px;
+}
+
+/*************************************************SAVE BUTTON******************************************/
+
+.save_button {
+	box-shadow:inset 0px 1px 0px 0px #caefab;
+	background:linear-gradient(to bottom, #77d42a 5%, #5cb811 100%);
+	background-color:#77d42a;
+	border-radius:6px;
+	border:1px solid #268a16;
+	display:inline-block;
+	cursor:pointer;
+	color:#306108;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #aade7c;
+}
+.save_button:hover {
+	background:linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
+	background-color:#5cb811;
+}
+.save_button:active {
+	position:relative;
+	top:1px;
+}
+
+        
+        
+        
+        
+
+        
+
+/*************************************************GENERAL BUTTON******************************************/
+.general_button {
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	background-color:#ffffff;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	color:#666666;
+	font-size:15px;
+	font-weight:bold;
+	padding:4px 19px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.general_button:hover:not(:disabled) {
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	background-color:#f6f6f6;
+}
+.general_button:active:not(:disabled) {
+	position:relative;
+	top:1px;
+}
+
+        
+
+.general_button:not(:disabled)
+{
+    cursor:pointer;
+}
+
+.general_button:disabled {
+	opacity: 50%;
+}
+
+        
+        
+/*********************************************************DELETE AND RESET BUTTON*************************************************************************/
+
+.delete_buttons
+{
+  height: 31px;
+  width: 35px;
+  font-size: 43px;
+  border: none;
+  padding-bottom: 30px;
+  background: transparent;
+  font-weight: bolder;
+  color: rgb(182, 182, 182);
+}
+
+.reset_buttons
+{
+  height: 50px;
+  width: 40px;
+  /*border: solid gray 1px;*/
+  border: none;
+  font-size: 30px;
+  background: transparent;
+  color: rgb(123, 123, 253);
+}
+
+
+/*************************************************************PLAYER LED BUTTON**********************************************************************/
+#playerled_button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  #playerled_button:disabled:hover {
+    background: none;
+    background-color: #ffffff;
+  }
+
+
+
+/*************************************************************INDIVIDUAL BUTTON**********************************************************************/
+
+#add_color_button
+{
+    position:absolute; 
+    top: 60px; 
+    right: 172px;
+
+}
+
+#update_color
+{
+    position:absolute; 
+    top: 60px; 
+    right: 240px;
+    /*display: none;*/
+}
+
+#color_adder
+{
+    position:absolute; 
+    top: 60px; 
+    right: 336px;
+    width: 30px;
+
+    
+}
+
+
+#clean_color_inputs
+{
+    position:absolute; 
+    top: 58px; 
+    right: 5px;
+
+    height: 31px;
+    width: 35px;
+    /*border: solid gray 1px;*/
+    border: none;
+    z-index: 1;
+    font-size: 20px;
+    background: transparent;
+    color: rgb(123, 123, 253);
+}
+
+#delete_color
+{
+    position:absolute; 
+    top: 42px; 
+    right: 380px;
+
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    padding-bottom: 30px;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+}
+
+
+.dl_code
+{
+    cursor: alias;
+    position:fixed;
+    top:5px; 
+    right: 5px;
+
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 5px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    z-index: 2;
+}
+
+#code_clipboard
+{
+  right: 10px;
+}
