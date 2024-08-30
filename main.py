@@ -10,10 +10,16 @@ import random
 import animation
 import os
 import sys
+import gc
 if config.activate_player_led:
     import playerLED
+try:
+    import oled
+    init.oled_active = True
+except IndexError:
+    print("\033[31mOled Not Found\033[0m")
+    init.oled_active = False
     
-
 
 #clear the init.code variable to free up the memory, if main was executed from a config file
 del init.code
@@ -25,6 +31,7 @@ onboard_led.value(config.onboard_led_on)
 init.background = config.background
 init.idle_ticks = functions.idle_after()
 
+functions.set_profile_list()
 
 if config.save_stats == True:
     try: #check if file exists
@@ -46,6 +53,10 @@ if config.save_stats == True:
 file_list = os.listdir()
 init.config_names = [s for s in file_list if "config" in s]
 init.current_config_index = 0
+
+if init.oled_active:
+    oled.oled_draw_splash()
+
 
 
 def load_config(importfile):
@@ -102,7 +113,7 @@ def load_config(importfile):
         config.smooth_brightness_speed = sys.modules[module_name].smooth_brightness_speed
     
         del sys.modules[module_name] # Remove reference    
-    
+
 #--------------------------main program-------------------------------------------------------
 #@functions.measure_execution_time
 def main():
@@ -114,6 +125,14 @@ def main():
     #print(init.p4_active)
     #print()
     #print(statemachine.ar)
+    if init.oled_active:
+        if config.oled_always_splash == False:
+            oled.oled_draw_stick()
+        else:
+            if init.oled_splash_drawn == False:
+                oled.oled_draw_splash()
+                init.oled_splash_drawn = True
+
     
     init.main_cnt += 1    
     init.leniency_counter += 1
@@ -138,12 +157,23 @@ def main():
             
             functions.pixels_fill(col)
             functions.pixels_show(config.brightness_mod)
-
+            
+            
             if not init.timer_lock:
                 init.timer_target = init.timer_counter + functions.get_seconds(config.ledOptions_start_time)
                 init.timer_start = init.timer_counter
                 init.timer_lock = True
-           
+            
+            if init.oled_active:
+                oled.oled.fill(0)
+                value = round(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, 100))
+                oled.oled.text("Entering", 30, 0)
+                oled.oled.text("LED Options Mode", 0, 13)
+                oled.oled.rect(10, 30, 100, 20, True)
+                oled.oled.rect(10, 30, value, 20, True, True)
+                oled.oled.text(str(value) + '%', 54, 53)
+                oled.oled.show()
+            #print()
             if init.timer_counter >= init.timer_target:
                 functions.mode_select(config.brightness_steps)
         else:
@@ -152,6 +182,16 @@ def main():
     
     #goes into idle mode after seconds defined in the variable 'idle_after' has been exceeded
     if init.idle_counter > init.idle_ticks and config.idle_mode != 0:
+        if init.oled_active:
+            if config.oled_idle == 0:
+                oled.oled_draw_splash()
+            elif config.oled_idle == 1:
+                oled.oled_clear_screen()
+                init.oled_splash_drawn = False
+            else:
+                oled.oled_draw_stick(True)
+                init.oled_splash_drawn = False
+            
         if config.idle_mode == 1:
             animation.idle_mode1()
         if config.idle_mode == 2:

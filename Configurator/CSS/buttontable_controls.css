@@ -1,0 +1,95 @@
+
+
+.controls-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    align-items: flex-start;
+    width: 700px;
+}
+
+.button-select-container, .range-container, .input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+.button-select-container {
+    position: relative;
+    display: inline-block; /* or display: block; depending on your layout */
+  }
+
+#delete_button {
+    height: 31px;
+    width: 35px;
+    font-size: 43px;
+    border: none;
+    background: transparent;
+    font-weight: bolder;
+    color: rgb(182, 182, 182);
+    margin-top: -20px; 
+}
+
+#update_button, #add_button, #set_leds_button {
+    height: 30px;
+}
+
+#button_name {
+    height: 25px;
+    box-sizing: border-box;
+}
+
+#refresh_button {
+    position: absolute;
+    right: 5px;
+    top: 34%;
+    font-size: large;
+    background: transparent;
+    color: rgb(123, 123, 253);
+    transform: translateY(-50%);
+    border: none;
+}
+
+#color_label {
+    position: absolute;
+    top: -1.2em; /* Adjust this value as needed to position the label correctly */
+    left: 0;
+    font-size: 12px; /* Adjust this value as needed */
+    color: #000; /* Set the desired color for the label */
+    white-space: nowrap; /* Prevent line break */
+}
+
+#color_select {
+    height: 30px;
+    width: 70px;
+}
+
+#button_brightness {
+    width: 100px;
+}
+
+#brightness_label {
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgb(75, 75, 75);
+}
+
+@media (max-width: 800px) {
+    .controls-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .input-container {
+        position: relative;
+    }
+
+    #refresh_button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}

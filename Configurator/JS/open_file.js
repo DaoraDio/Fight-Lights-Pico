@@ -701,8 +701,116 @@ function get_code()
     set_eighway_arrows("eight_way_upright = [", "arrow arrow-up-right");
     set_eighway_arrows("eight_way_leftdown = [", "arrow arrow-down-left");
     set_eighway_arrows("eight_way_rightdown = [", "arrow arrow-down-right");
+
+    //oled splah
+    var splash = get_variable_line("splash = ");
+    var codeboxtext = document.getElementById("new_codebox").value;
+    var indexOfStr = codeboxtext.indexOf(splash);
+
+    if (indexOfStr !== -1) 
+    {
+        var substring = codeboxtext.substring(indexOfStr, codeboxtext.length);
+        substring = substring.substring(0, substring.indexOf('])'));
+    }
+    splash = substring.replaceAll("splash = bytearray([", '');
+    drawHexImage(splash);
+    splash_canvas_drawn = true;
+
+    //oled buttons
+    remove_all_event_listeners();
+    circles = [];
+    var oled_buttons = get_variable_line("oled_buttons = [");
+    oled_buttons = oled_buttons.replaceAll("oled_buttons = [", '');
+    oled_buttons = oled_buttons.replaceAll("]", '');
+    oled_buttons = oled_buttons.split(',');
+    oled_buttons = oled_buttons.filter(item => item !== "");
+
+    for(var i = 0; i < oled_buttons.length; i++)
+    {
+      var new_button = get_variable_line(oled_buttons[i]);
+      new_button = new_button.replaceAll(oled_buttons[i], '');
+      new_button = new_button.replaceAll(" = (", '');
+      new_button = new_button.replaceAll(")", '');
+      new_button = new_button.split(',');
+      var x_pos = parseInt(new_button[0]);
+      var y_pos = parseInt(new_button[1]);
+      var btn_type = new_button[2];
+
+      if(btn_type == "'is_lever'")
+        var is_lever = true;
+      else
+        var is_lever = false;
+    
+      if(btn_type == "'is_key'")
+        var is_key = true;
+      else
+        var is_key = false;
+
+      var associated_btn = new_button[3];
+      associated_btn = associated_btn.replaceAll("_MyButton", '');
+      if(associated_btn == "None")
+        associated_btn = "notSet";
+      var size = parseInt(new_button[4]);
+      var angle = new_button[5];
+      if(angle != 'None')
+        angle = parseInt(angle);
+      else
+        angle = 0;
+      //console.log(new_button);
+      oled_add_button(x_pos,y_pos,size,is_lever,is_key,associated_btn,angle);
+      updateCanvas();
+      //console.log(x_pos,y_pos,size,is_lever,is_key,associated_btn,angle);
+    }
+
+    //oled idle
+    var oled_idle = parseInt(get_value("oled_idle = "));
+    const oled_idle_select = document.getElementById("oled_idle");
+    oled_idle_select.value = oled_idle;
+
+    //oled splash checkbox
+    //"oled_splash_always_on"
+    var oled_always_on = get_value("oled_always_splash = ");
+    const oled_splash_checkbox = document.getElementById("oled_splash_always_on");
+    if(oled_always_on == "False")
+        oled_splash_checkbox.checked = false;
+    else if(oled_always_on == "True")
+        oled_splash_checkbox.checked = true;
+
+
+    
 }
 
+function drawHexImage(hexString) 
+{
+    const width = 128;
+    const height = 64;
+    const canvas = document.getElementById("my_splash_canvas");
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.createImageData(width, height);
+    const data = imageData.data;
+
+    const hexArray = hexString.split(',').map(hex => parseInt(hex.trim(), 16));
+    let dataIndex = 0;
+
+    for (let i = 0; i < hexArray.length; i++) 
+    {
+        let byte = hexArray[i];
+        for (let bit = 7; bit >= 0; bit--) 
+            {
+            const isPixelOn = (byte & (1 << bit)) !== 0;
+            const color = isPixelOn ? 255 : 0; // Black or white
+
+            // Set pixel data (RGBA)
+            data[dataIndex] = color;      // Red
+            data[dataIndex + 1] = color;  // Green
+            data[dataIndex + 2] = color;  // Blue
+            data[dataIndex + 3] = 255;    // Alpha
+            dataIndex += 4;
+        }
+    }
+
+    ctx.putImageData(imageData, 30, 40);
+}
 
 function get_names()
 {

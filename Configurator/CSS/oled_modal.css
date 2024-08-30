@@ -1,0 +1,169 @@
+
+#oled_add_button
+{
+    position: absolute;
+    right: 20px;
+    top: 70px;
+}
+
+#oled_add_lever
+{
+    position: absolute;
+    right: 130px;
+    top: 70px;
+}
+
+#oled_add_key
+{
+    position: absolute;
+    right: 240px;
+    top: 70px;
+}
+
+#delete_oled_button
+{
+    position: absolute;
+    right: 330px;
+    top: 50px;
+}
+
+#oled_button_radius
+{
+    position: absolute;
+    right: 25px;
+    top: 110px;
+    width: 70px;
+}
+
+#oled_radius_label
+{
+    position: absolute;
+    right: 107px;
+    top: 114px;
+    font-size: small;
+}
+
+#oled_modal
+{
+    width: 600px;
+}
+
+#oled_invert_button
+{
+    position: absolute;
+    left: 180px;
+    top: 368px;
+}
+
+#oled_key_angle
+{
+    position: absolute;
+    right: 25px;
+    top: 140px;
+}
+
+#oled_rotation_label
+{
+    position: absolute;
+    right: 88px;
+    top: 143px;
+    font-size: small;
+}
+
+
+#imageLoader {
+    display: none;
+}
+
+/* Style the custom button */
+#customButton {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+
+    position: absolute;
+    left: 40px;
+    bottom: 60px;
+    
+}
+
+#customButton:hover 
+{
+    background-color: #0056b3;
+}
+
+#oled_select_activation_button
+{
+    position: absolute;
+    right: 25px;
+    top: 190px;
+    width: 120px;
+}
+
+#act_button_label
+{
+    position: absolute;
+    right: 30px;
+    top: 175px;
+    font-size: small;
+}
+
+#splash_screen_head
+{
+    position: absolute;
+    bottom: 165px;
+}
+
+#delete_oled_button
+{
+    color: lightgray;
+}
+
+#oled_open_directions
+{
+    position: absolute;
+    top: 180px;
+    right: 20px;
+}
+
+#oled_set_predef_layout
+{
+    position: absolute;
+    top: 180px;
+    left: 45px;
+    width: 130px;
+}
+
+#oled_splash_always_on
+{
+    position: absolute;
+    bottom: 105px;
+    left: 180px;
+}
+
+#oled_splash_always_on_label
+{
+    position: absolute;
+    bottom: 100px;
+    left: 200px;
+    font-size: small;
+}
+
+#oled_idle
+{
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    width: 150px;
+}
+
+#oled_idle_label
+{
+    position: absolute;
+    bottom: 80px;
+    right: 40px;
+}

@@ -18,6 +18,11 @@ import os
 import micropython
 import animation
 import sys
+import gc
+try:
+    import oled
+except IndexError:
+    pass
 
 micropython.alloc_emergency_exception_buf(100)
 
@@ -96,13 +101,18 @@ def clear_led(pin):
 def activate_save_stats(timer):
     init.run_savestats = True
     
-
+def print_memory_usage(timer):
+    gc.collect()
+    free_memory_kb = gc.mem_free() / 1024
+    allocated_memory_kb = gc.mem_alloc() / 1024
+    print(f"\rFree memory: {free_memory_kb:.2f} KB | Allocated memory: {allocated_memory_kb:.2f} KB", end='')
 
 #frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
 #freq=1 = 1hz = 1 interrupt every second
 #freq=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
 init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
-init.timer3.init(freq=1/30, mode=machine.Timer.PERIODIC, callback=activate_save_stats) 
+init.timer3.init(freq=1/30, mode=machine.Timer.PERIODIC, callback=activate_save_stats)
+#init.timer5.init(freq=1, mode=machine.Timer.PERIODIC, callback=print_memory_usage)
 
 #interrupt routine to debounce the brightness button
 #all credits to Kaspars Dambis @ https://kaspars.net/blog/micropython-button-debounce
@@ -116,22 +126,19 @@ def debounce_brightness(pin):
 
 
 def increase_brightness(steps_size):
-    brightness = config.brightness_mod
-    while config.brightness_mod < (brightness + steps_size):
-        pixels_show(config.brightness_mod)
-        config.brightness_mod += 0.005
-        if config.brightness_mod >= 1:
+    config.brightness_mod += steps_size
+    pixels_show(config.brightness_mod)
+    if config.brightness_mod > 1:
             config.brightness_mod = 1
-            return
+    return
 
 def decrease_brightness(steps_size):
-    brightness = config.brightness_mod
-    while config.brightness_mod > (brightness - steps_size):
-        pixels_show(config.brightness_mod)
-        config.brightness_mod -= 0.005
-        if config.brightness_mod <= 0:
+    config.brightness_mod -= steps_size
+    pixels_show(config.brightness_mod)
+    if config.brightness_mod <= 0:
             config.brightness_mod = 0
-            return
+    return
+
         
 def pixels_show(brightness_input):
     dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
@@ -500,6 +507,48 @@ def set_background(background):
                     pixels_set(init.ranges[i][j]-1,init.colors[i])
 
 
+
+def get_profile_name(config_name):
+    file = open(config_name, 'r')
+    name = ""
+
+    while True:
+        line = file.readline()
+        if 'profile_name' in line:
+            line = line.replace('profile_name = ', '')
+            line = line.replace('"', '')
+            line = line.strip()
+            line = line.split('#',1)
+            line = line[0]
+            name = line
+            file.close()
+            break
+        if not line:
+            file.close()
+    return name
+
+def set_profile_list():
+    profile_names = []
+    config_prefix = 'config'
+    
+    try:
+        for file_name in os.listdir('.'):
+            if file_name.startswith(config_prefix):
+                try:
+                    with open(file_name, "r") as f:
+                        profile_names.append(get_profile_name(file_name))
+                except OSError:
+                    # If there's an error opening the file, skip it
+                    continue
+                
+    except OSError as e:
+        print(f"Error: {e}")
+        
+    init.profile_names = profile_names
+    
+    
+    
+
 def get_profile_color(config_name):
     file = open(config_name, 'r')
     color = 'blank'
@@ -612,6 +661,8 @@ def mode_select(brightness_steps):
     pixels_show(config.brightness_mod)
     
     while True:
+        if init.oled_active:
+            oled.oled_draw_options_mode(init.mode_selector)
         pixels_fill(bg_color)
         profile_color = get_profile_color(config_name)
         
@@ -644,17 +695,17 @@ def mode_select(brightness_steps):
         if brightness_steps != 'smooth':
             if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].was_pressed:
                 increase_brightness(config.brightness_steps)
-                #print("brightness:", config.brightness_mod)
+                print("brightness:", config.brightness_mod)
             if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].was_pressed:
                 decrease_brightness(config.brightness_steps)
-                #print("brightness:", config.brightness_mod)
+                print("brightness:", config.brightness_mod)
         else:
             if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].is_pressed:
                 increase_brightness(config.smooth_brightness_speed)
-                #print("brightness:", config.brightness_mod)
+                print("brightness:", config.brightness_mod)
             if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].is_pressed:
                 decrease_brightness(config.smooth_brightness_speed)
-                #print("brightness:", config.brightness_mod)
+                print("brightness:", config.brightness_mod)
 
             
                 
@@ -737,8 +788,6 @@ def reset_background():
     
     
 def lerp(tstart,tend,t, ystart, yend):
-    #ystart = 0
-    #yend = 255
     y = ystart + (yend - ystart) * ((t-tstart)/(tend-tstart))
     return y
 

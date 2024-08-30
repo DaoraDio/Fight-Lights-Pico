@@ -181,25 +181,6 @@ select
 
 /*button*/
 
-#delete_button
-{
-    height: 31px;
-    width: 35px;
-    font-size: 43px;
-    border: none;
-    padding-bottom: 30px;
-    background: transparent;
-    font-weight: bolder;
-    color: rgb(182, 182, 182);
-}
-
-
-#color_select
-{
-    height: 30px;
-    width: 70px;
-}
-
 
 .input-container 
 {
@@ -207,35 +188,14 @@ select
     display: inline-block;
 }
 
-#button_name
-{
-    height: 25px;
-    box-sizing: border-box;
-}
 
-
-#refresh_button
-{
-    position: absolute;
-    right: 5px; /* Adjust the value based on the desired spacing */
-    top: 34%;
-    font-size: large;
-    background: transparent;
-    color: rgb(123, 123, 253);
-    transform: translateY(-50%);
-    border: none;
-    
-}
 
 #button_error_message
 {
     color: red;
 }
 
-#set_leds_button
-{
-    height: 30px;
-}
+
 
 
 #background_conf
@@ -422,32 +382,6 @@ select
     width: 100px;
 }
 
-
-
-#button_brightness 
-{
-    width:100px;
-    position: absolute;
-    margin-top: 40px;
-    margin-left: 5px;
-}
-
-#brightness_label
-{
-    margin-top: 26px;
-    position: absolute;
-    font-size: 14px;
-    margin-left: 5px;
-    color: rgb(75, 75, 75);
-}
-
-#color_label
-{
-    padding-top: 10px;
-    position: absolute;
-    font-size: 13px;
-    color: rgb(75, 75, 75);
-}
 
 .player_LED_circle {
     display: inline-block;
@@ -844,3 +778,4 @@ select
 {
     width: 270px;
 }
+

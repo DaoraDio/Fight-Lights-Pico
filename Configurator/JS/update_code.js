@@ -446,6 +446,56 @@ function set_code()
   var eight_way_down_right = "eight_way_rightdown = [" + down_right_positions + ","+ down_right_color + "]";
 
   
+  var oled_button = ""
+  var oled_array = "oled_buttons = ["
+  for(var i = 0; i < circles.length; i++)
+  {
+    oled_array += "oled_button" + i + ",";
+
+    oled_button += "oled_button";
+    var x = circles[i].x - 30;
+    var y = circles[i].y - 10;
+    oled_button += i + " = (" + x + "," + y + ",";
+    if(circles[i].is_lever)
+      oled_button += "'is_lever',";
+    else if(circles[i].is_key)
+      oled_button += "'is_key',";
+    else
+      oled_button += "'is_button',";
+
+    if(circles[i].button_activation != "notSet")
+      oled_button += circles[i].button_activation + "_MyButton,";
+    else
+      oled_button += "None,";
+
+    oled_button += circles[i].radius + ",";
+
+    if(circles[i].is_key)
+      oled_button += circles[i].angle + ")\n";
+    else
+      oled_button += "None)\n";
+  }
+  oled_array += "]";
+
+  //oled splash always on
+  var splash_alwayson = document.getElementById("oled_splash_always_on");
+  
+  if(splash_alwayson.checked == true)
+    splash_alwayson = "oled_always_splash = True"
+  else
+    splash_alwayson = "oled_always_splash = False"
+
+  //oled idle behaviour
+  var oled_idle = parseInt(document.getElementById("oled_idle").value);
+
+  //console.log(oled_idle);
+
+  if(oled_idle == 0)
+    oled_idle = "oled_idle = 0"
+  else if(oled_idle == 1)
+    oled_idle = "oled_idle = 1"
+  else
+    oled_idle = "oled_idle = -1"
 
   //output
   document.getElementById("code_box").value = failsave + header 
@@ -503,6 +553,10 @@ function set_code()
                                               + eight_way_down_right + '\n'
                                               + skip_leds_in_idle + '\n'
                                               + idlemode_leds + '\n'
+                                              + oled_button + oled_array + '\n'
+                                              + oled_idle + '\n'
+                                              + splash_alwayson + '\n'
+                                              + createPythonByteArray(getBinaryPixelValuesArray()) + '\n'
                                               + "############do not delete this line#######################";
 }
 

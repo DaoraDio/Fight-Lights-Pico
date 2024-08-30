@@ -101,3 +101,15 @@
     overflow-x: auto; 
 }
 
+#eightway_open_directions_modal
+{
+    display: block; /* Make the button a block-level element */
+    margin: 0 auto; /* Center the button horizontally */
+}
+
+#eightway_reset
+{
+    position: absolute;
+    top: 165px;
+    left: 50px;
+}

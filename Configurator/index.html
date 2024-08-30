@@ -4,12 +4,14 @@
 <link rel="stylesheet" type="text/css" href="CSS\input_type_color.css">
 <link rel="stylesheet" type="text/css" href="CSS\select.css">
 <link rel="stylesheet" type="text/css" href="CSS\eightway.css">
+<link rel="stylesheet" type="text/css" href="CSS\buttontable_controls.css">
+<link rel="stylesheet" type="text/css" href="CSS\oled_modal.css">
 <html>
   <textarea id="new_codebox" autocomplete="off" hidden></textarea>
   <textarea id="code_box" name="code_box" hidden></textarea>
 
   <h2><a target="_blank" href="https://fight-lights.com">Fight Lights Pico</a></h2>
-  <h2>Configurator for V2.5.2</h2>
+  <h2>Configurator for V2.6.0</h2>
   <div id="file_wrapper">
     <div id="file_select_text">Open one or multiple config files:</div>
     <input type="file" id="open_button" onchange="get_names()" multiple accept=".py"><br>
@@ -42,6 +44,8 @@
         <script src="JS\default_code.js"></script>
         <script src="JS\eightway.js"></script>
         <script src="JS\led_count.js"></script>
+        <script src="JS\oled_modal.js"></script>
+        <script src="JS\select_directions_modal.js"></script>
         
         
 
@@ -205,6 +209,12 @@
         <div class="helper" title="Set a button or a combination of buttons to instantly display the next profile.&#10;&#10;Unlike changing the profile from LED option mode, the selected profile is not saved for the next restart">?</div>
         <br>
 
+        <!--OLED configuration-->
+        <br>
+        <button class="general_button"  id="oled_modal_open" onclick="show_oled_modal()">Configure OLED</button>
+        <div class="helper" title="Set a button or a combination of buttons to instantly display the next profile.&#10;&#10;Unlike changing the profile from LED option mode, the selected profile is not saved for the next restart">?</div>
+        <br>
+
 
         <!--Save Stats-->
         <br>
@@ -233,21 +243,26 @@
         <div>Button Fade out speed: <input type="number" min="0" max="100" id="fade_out" value="6" step="0.2" oninput="update_fadeout()"> <div class="helper" title="When fade enabled for a button this sets how fast that buttons fades from full brightness to 0% brightness when released. Can take floating point numbers as value&#10;Higher values = faster fade">?</div> <button class="general_button" onclick="set_fadeout_for_all()">Set for all</button></div>
 
 
-        <button id="delete_button" onclick="delete_button()" title="Delete" disabled>&#128465</button>
-        <button class="general_button" id="update_button" onclick="update_button()" disabled>Update</button>
-        <button class="general_button id="add_button" onclick="add_button()">Add</button>
-        <div class="input-container">
-          <input  id="button_name" type="text" placeholder="Button Name">
-          <button id="refresh_button" onclick="reset_all()" title="reset inputs">&#10227</button>
-        </div>
-        
-        <button class="general_button" id="set_leds_button" disabled onclick="led_open_modal()">Set LEDs</button>
-      <label id="color_label" for="color_select">Button Color</label>
-        <select id="color_select" onmouseenter="update_color_select()" onchange="set_color_from_select()" disabled><option>random</option></select>
-        
-        <input id="button_brightness" type="range" min="0" max="100" value="100" oninput="set_brightness_slider(this)">
-        
-        <label id="brightness_label" for="button_brightness">Brightness: 100%</label>
+        <div class="controls-container">
+          <button id="delete_button" onclick="delete_button()" title="Delete" disabled>&#128465;</button>
+          <button class="general_button" id="update_button" onclick="update_button()" disabled>Update</button>
+          <button class="general_button" id="add_button" onclick="add_button()">Add</button>
+          <div class="input-container">
+              <input id="button_name" type="text" placeholder="Button Name">
+              <button id="refresh_button" onclick="reset_all()" title="reset inputs">&#10227;</button>
+          </div>
+          <button class="general_button" id="set_leds_button" disabled onclick="led_open_modal()">Set LEDs</button>
+          <div class="button-select-container">
+              <label id="color_label" for="color_select">Button Color</label>
+              <select id="color_select" onmouseenter="update_color_select()" onchange="set_color_from_select()" disabled>
+                  <option>random</option>
+              </select>
+          </div>
+          <div class="range-container">
+              <label id="brightness_label" for="button_brightness">Brightness: 100%</label>
+              <input id="button_brightness" type="range" min="0" max="100" value="100" oninput="set_brightness_slider(this)">
+          </div>
+      </div>
         
         
         
@@ -632,7 +647,8 @@
 
   <dialog class="modal" id="eightway_modal">
     <h2>8-Way Joystick LED Setup</h2>
-    <div class="select-container">
+    <button class="general_button" onclick="show_directions_modal()" id="eightway_open_directions_modal">Set Directions</button>
+    <!--<div class="select-container">
       <br>
       <select id="eightway_select-up" onchange="eightway_set_border_color()">
         <option value="-1" selected>Set UP Button</option>
@@ -649,12 +665,12 @@
       <select id="eightway_select-down" onchange="eightway_set_border_color()">
         <option value="-1" selected>Set DOWN Button</option>
       </select>
-    </div>
+    </div>-->
     <h2>Set LEDs and Color</h2>
     
     <button class="general_button" id="eighway_set_leds" onclick="eightway_show_led_modal()" disabled>Set LEDs</button>
     <select id="eightway_color_select" onchange="eightway_set_select_color(this)" disabled></select>
-    <button class="reset_buttons" onclick="eightway_reset()">&#10227</button>
+    <button class="reset_buttons" id="eightway_reset" onclick="eightway_reset()">&#10227</button>
     <br>
 
     <div class="arrow-container">
@@ -681,5 +697,73 @@
     </div>
     <button class="close_button" onclick="close_eightway_led_modal()">Close</button>
   </dialog>
+
+  <dialog class="modal" id="oled_modal">
+    <h2 id="oled_modal_headline" >Configure OLED</h2>
+    <div id="oled_modal_body">
+      <div>Layout:</div>
+      <canvas id="myCanvas"></canvas>
+      <div id="splash_screen_head">Splash Screen:</div>
+      <canvas id="my_splash_canvas"></canvas>
+      <input type="file" id="imageLoader" accept="image/*">
+      <button id="customButton">Choose Image</button>
+      <button id="oled_invert_button" class="general_button" onclick="invertColors()">Invert</button>
+      <button class="general_button" onclick="outputstuff()" hidden>OUTPUT</button>
+      <label id="act_button_label" for="oled_select_activation_button" hidden>Activation Button:</label>
+      <select name="" id="oled_select_activation_button" onchange="set_activation_button()" hidden>
+        <option value="0">notSet</option>
+      </select>
+      <select name="" id="oled_set_predef_layout" onchange="set_layout()">
+        <option value="0" selected disabled>Preset Layouts</option>
+        <option value="1">Vewlix</option>
+        <option value="2">Noir</option>
+        <option value="3">Leverless</option>
+        <option value="4">WASD</option>
+        <option value="5">Clear Layout</option>
+      </select>
+      <button class="general_button" id="oled_add_button" onclick="oled_add_button()">+ Button</button>
+      <button class="general_button" id="oled_add_lever" onclick="oled_add_lever()">+ Lever</button>
+      <button class="general_button" id="oled_add_key" onclick="oled_add_key()">+ Key</button>
+      <button class="general_button" id="oled_open_directions" onclick="show_directions_modal()" hidden>Set Directions</button>
+      <button class="delete_buttons" id="delete_oled_button" onclick="delete_oled_button()" title="Delete" disabled>&#128465</button>
+      <label id="oled_radius_label" for="oled_button_radius">Size:</label>
+      <label id="oled_rotation_label" for="oled_key_angle">Rotation:</label>
+      <input id="oled_button_radius"  name="oled_button_radius" type="number" value="8" min="1" max="25" onchange="changerad(this.value)" oninput=""> 
+      <input id="oled_key_angle"  name="oled_key_angle" type="number" value="0" min="0" max="359" onchange="changeangle(this.value)" oninput="">
+      <input type="checkbox" id="oled_splash_always_on">
+      <label for="oled_splash_always_on" id="oled_splash_always_on_label">Show Splash <br> instead of Layout</label>
+      <select name="" id="oled_idle" onchange="">
+        <option value="-1">Display Layout</option>
+        <option value="0">Display Splash</option>
+        <option value="1">Clear OLED</option>
+      </select>
+    </div>
+    <button class="close_button" onclick="close_oled_modal()">Close</button>
+    <div id="oled_idle_label">When entering Idle Mode:</div>
+  </dialog>
+
+  <dialog class="modal" id="set_directions_modal">
+    <h2>Map Directions</h2>
+    <div class="select-container">
+      <br>
+      <select id="eightway_select-up" onchange="eightway_set_border_color()">
+        <option value="-1" selected>Set UP Button</option>
+      </select>
+      <br>
+      <select id="eightway_select-left" onchange="eightway_set_border_color()">
+        <option value="-1" selected>Set LEFT Button</option>
+      </select>
+      <br>
+      <select id="eightway_select-right" onchange="eightway_set_border_color()">
+        <option value="-1" selected>Set RIGHT Button</option>
+      </select>
+      <br>
+      <select id="eightway_select-down" onchange="eightway_set_border_color()">
+        <option value="-1" selected>Set DOWN Button</option>
+      </select>
+    </div>
+    <button onclick="close_directions_modal()" class="close_button">Close</button>
+  </dialog>
+
 </body>
 </html> 

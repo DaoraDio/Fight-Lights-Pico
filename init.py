@@ -23,8 +23,6 @@ start_pos = 0
 #global counter that increases at the rate of frequency
 timer_counter = 0
 
-
-
 #value to which the timer counter gets reset after a button press,
 #ideally it should be 0, but if the frequency is too high and the setback value is too high as well (aka 0 or >-5)...
 #...the timer interrupt overrides the value too fast for other functions to register properly
@@ -69,6 +67,7 @@ timer1 = machine.Timer() #timer for timer the interrupts
 timer2 = machine.Timer() #debounce timer for brightness
 timer3 = machine.Timer()
 timer4 = machine.Timer() #timer for player LED update
+timer5 = machine.Timer() 
 
 mode_selector = 0 #should not be reset on mode select
 
@@ -88,6 +87,8 @@ header_text = "##################This file stores the number of presses for each
 file_content = "" #stores the files content in memory 
 
 
+#profile_names = ["All RED no button actions", "white BG No Fade", "proafsdada"]
+profile_names = []
 ####player LED status
 p1_active = False
 p2_active = False
@@ -108,3 +109,6 @@ saved_RGB = (0,0,0)
 last_color_id = 0
 
 run_savestats = False
+
+oled_active = False
+oled_splash_drawn = False

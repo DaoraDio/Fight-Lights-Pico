@@ -187,7 +187,11 @@ function delete_button()
     }
   } 
 
-
+  for(let i = 0; i < circles.length; i++)
+  {
+    if(circles[i].button_activation == button_name)
+      circles[i].button_activation = "notSet";
+  }
 
   button_table.deleteRow(row_id);
   reset_all();
