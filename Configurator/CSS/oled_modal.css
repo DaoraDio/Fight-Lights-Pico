@@ -46,13 +46,14 @@
 #oled_modal
 {
     width: 600px;
+    height: 800px;
 }
 
 #oled_invert_button
 {
     position: absolute;
-    left: 180px;
-    top: 368px;
+    left: 470px;
+    top: 380px;
 }
 
 #oled_key_angle
@@ -71,12 +72,14 @@
 }
 
 
-#imageLoader {
+#imageLoader 
+{
     display: none;
 }
 
-/* Style the custom button */
-#customButton {
+
+#customButton 
+{
     padding: 5px 10px;
     background-color: #007bff;
     color: white;
@@ -86,8 +89,8 @@
     font-size: 16px;
 
     position: absolute;
-    left: 40px;
-    bottom: 60px;
+    left: 330px;
+    top: 380px;
     
 }
 
@@ -115,7 +118,8 @@
 #splash_screen_head
 {
     position: absolute;
-    bottom: 165px;
+    top: 270px;
+    left: 325px;
 }
 
 #delete_oled_button
@@ -145,25 +149,290 @@
     left: 180px;
 }
 
-#oled_splash_always_on_label
+
+#exportBtn
+{
+    padding: 5px 10px;
+    background-color: #059700;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    position: absolute;
+    left: 180px;
+    top: 174px;
+}
+
+
+
+#oled_normal_operation_label
 {
     position: absolute;
-    bottom: 100px;
-    left: 200px;
-    font-size: small;
+    top: 460px;
+    left: 30px;
+    font-size: 90%;
+}
+
+#oled_layout
+{
+    width: 150px;
+    left: 28px;
+    top: 480px;
+    position: absolute;
+}
+
+
+#oled_idle_label
+{
+    position: absolute;
+    top: 520px;
+    left: 30px;
+    font-size: 90%;
 }
 
 #oled_idle
 {
     position: absolute;
-    bottom: 30px;
-    right: 40px;
+    top: 540px;
+    left: 28px;
     width: 150px;
 }
 
-#oled_idle_label
+#upload_overlay_button
+{
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+
+    position: absolute;
+    left: 40px;
+    top: 380px;
+}
+
+#overlay_head
 {
     position: absolute;
-    bottom: 80px;
-    right: 40px;
+    top: 270px;
+}
+
+#oled_upload_animation_button
+{
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+
+    position: absolute;
+    top: 670px;
+    left: 390px;
+    width: 180px;
+    height: 30px;
+}
+
+#animation_border
+{
+    border: 1px solid rgb(143, 142, 142);
+    border-radius: 10px;
+    width: 280px;
+    height: 114px;
+
+    left: 340px;
+    top: 640px;
+    position:absolute;
+    pointer-events: none;
+}
+
+#oled_download_animation
+{
+    position: absolute;
+    top: 710px;
+    width: 241px;
+    left: 360px;
+    opacity: 50%;
+}
+
+#oled_anim_text
+{
+    position: absolute;
+    left: 440px;
+    top: 645px;
+}
+
+#oled_anim_helper
+{
+    position: absolute;
+    left: 580px;
+    top: 675px;
+}
+
+#oled_overlay_helper
+{
+    position: absolute;
+    top: 385px;
+    left: 190px;
+}
+
+#my_splash_canvas
+{
+    position: absolute;
+    left: 300px;
+}
+
+#oled_close_modal_button
+{
+    position: absolute;
+    top: 780px;
+}
+
+#oled_invert_oled, #oled_invert_check_label
+{
+    position: absolute;
+    top: 531px;
+    left: 230px;
+}
+
+#oled_invert_check_label
+{
+    left: 250px;
+}
+#oled_rotate_oled, #oled_rotate_check_label
+{
+    position: absolute;
+    top: 561px;
+    left: 230px;
+}
+
+#oled_rotate_check_label
+{
+    left: 250px;
+}
+
+#oled_type_select
+{
+    position: absolute;
+    top: 480px;
+    left: 240px;
+}
+
+#oled_type_label
+{
+    position: absolute;
+    top: 465px;
+    left: 250px;
+    font-size: small;
+}
+
+#oled_i2c_rad1
+{
+    position: absolute;
+    top: 480px;
+    left: 390px;
+}
+#oled_i2c_rad2
+{
+    position: absolute;
+    top: 520px;
+    left: 390px;
+}
+
+#oled_i2c_rad1_label
+{
+    position: absolute;
+    top: 480px;
+    left: 415px;
+
+}
+
+#oled_i2c_rad2_label
+{
+    position: absolute;
+    top: 522px;
+    left: 415px;
+
+}
+
+#oled_sda0_select, #oled_sda1_select
+{
+    position: absolute;
+    top: 500px;
+    left: 460px;
+}
+
+#oled_scl0_select, #oled_scl1_select
+{
+    position: absolute;
+    top: 500px;
+    left: 540px;
+}
+
+#oled_sda_label
+{
+    position: absolute;
+    left: 480px;
+    font-size: small;
+    top: 483px;
+}
+
+#oled_scl_label
+{
+    position: absolute;
+    left: 560px;
+    font-size: small;
+    top: 483px;
+}
+
+#oled_rotate_helper
+{
+    position: absolute;
+    top: 561px;
+    left: 355px;
+}
+
+#oled_animation_delay
+{
+    width: 60px;
+    position: absolute;
+    top: 680px;
+    left: 230px;
+}
+
+#oled_animation_delay_label1
+{
+    font-size: small;
+    position: absolute;
+    top: 660px;
+    left: 225px;
+}
+
+#oled_animation_delay_label2
+{
+    font-size: small;
+    position: absolute;
+    top: 682px;
+    left: 300px;
+}
+
+#oled_anim_delay_helper
+{
+    font-size: small;
+    position: absolute;
+    top: 665px;
+    left: 310px;
+}
+
+#oled_guide_link
+{
+    position: absolute;
+    left: 150px;
+    top: 785px;
+    color: #0056b3;
+    text-decoration: underline;
 }

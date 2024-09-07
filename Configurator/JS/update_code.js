@@ -15,7 +15,7 @@ function pythonArrayStringSubtractOne(inputString) //subtracts 1 from a python t
 
 function set_code()
 {
-  var version = "V2.5.2"
+  var version = "V2.6.0"
   var failsave = "if __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
   var header = "print(\"\\033[32mconfig\\033[0m\")\n\#Fight Lights Pico " + version +"\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth, notSet\nimport button\nimport functions\nimport init\n\n";
 
@@ -477,25 +477,79 @@ function set_code()
   }
   oled_array += "]";
 
-  //oled splash always on
-  var splash_alwayson = document.getElementById("oled_splash_always_on");
-  
-  if(splash_alwayson.checked == true)
-    splash_alwayson = "oled_always_splash = True"
-  else
-    splash_alwayson = "oled_always_splash = False"
-
   //oled idle behaviour
   var oled_idle = parseInt(document.getElementById("oled_idle").value);
-
-  //console.log(oled_idle);
 
   if(oled_idle == 0)
     oled_idle = "oled_idle = 0"
   else if(oled_idle == 1)
     oled_idle = "oled_idle = 1"
+  else if(oled_idle == 2)
+    oled_idle = "oled_idle = 2"
+  else if(oled_idle == 3)
+    oled_idle = "oled_idle = 3"
+
+  //oled normal operation
+  var oled_layout = parseInt(document.getElementById("oled_layout").value);
+  if(oled_layout == 0)
+    oled_layout = "oled_layout = 0"
+  else if(oled_layout == 1)
+    oled_layout = "oled_layout = 1"
+  else if(oled_layout == 2)
+    oled_layout = "oled_layout = 2"
+  else if(oled_layout == 3)
+    oled_layout = "oled_layout = 3"
+
+  //oled type
+  var oled_type = parseInt(document.getElementById("oled_type_select").value);
+  if(oled_type == 0)
+    oled_type = "oled_type = 0"
+  else if(oled_type == 1)
+    oled_type = "oled_type = 1"
+
+
+  //oled invert
+  var oled_invert = document.getElementById("oled_invert_oled");
+  if(oled_invert.checked)
+    oled_invert = "invert_oled = True"
   else
-    oled_idle = "oled_idle = -1"
+    oled_invert = "invert_oled = False"
+
+  //oled rotate
+  var oled_rotate = document.getElementById("oled_rotate_oled");
+  if(oled_rotate.checked)
+    oled_rotate = "rotate_oled = True"
+  else
+    oled_rotate = "rotate_oled = False"
+
+  //oled i2c pins
+  var oled_i2c_rad1 = document.getElementById("oled_i2c_rad1");
+  var oled_i2c_rad2 = document.getElementById("oled_i2c_rad2");
+  var i2c_interface;
+  var sda;
+  var scl;
+
+  if(oled_i2c_rad1.checked)
+  {
+    i2c_interface = 0;
+    sda = document.getElementById("oled_sda0_select").value;
+    scl = document.getElementById("oled_scl0_select").value;
+  }
+  else if(oled_i2c_rad2.checked)
+  {
+    i2c_interface = 1;
+    sda = document.getElementById("oled_sda1_select").value;
+    scl = document.getElementById("oled_scl1_select").value;
+  }
+
+  var i2cinterface = "i2c_interface = " + i2c_interface;
+  var sdapin = "oled_sda = " + sda;
+  var sclpin = "oled_scl = " + scl;
+  
+
+  //oled animation delay
+  var animation_delay = document.getElementById("oled_animation_delay").value;
+  animation_delay = "oled_animation_delay = " + animation_delay;
 
   //output
   document.getElementById("code_box").value = failsave + header 
@@ -555,8 +609,17 @@ function set_code()
                                               + idlemode_leds + '\n'
                                               + oled_button + oled_array + '\n'
                                               + oled_idle + '\n'
-                                              + splash_alwayson + '\n'
-                                              + createPythonByteArray(getBinaryPixelValuesArray()) + '\n'
+                                              + oled_layout + '\n'
+                                              + oled_type + '\n'
+                                              + oled_invert + '\n'
+                                              + oled_rotate + '\n'
+                                              + i2cinterface + '\n'
+                                              + sdapin + '\n'
+                                              + sclpin + '\n'
+                                              + animation_delay + '\n'
+                                              //+ splash_alwayson + '\n'
+                                              + createPythonByteArray(getBinaryPixelValuesArray('my_splash_canvas'),'splash') + '\n'
+                                              + createPythonByteArray(getBinaryPixelValuesArray('my_overlay_canvas'),'overlay') + '\n'
                                               + "############do not delete this line#######################";
 }
 

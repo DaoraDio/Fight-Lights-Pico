@@ -703,10 +703,19 @@
     <div id="oled_modal_body">
       <div>Layout:</div>
       <canvas id="myCanvas"></canvas>
+      <button id="exportBtn" onclick="exportCanvasAsPNG()" title="Export current layout as PNG">↓</button>
       <div id="splash_screen_head">Splash Screen:</div>
+      <canvas id="my_overlay_canvas"></canvas>
+      <input type="file" id="imageLoader2" accept="image/*" hidden>
+      <button id="upload_overlay_button" onclick="handleUploadOverlay()">Upload Overlay</button>
+      <div id="oled_overlay_helper" class="helper" title="An Overlay is a layer, drawn above the Layout to create a more unique and customizeable layout.&#10;Create an Overlay by downloading your current layout and drawing anything on the pixels not used by the layout itself&#10;&#10;(Remove all pixels used by the Layout itself. Only draw what you want added to the Layout)">?</div>
+      <div id="overlay_head">Overlay:</div>
+
       <canvas id="my_splash_canvas"></canvas>
-      <input type="file" id="imageLoader" accept="image/*">
-      <button id="customButton">Choose Image</button>
+      <input type="file" id="imageLoader" accept="image/*" hidden>
+      <button id="customButton">Upload Splash</button>
+      
+
       <button id="oled_invert_button" class="general_button" onclick="invertColors()">Invert</button>
       <button class="general_button" onclick="outputstuff()" hidden>OUTPUT</button>
       <label id="act_button_label" for="oled_select_activation_button" hidden>Activation Button:</label>
@@ -730,16 +739,98 @@
       <label id="oled_rotation_label" for="oled_key_angle">Rotation:</label>
       <input id="oled_button_radius"  name="oled_button_radius" type="number" value="8" min="1" max="25" onchange="changerad(this.value)" oninput=""> 
       <input id="oled_key_angle"  name="oled_key_angle" type="number" value="0" min="0" max="359" onchange="changeangle(this.value)" oninput="">
-      <input type="checkbox" id="oled_splash_always_on">
-      <label for="oled_splash_always_on" id="oled_splash_always_on_label">Show Splash <br> instead of Layout</label>
+      <input type="checkbox" id="oled_invert_oled">
+      <label id="oled_invert_check_label" for="oled_invert_oled">Invert OLED</label>
+
+      <input type="checkbox" id="oled_rotate_oled">
+      <label id="oled_rotate_check_label" for="oled_rotate_oled">Rotate OLED</label>
+      <div id="oled_rotate_helper" class="helper" title="Rotate the display 180°">?</div>
+
+      <label for="oled_i2c_rad1" id="oled_i2c_rad1_label">I2C0</label>
+      <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad1" onchange="show_hide_i2c_selects()" checked>
+
+      <label for="oled_i2c_rad2" id="oled_i2c_rad2_label">I2C1</label>
+      <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad2" onchange="show_hide_i2c_selects()">
+
+      <select name="" id="oled_sda0_select" onchange="">
+        <option value="0">GP0</option>
+        <option value="4">GP4</option>
+        <option value="8">GP8</option>
+        <option value="12">GP12</option>
+        <option value="16">GP16</option>
+        <option value="20">GP20</option>
+      </select>
+
+      <div id="oled_sda_label">SDA</div>
+      <div id="oled_scl_label">SCL</div>
+
+      <select name="" id="oled_sda1_select" onchange="">
+        <option value="2">GP2</option>
+        <option value="6">GP6</option>
+        <option value="10">GP10</option>
+        <option value="14">GP14</option>
+        <option value="18">GP18</option>
+        <option value="26">GP26</option>
+      </select>
+
+      <select name="" id="oled_scl0_select" onchange="">
+        <option value="1">GP1</option>
+        <option value="5">GP5</option>
+        <option value="9">GP9</option>
+        <option value="13">GP13</option>
+        <option value="17">GP17</option>
+        <option value="21">GP21</option>
+      </select>
+
+      <select name="" id="oled_scl1_select" onchange="">
+        <option value="3">GP3</option>
+        <option value="7">GP7</option>
+        <option value="11">GP11</option>
+        <option value="15">GP15</option>
+        <option value="19">GP19</option>
+        <option value="27">GP27</option>
+      </select>
+
+      <div id="oled_type_label">Oled Type</div>
+      <select name="" id="oled_type_select" onchange="">
+        <option value="0">SH1106</option>
+        <option value="1">SSD1306</option>
+      </select>
+
+      <div id="oled_normal_operation_label">During Play:</div>
+      <select name="" id="oled_layout" onchange="">
+        <option value="0">Display Layout</option>
+        <option value="1">Display Splash</option>
+        <option value="2">Clear OLED</option>
+        <option value="3">Display Animation</option>
+      </select>
+
       <select name="" id="oled_idle" onchange="">
-        <option value="-1">Display Layout</option>
+        <option value="2">Display Layout</option>
         <option value="0">Display Splash</option>
         <option value="1">Clear OLED</option>
+        <option value="3">Display Animation</option>
       </select>
     </div>
-    <button class="close_button" onclick="close_oled_modal()">Close</button>
+
+    <!--Gif Stuff-->
+    <div id="oled_anim_delay_helper" class="helper" title="Delay each frame of the animation by a given amount (in milliseconds)&#10;&#10;Value is stored in the config.py">?</div>
+    <div id="oled_animation_delay_label1">Frame Delay</div>
+    <div id="oled_animation_delay_label2">ms</div>
+    <input id="oled_animation_delay" name="" type="number" value="0" min="0"  onchange="" oninput="">
+    <button id="oled_upload_animation_button">Upload PNG Files</button>
+    <button class="dl_code" id="oled_download_animation" onclick="save_animation_code('oled_animation.py')" disabled>Download Animation Code</button>
+    <input type="file" id="uploadPngs" accept="image/png" multiple hidden>
+    <canvas id="pngCanvas" style="display: none;" hidden></canvas>
+    <br> <br> <br> <br><br> <br>
+    <div id="animation_border"></div>
+    <textarea id="animation_code_box" name="animation_code_box" hidden></textarea>
+    <!--Gif Stuff-->
+    <button id="oled_close_modal_button" class="close_button" onclick="close_oled_modal()">Close</button>
     <div id="oled_idle_label">When entering Idle Mode:</div>
+    <div id="oled_anim_text">Animation</div>
+    <div id="oled_anim_helper" class="helper" title="Select PNG files for each frame of animation.&#10;For example select: frame1.png, frame2.png, frame3.png, and then Download the code and upload it to your Pico.&#10;(Names don't have to be 'frameX.png' but should all be the same and ordered by number at the end)">?</div>
+    <a href="https://docs.google.com/document/d/1sRzsu_7MLZvugeR4t4hok-HUen5nlwNqmLjYXqlQP0s/edit" target="_blank" id="oled_guide_link">Need help? Check out the guide</a>
   </dialog>
 
   <dialog class="modal" id="set_directions_modal">
@@ -764,6 +855,8 @@
     </div>
     <button onclick="close_directions_modal()" class="close_button">Close</button>
   </dialog>
+
+
 
 </body>
 </html> 

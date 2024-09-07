@@ -43,6 +43,7 @@ function updateCanvas()
 
 var canvas_drawn = false;
 var splash_canvas_drawn = false;
+var overlay_canvas_drawn = false;
 
 
 function draw_splash_canvas()
@@ -58,6 +59,21 @@ function draw_splash_canvas()
     ctx2.fillStyle = 'black';
     ctx2.fillRect(x, y, width, height);
     splash_canvas_drawn = true;
+}
+
+function draw_overlay_canvas()
+{
+    const canvas = document.getElementById('my_overlay_canvas');
+    const ctx2 = canvas.getContext('2d');
+
+    const x = 30;
+    const y = 40;
+    const width = 128;
+    const height = 64;
+
+    ctx2.fillStyle = 'black';
+    ctx2.fillRect(x, y, width, height);
+    overlay_canvas_drawn = true;
 }
 
 function draw_canvas()
@@ -77,12 +93,16 @@ function draw_canvas()
 
 function show_oled_modal() 
 {
+    check_animation_codebox();
+    show_hide_i2c_selects();
     const modal = document.getElementById("oled_modal");
     loadImageToCanvas();
     if(canvas_drawn == false)
         draw_canvas();
     if(splash_canvas_drawn == false)
         draw_splash_canvas();
+    if(overlay_canvas_drawn == false)
+        draw_overlay_canvas();
 
 
 
@@ -531,6 +551,67 @@ function loadImageToCanvas() {
         reader.readAsDataURL(file);
     });
 }
+
+function handleUploadOverlay() 
+{
+    const imageLoader = document.getElementById('imageLoader2');
+    const canvas = document.getElementById('my_overlay_canvas');
+    
+    // Trigger the file input click
+    imageLoader.click();
+
+    // Handle the file input change event
+    imageLoader.onchange = function(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            console.error('No file selected');
+            return;
+        }
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const ctx = canvas.getContext('2d');
+                const x = 30;
+                const y = 40;
+
+                // Clear the canvas before drawing the new image
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw the image at the specified (x, y) coordinates
+                ctx.drawImage(img, x, y, 128, 64);
+
+                // Get the image data from the canvas
+                const imageData = ctx.getImageData(x, y, 128, 64);
+                const data = imageData.data;
+
+                // Convert the image to binary (black and white)
+                for (let i = 0; i < data.length; i += 4) {
+                    const gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
+                    const binaryColor = gray > 128 ? 255 : 0;
+
+                    data[i] = binaryColor;     // Red
+                    data[i + 1] = binaryColor; // Green
+                    data[i + 2] = binaryColor; // Blue
+                }
+
+                // Put the modified image data back onto the canvas
+                ctx.putImageData(imageData, x, y);
+            };
+            img.onerror = function() {
+                console.error('Failed to load image');
+            };
+            img.src = event.target.result;
+        };
+
+        reader.onerror = function() {
+            console.error('Failed to read file');
+        };
+
+        reader.readAsDataURL(file);
+    };
+}
 // Add event listener for keydown events
 document.addEventListener('keydown', function(event) 
 {
@@ -601,11 +682,11 @@ function outputstuff()
     console.log(createPythonByteArray(getBinaryPixelValuesArray()));
 }
 
-function createPythonByteArray(pixelArray) {
+function createPythonByteArray(pixelArray, string) {
     const width = 128;
     const height = 64;
     const bytesPerRow = width / 8;
-    let hexString = 'splash = bytearray([\n';
+    let hexString = string + ' = bytearray([\n';
 
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < bytesPerRow; x++) {
@@ -631,8 +712,8 @@ function createPythonByteArray(pixelArray) {
 
 
 
-function getBinaryPixelValuesArray() {
-    const canvas = document.getElementById('my_splash_canvas');
+function getBinaryPixelValuesArray(canvas_id) {
+    const canvas = document.getElementById(canvas_id);
     const ctx = canvas.getContext('2d');
     const width = 128;
     const height = 64;
@@ -779,5 +860,213 @@ function set_layout()
     selectedCircle = null;
     disable_enable_elements(true,true,true);
     updateCanvas();
+    
+}
+
+
+/************************************************** */
+var animation_string = "";
+var frame_arr = "frames = [";
+document.addEventListener('DOMContentLoaded', function () 
+{
+    // Trigger file input when button is pressed
+    document.getElementById('oled_upload_animation_button').addEventListener('click', function() 
+    {
+        document.getElementById('uploadPngs').click();
+    });
+
+    document.getElementById('uploadPngs').addEventListener('change', handlePngUpload);
+
+    function handlePngUpload(event) 
+    {
+
+        const files = event.target.files;
+        if (files.length === 0) 
+        {
+            console.error("No PNG files selected.");
+            return;
+        }
+        animation_string = "";
+        frame_arr = "frames = [";
+        // Process each PNG file
+        for (let i = 0; i < files.length; i++) 
+        {
+            const file = files[i];
+            if (file.type === "image/png") 
+            {
+                readAndProcessPng(file, i);
+            } 
+            else 
+            {
+                console.warn(`Skipping non-PNG file: ${file.name}`);
+            }
+        }
+    }
+
+    function readAndProcessPng(file, i) 
+    {
+        const reader = new FileReader();
+        reader.onload = function (e) 
+        {
+            const img = new Image();
+            img.onload = function () 
+            {
+                processPngFrame(img, i);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+    }
+
+    function processPngFrame(img, i) 
+    {
+        const canvas = document.getElementById('pngCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Resize canvas to the image size
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Draw the image onto the canvas
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        // Get image data from the canvas
+        const frameData = ctx.getImageData(0, 0, img.width, img.height);
+        const binaryFrame = convertToBinaryImage(frameData);
+        convertToBinaryArray(binaryFrame, img.width, img.height, i);
+    }
+
+    function convertToBinaryImage(frameData) 
+    {
+        const binaryImage = new Uint8Array(frameData.width * frameData.height);
+        for (let y = 0; y < frameData.height; y++) 
+        {
+            for (let x = 0; x < frameData.width; x++) 
+            {
+                const index = (y * frameData.width + x) * 4;
+                const r = frameData.data[index];
+                const g = frameData.data[index + 1];
+                const b = frameData.data[index + 2];
+                const gray = (r + g + b) / 3;
+                binaryImage[y * frameData.width + x] = gray > 127 ? 255 : 0;
+            }
+        }
+        return binaryImage;
+    }
+
+    function convertToBinaryArray(binaryFrame, width, height, i) 
+    {
+        const binaryArray = new Uint8Array(width * height);
+        for (let y = 0; y < height; y++) 
+        {
+            for (let x = 0; x < width; x++) 
+            {
+                binaryArray[y * width + x] = binaryFrame[y * width + x] === 255 ? 255 : 0;
+            }
+        }
+        let name = 'frame' + i;
+        animation_string += createPythonByteArray(binaryArray, name) + '\n';
+        frame_arr += name + ",";
+        document.getElementById("animation_code_box").value = animation_string + '\n' + frame_arr;
+        document.getElementById("animation_code_box").value = document.getElementById("animation_code_box").value.slice(0, -1) + ']';
+        check_animation_codebox();
+    }
+});
+
+
+function exportCanvasAsPNG() {
+
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Define the area to export (same as the black rectangle coordinates)
+    const x = 30;
+    const y = 10;
+    const width = 128;
+    const height = 64;
+
+    // Create a temporary canvas with the size of the black rectangle
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    const tempContext = tempCanvas.getContext('2d');
+
+    // Draw the black area from the original canvas onto the temporary canvas
+    tempContext.drawImage(canvas, x, y, width, height, 0, 0, width, height);
+
+    // Export the temporary canvas as a PNG
+    const dataURL = tempCanvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'layout.png';
+    link.click();
+}
+
+function save_animation_code(filename, type) 
+{
+    var data = document.getElementById("animation_code_box").value;
+    var file = new Blob([data], {type: type});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
+
+function check_animation_codebox()
+{
+    var codebox = document.getElementById("animation_code_box").value;
+    if(codebox == "")
+    {
+        document.getElementById("oled_download_animation").disabled = true;
+        document.getElementById("oled_download_animation").style.opacity = "50%";
+        document.getElementById("oled_download_animation").style.cursor = "default";
+    }
+    else
+    {
+        document.getElementById("oled_download_animation").disabled = false;
+        document.getElementById("oled_download_animation").style.opacity = "100%";
+        document.getElementById("oled_download_animation").style.cursor = "alias";
+    }
+
+}
+
+function show_hide_i2c_selects()
+{
+    var sda0 = document.getElementById("oled_sda0_select");
+    var scl0 = document.getElementById("oled_scl0_select");
+
+    var sda1 = document.getElementById("oled_sda1_select");
+    var scl1 = document.getElementById("oled_scl1_select");
+
+    var rad0 = document.getElementById("oled_i2c_rad1");
+    var rad1 = document.getElementById("oled_i2c_rad2");
+
+    if(rad0.checked)
+    {
+        sda0.hidden = false;
+        scl0.hidden = false;
+
+        sda1.hidden = true;
+        scl1.hidden = true;
+    }
+    else if(rad1.checked)
+    {
+        sda0.hidden = true;
+        scl0.hidden = true;
+
+        sda1.hidden = false;
+        scl1.hidden = false;
+    }
     
 }

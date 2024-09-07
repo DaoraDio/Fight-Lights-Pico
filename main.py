@@ -11,18 +11,21 @@ import animation
 import os
 import sys
 import gc
+import _thread
 if config.activate_player_led:
     import playerLED
 try:
     import oled
+    oled.setup_oled()
     init.oled_active = True
 except IndexError:
     print("\033[31mOled Not Found\033[0m")
     init.oled_active = False
-    
+    del oled.i2c
 
-#clear the init.code variable to free up the memory, if main was executed from a config file
+#clear the init.code variable to free up the memory, if main was executed from another file
 del init.code
+
 
 #lights up the onborad led
 onboard_led = Pin(25, Pin.OUT)
@@ -53,11 +56,6 @@ if config.save_stats == True:
 file_list = os.listdir()
 init.config_names = [s for s in file_list if "config" in s]
 init.current_config_index = 0
-
-if init.oled_active:
-    oled.oled_draw_splash()
-
-
 
 def load_config(importfile):
     if importfile is 'config.py':
@@ -114,24 +112,37 @@ def load_config(importfile):
     
         del sys.modules[module_name] # Remove reference    
 
+counter = 0
+for button in config.button_list:
+    button.run(0)
+    if button.is_pressed:
+        counter += 1
+
+if init.oled_active:
+    oled.oled_draw_splash()
+    if config.overlay:
+        oled.oled_set_overlay_coordinates()
+    if counter < 3 and functions.oled_animation_exists():
+        second_thread = _thread.start_new_thread(oled.play_animation2, ())
+        print("Second Thread Started")
 #--------------------------main program-------------------------------------------------------
 #@functions.measure_execution_time
 def main():
-    #print(config.idlemode_leds)
-    #print(init.current_input)
-    #print(init.p1_active)
-    #print(init.p2_active)
-    #print(init.p3_active)
-    #print(init.p4_active)
-    #print()
-    #print(statemachine.ar)
+    gc.collect()
     if init.oled_active:
-        if config.oled_always_splash == False:
+        if config.oled_layout == 0:
+            init.oled_stop_animation = True
             oled.oled_draw_stick()
-        else:
+        if config.oled_layout == 1:
             if init.oled_splash_drawn == False:
+                init.oled_stop_animation = True
                 oled.oled_draw_splash()
                 init.oled_splash_drawn = True
+        if config.oled_layout == 2:
+            init.oled_stop_animation = True
+            oled.oled_clear_screen()
+        if config.oled_layout == 3 and init.timer_lock == False:
+            init.oled_stop_animation = False
 
     
     init.main_cnt += 1    
@@ -152,7 +163,6 @@ def main():
             R = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[0]))
             G = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[1]))
             B = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[2]))
-            #print("R:", R, "G:", G, "B:", B)
             col = (R,G,B)
             
             functions.pixels_fill(col)
@@ -165,6 +175,8 @@ def main():
                 init.timer_lock = True
             
             if init.oled_active:
+                init.oled_stop_animation = True
+
                 oled.oled.fill(0)
                 value = round(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, 100))
                 oled.oled.text("Entering", 30, 0)
@@ -172,8 +184,9 @@ def main():
                 oled.oled.rect(10, 30, 100, 20, True)
                 oled.oled.rect(10, 30, value, 20, True, True)
                 oled.oled.text(str(value) + '%', 54, 53)
-                oled.oled.show()
-            #print()
+                with init.lock:
+                    oled.oled.show()
+
             if init.timer_counter >= init.timer_target:
                 functions.mode_select(config.brightness_steps)
         else:
@@ -184,12 +197,18 @@ def main():
     if init.idle_counter > init.idle_ticks and config.idle_mode != 0:
         if init.oled_active:
             if config.oled_idle == 0:
+                init.oled_stop_animation = True
                 oled.oled_draw_splash()
             elif config.oled_idle == 1:
-                oled.oled_clear_screen()
+                init.oled_stop_animation = True
                 init.oled_splash_drawn = False
-            else:
+                oled.oled_clear_screen()
+            elif config.oled_idle == 2:
+                init.oled_stop_animation = True
                 oled.oled_draw_stick(True)
+                init.oled_splash_drawn = False
+            elif config.oled_idle == 3:
+                init.oled_stop_animation = False
                 init.oled_splash_drawn = False
             
         if config.idle_mode == 1:
@@ -207,7 +226,6 @@ def main():
     
     #checks if no buttons are pressed
     init.no_buttons_pressed = functions.no_buttons_pressed()
-    #print(init.no_buttons_pressed)
     
     #chooses a "random" color from the color array 'colors'
     init.random_color_id = init.i % len(config.colors)
@@ -329,6 +347,6 @@ def main():
 while True:
     main()
 
-      
+     
 
         

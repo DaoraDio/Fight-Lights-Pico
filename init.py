@@ -5,6 +5,7 @@ if __name__ == '__main__':
 
 print("\033[32minit\033[0m")
 import machine
+import _thread
 code = "" #hold the code for main.py when launching from config
 
 leniency_counter = 0 #increases every iteration of the main loop, resets when value reaches config.leniency
@@ -87,7 +88,6 @@ header_text = "##################This file stores the number of presses for each
 file_content = "" #stores the files content in memory 
 
 
-#profile_names = ["All RED no button actions", "white BG No Fade", "proafsdada"]
 profile_names = []
 ####player LED status
 p1_active = False
@@ -112,3 +112,6 @@ run_savestats = False
 
 oled_active = False
 oled_splash_drawn = False
+oled_stop_animation = True
+lock = _thread.allocate_lock()
+pixel_coordinates = []

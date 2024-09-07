@@ -713,8 +713,23 @@ function get_code()
         substring = substring.substring(0, substring.indexOf('])'));
     }
     splash = substring.replaceAll("splash = bytearray([", '');
-    drawHexImage(splash);
+    drawHexImage(splash, "my_splash_canvas");
     splash_canvas_drawn = true;
+
+    //oled overlay
+    var overlay = get_variable_line("overlay = ");
+    var codeboxtext2 = document.getElementById("new_codebox").value;
+    var indexOfStr2 = codeboxtext2.indexOf(overlay);
+
+    if (indexOfStr2 !== -1) 
+    {
+        var substring = codeboxtext2.substring(indexOfStr2, codeboxtext2.length);
+        substring = substring.substring(0, substring.indexOf('])'));
+    }
+
+    overlay = substring.replaceAll("overlay = bytearray([", '');
+    drawHexImage(overlay, 'my_overlay_canvas');
+    overlay_canvas_drawn = true;
 
     //oled buttons
     remove_all_event_listeners();
@@ -767,24 +782,61 @@ function get_code()
     const oled_idle_select = document.getElementById("oled_idle");
     oled_idle_select.value = oled_idle;
 
-    //oled splash checkbox
-    //"oled_splash_always_on"
-    var oled_always_on = get_value("oled_always_splash = ");
-    const oled_splash_checkbox = document.getElementById("oled_splash_always_on");
-    if(oled_always_on == "False")
-        oled_splash_checkbox.checked = false;
-    else if(oled_always_on == "True")
-        oled_splash_checkbox.checked = true;
+    //oled layout
+    var oled_layout = parseInt(get_value("oled_layout = "));
+    const oled_layout_select = document.getElementById("oled_layout");
+    oled_layout_select.value = oled_layout;
+
+    //oled type
+    var oled_type = parseInt(get_value("oled_type = "));
+    const oled_type_select = document.getElementById("oled_type_select");
+    oled_type_select.value = oled_type;
+
+    //invert oled
+    var invert_oled = get_value("invert_oled = ");
+    const oled_invert_oled_checkbox = document.getElementById("oled_invert_oled");
+    if(invert_oled == 'False')
+        oled_invert_oled_checkbox.checked = false;
+    else if(invert_oled == 'True')
+        oled_invert_oled_checkbox.checked = true;
+
+    //rotate oled
+    var rotate_oled = get_value("rotate_oled = ");
+    const oled_rotate_oled_checkbox = document.getElementById("oled_rotate_oled");
+    if(rotate_oled == 'False')
+        oled_rotate_oled_checkbox.checked = false;
+    else if(rotate_oled == 'True')
+        oled_rotate_oled_checkbox.checked = true;
 
 
-    
+    var sda = parseInt(get_value("oled_sda = "));
+    var scl = parseInt(get_value("oled_scl = "));
+
+    //i2c interface
+    var i2c_interface = parseInt(get_value("i2c_interface = "));
+    if(i2c_interface == 0)
+    {
+        document.getElementById("oled_i2c_rad1").checked = true;
+        document.getElementById("oled_sda0_select").value = sda;
+        document.getElementById("oled_scl0_select").value = scl;
+    }
+    else if(i2c_interface == 1)
+    {
+        document.getElementById("oled_i2c_rad2").checked = true;
+        document.getElementById("oled_sda1_select").value = sda;
+        document.getElementById("oled_scl1_select").value = scl;
+    }
+
+    //animation delay
+    var animation_delay = parseInt(get_value("oled_animation_delay = "));
+    document.getElementById("oled_animation_delay").value = animation_delay;
 }
 
-function drawHexImage(hexString) 
+function drawHexImage(hexString, canvasname) 
 {
     const width = 128;
     const height = 64;
-    const canvas = document.getElementById("my_splash_canvas");
+    const canvas = document.getElementById(canvasname);
     const ctx = canvas.getContext('2d');
     const imageData = ctx.createImageData(width, height);
     const data = imageData.data;

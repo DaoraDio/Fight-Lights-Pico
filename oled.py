@@ -4,31 +4,39 @@ if __name__ == '__main__':
         init.code = f.read()
     exec(init.code)
 
+print("\033[32moled\033[0m")
+
 from machine import I2C, ADC, Pin
 from sh1106 import SH1106_I2C
+from ssd1306 import SSD1306_I2C
+import ssd1306
 import framebuf
-import config
 import time
 import functions
 import _thread
 import gc
 import init
 import math
+import config
 
+def setup_oled():
+    global oled
+    global i2c
+    
+    i2c = I2C(config.i2c_interface, scl=Pin(config.oled_scl), sda=Pin(config.oled_sda), freq=1000000)
+    print("\033[32mOled Found\033[0m at Address: " + hex(i2c.scan()[0]).upper())
 
+    WIDTH  = 128
+    HEIGHT = 64
 
-i2c = I2C(1, scl=Pin(27), sda=Pin(26), freq=1000000)      # Init I2C uses pin 27 for scl and pin 26 for sda
-print("\033[32mOled Found\033[0m at Adress: " + hex(i2c.scan()[0]).upper())
-#print("I2C Address      : "+hex(i2c.scan()[0]).upper()) # Display device address
-#print("I2C Configuration: "+str(i2c))                   # Display I2C config
+    if config.oled_type == 0:
+        oled = SH1106_I2C(WIDTH, HEIGHT, i2c)
+    elif config.oled_type == 1:
+        oled = SSD1306_I2C(WIDTH, HEIGHT, i2c)
 
-WIDTH  = 128                                            # oled display width
-HEIGHT = 64
-
-oled = SH1106_I2C(WIDTH, HEIGHT, i2c)                  # Init oled display
-
-oled.invert(0) #invert colors
-oled.rotate(1) #rotate display 180°
+    oled.invert(config.invert_oled) #invert colors
+    oled.rotate(not config.rotate_oled) #rotate display 180°
+    
 
 def round_half_up(n):
     if n - math.floor(n) >= 0.5:
@@ -199,13 +207,53 @@ def draw_circle(x_centre, y_centre, r):
 #@functions.measure_execution_time
 def oled_clear_screen():
     oled.fill(0)
-    oled.show()
+    with init.lock:
+        oled.show()
 
 def oled_draw_splash():
     fb = framebuf.FrameBuffer(config.splash, 128, 64, framebuf.MONO_HLSB)
     oled.blit(fb, 0, 0)
-    oled.show()
+    with init.lock:
+        oled.show()
 
+
+def parse_frame(frame):
+    cleaned_string = frame.split('bytearray([')[-1].strip('])').replace(' ', '')
+
+    hex_values = cleaned_string.split(',')
+    hex_values = hex_values[:-1]
+    byte_data = bytearray(int(value, 16) for value in hex_values)
+    
+    fb = framebuf.FrameBuffer(byte_data, 128, 64, framebuf.MONO_HLSB)
+    oled.blit(fb, 0, 0)
+    oled.show()
+    del hex_values
+
+
+def play_animation():
+    while True:
+        current_frame = ""
+        with open('oled_animation.txt', 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line.startswith('])'):
+                    current_frame += line
+                else:
+                    parse_frame(current_frame)
+                    current_frame = ""
+       
+
+def play_animation2():
+    import oled_animation
+    while True:
+        for frame in oled_animation.frames:
+            if init.oled_stop_animation == False:
+                fb = framebuf.FrameBuffer(frame, 128, 64, framebuf.MONO_HLSB)
+                oled.blit(fb, 0, 0)
+                with init.lock:
+                    oled.show()
+                time.sleep_ms(config.oled_animation_delay)
+            
 def oled_draw_options_mode(profile_num=0):
     oled.fill(0)
     oled.text("SELECT PROFILE:",5,0)
@@ -227,8 +275,8 @@ def oled_draw_options_mode(profile_num=0):
         oled.text(">",60,35)
     
     oled.text("Brightness:" + str(round(config.brightness_mod*100)) + '%', 0, 50)
-    
-    oled.show()
+    with init.lock:
+        oled.show()
     
 def oled_draw_lever(x,y,radius):
     offset_y = 0
@@ -256,7 +304,26 @@ def oled_draw_key(x,y,radius,angle,button):
     draw_rectangle(x,y,radius,angle)
     if button is not None and button.is_pressed:
         draw_filled_rectangle(x,y,radius,angle)
+        
+def oled_set_overlay_coordinates():
+    x = 0
+    y = 0
+    for byte in config.overlay:
+        for i in range(8):
+            bit = (byte >> (7 - i)) & 1
+            if bit == 1:
+                init.pixel_coordinates.append((x + i, y))
+        x += 8
+        if x >= 128:
+            x = 0
+            y += 1
 
+def oled_draw_overlay():
+    for values in init.pixel_coordinates:
+        x, y = values
+        oled.pixel(x,y,1)
+    
+        
 #--------------------------------------------------------------------------------------------
 #@functions.measure_execution_time
 def oled_draw_stick(overwrite = False):
@@ -269,6 +336,7 @@ def oled_draw_stick(overwrite = False):
     for button in config.button_list:
         if button.was_pressed or button.released:
             action_taken = True
+            init.oled_overlay_drawn = False
     
     if action_taken:
         oled.fill(0)
@@ -279,18 +347,12 @@ def oled_draw_stick(overwrite = False):
             if oled_button[2] == 'is_key':
                 oled_draw_key(oled_button[0],oled_button[1],oled_button[4],oled_button[5],oled_button[3])
             if oled_button[2] == 'is_button':
-                oled_draw_button(oled_button[0],oled_button[1],oled_button[4],oled_button[3]) 
+                oled_draw_button(oled_button[0],oled_button[1],oled_button[4],oled_button[3])
         
+        if init.pixel_coordinates:
+            oled_draw_overlay()
         
-        oled.show()
+        with init.lock:
+            oled.show()
         
         action_taken = False
-     
-
-    
-
-    
-    
-
-
-

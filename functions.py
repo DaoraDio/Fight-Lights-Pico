@@ -434,6 +434,14 @@ def no_buttons_pressed():
     
     return True
     
+
+def oled_animation_exists():
+    try:
+        os.stat('oled_animation.py')
+        return True
+    except OSError:
+        return False
+    
     
 def set_background(background):
     #speed = 1000 #speed for colorwheel, higher = slower
