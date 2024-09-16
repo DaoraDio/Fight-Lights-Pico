@@ -104,7 +104,7 @@ on_off_cnt = 0
 prof_next_cnt = 0
 prof_prev_cnt = 0
 
-#8 Way-Joystick random color
+#8 Way-Joystick random color 
 saved_RGB = (0,0,0)
 last_color_id = 0
 
@@ -115,3 +115,8 @@ oled_splash_drawn = False
 oled_stop_animation = True
 lock = _thread.allocate_lock()
 pixel_coordinates = []
+current_frame = ""
+framebuffer = ""
+t1 = 0
+t2 = 0
+hex_bytearrays = []

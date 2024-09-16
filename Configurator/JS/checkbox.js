@@ -17,12 +17,12 @@ function call_on_start()
     update_smooth_value()
     show_smooth_slider()
 
-    var browser = navigator.sayswho;
+    /*var browser = navigator.sayswho;
     browser = browser.split(" ");
     console.log(browser);
 
     if(browser[0] == 'Chrome')
-        document.getElementById("load_from_clipboard").hidden = false;
+        document.getElementById("load_from_clipboard").hidden = false;*/
 
     var playerled_cb = document.getElementById("playerled_cb");
     if(playerled_cb.checked)

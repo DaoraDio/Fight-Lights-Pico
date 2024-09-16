@@ -18,6 +18,7 @@ import gc
 import init
 import math
 import config
+import sys
 
 def setup_oled():
     global oled
@@ -43,6 +44,8 @@ def round_half_up(n):
         return math.ceil(n)
     else:
         return math.floor(n)
+
+
 
 def draw_rectangle(x, y, radius, angle):
     # Convert angle to radians
@@ -217,31 +220,50 @@ def oled_draw_splash():
         oled.show()
 
 
-def parse_frame(frame):
-    cleaned_string = frame.split('bytearray([')[-1].strip('])').replace(' ', '')
+def measure_execution_time(func):
+    def wrapper(*args, **kwargs):
+        times = []
+        iterations = 1
+        for i in range(iterations):
+            t1 = time.ticks_us()
+            func(*args, **kwargs)
+            t2 = time.ticks_us()-t1
+            times.append(t2)
+        average = sum(times) / len(times)
+        #print(f'Took {t2/1000:.3f} ms')
+        print(f'Took on average {average/1000:.3f} ms')
+    return wrapper
 
-    hex_values = cleaned_string.split(',')
-    hex_values = hex_values[:-1]
-    byte_data = bytearray(int(value, 16) for value in hex_values)
-    
-    fb = framebuf.FrameBuffer(byte_data, 128, 64, framebuf.MONO_HLSB)
-    oled.blit(fb, 0, 0)
-    oled.show()
-    del hex_values
+def string_to_bytearray(data_str):
+    hex_values = data_str.split(',')
+    return bytearray(int(value, 16) for value in hex_values)
 
-
+  
+         
+#@measure_execution_time
 def play_animation():
+    characters_to_read = 32
     while True:
-        current_frame = ""
-        with open('oled_animation.txt', 'r') as f:
-            for line in f:
-                line = line.strip()
-                if not line.startswith('])'):
-                    current_frame += line
-                else:
-                    parse_frame(current_frame)
-                    current_frame = ""
-       
+        y=0
+        if init.oled_stop_animation == False:
+            with open('oled_animation.txt', 'r') as f:
+                while init.oled_stop_animation == False:
+                    chars = f.read(characters_to_read)  
+                    if not chars:  
+                        break
+                    num = bytearray.fromhex(chars)
+                    init.framebuffer = framebuf.FrameBuffer(num, characters_to_read*4, 1, framebuf.MONO_HLSB)
+                    oled.blit(init.framebuffer, 0, y)
+            
+                    y = (y+1) % 64
+                    if y == 0:
+                        with init.lock:
+                            time.sleep_ms(config.oled_animation_delay)
+                            oled.show()
+                                #print(init.t1 - init.t2)
+                                #init.t2 = init.t1
+                
+                
 
 def play_animation2():
     import oled_animation
@@ -337,6 +359,8 @@ def oled_draw_stick(overwrite = False):
         if button.was_pressed or button.released:
             action_taken = True
             init.oled_overlay_drawn = False
+            
+
     
     if action_taken:
         oled.fill(0)

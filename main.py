@@ -23,9 +23,14 @@ except IndexError:
     init.oled_active = False
     del oled.i2c
 
-#clear the init.code variable to free up the memory, if main was executed from another file
+#clear the init.code variable to free up the memory, if main was executed from another file 
 del init.code
-
+#machine.freq(125000000) #<--Pico1 Standard clockspeed
+#machine.freq(150000000) #<--Pico2 Standard clockspeed
+#machine.freq(180000000) #<--medium Overclock
+#machine.freq(210000000) #<--medium/high Overclock
+#machine.freq(240000000) #<--high Overclock
+#machine.freq(270000000) #<--very high Overclock
 
 #lights up the onborad led
 onboard_led = Pin(25, Pin.OUT)
@@ -112,23 +117,28 @@ def load_config(importfile):
     
         del sys.modules[module_name] # Remove reference    
 
+
 counter = 0
 for button in config.button_list:
     button.run(0)
     if button.is_pressed:
         counter += 1
-
+        
 if init.oled_active:
     oled.oled_draw_splash()
     if config.overlay:
         oled.oled_set_overlay_coordinates()
     if counter < 3 and functions.oled_animation_exists():
-        second_thread = _thread.start_new_thread(oled.play_animation2, ())
+        second_thread = _thread.start_new_thread(oled.play_animation, ())
         print("Second Thread Started")
+        #oled.play_animation()
+        
 #--------------------------main program-------------------------------------------------------
 #@functions.measure_execution_time
 def main():
-    gc.collect()
+    #gc.collect()
+   # free_memory = gc.mem_free()
+    #print("Available memory:", free_memory, "bytes")
     if init.oled_active:
         if config.oled_layout == 0:
             init.oled_stop_animation = True

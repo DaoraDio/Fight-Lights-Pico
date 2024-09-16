@@ -660,29 +660,8 @@ function invertColors() {
     ctx.putImageData(imageData, 0, 0);
 }
 
-function outputstuff()
+function createPythonByteArray(pixelArray, string) 
 {
-    /*
-    var old_arr = getBinaryPixelValuesArray();
-    var my_string = "";
-
-    for (let i = 0; i < old_arr.length; i++) {
-        if (old_arr[i] === 0) {
-            my_string += "0";
-        } else if (old_arr[i] === 255) {
-            my_string += "1";
-        }
-
-        if ((i + 1) % 128 === 0 && i !== old_arr.length - 1) {
-            my_string += "\n";
-        }
-    }
-
-    //console.log(my_string);*/
-    console.log(createPythonByteArray(getBinaryPixelValuesArray()));
-}
-
-function createPythonByteArray(pixelArray, string) {
     const width = 128;
     const height = 64;
     const bytesPerRow = width / 8;
@@ -699,7 +678,7 @@ function createPythonByteArray(pixelArray, string) {
             }
 
             // Convert byte to two-character hexadecimal string and prepend 0x
-            hexString += ' 0x' + byte.toString(16).padStart(2, '0').toUpperCase() + ', ';
+            hexString += '0x' + byte.toString(16).padStart(2, '0').toUpperCase() + ',';
         }
         hexString += '\n'; // Add new line after each row of bytes
     }
@@ -709,10 +688,35 @@ function createPythonByteArray(pixelArray, string) {
 
     return hexString;
 }
+function createPythonByteArray2(pixelArray, string) {
+    const width = 128;
+    const height = 64;
+    const bytesPerRow = width / 8;
+    let hexString = string;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < bytesPerRow; x++) {
+            let byte = 0;
+
+            for (let bit = 0; bit < 8; bit++) {
+                if (pixelArray[y * width + x * 8 + bit] === 255) {
+                    byte |= (1 << (7 - bit)); // Set bit from MSB to LSB
+                }
+            }
+
+            // Convert byte to two-character hexadecimal string without 0x
+            hexString += byte.toString(16).padStart(2, '0').toUpperCase();
+        }
+    }
+
+    // Remove the trailing comma if added, but ensure no extra characters
+    return hexString;
+}
 
 
 
-function getBinaryPixelValuesArray(canvas_id) {
+function getBinaryPixelValuesArray(canvas_id) 
+{
     const canvas = document.getElementById(canvas_id);
     const ctx = canvas.getContext('2d');
     const width = 128;
@@ -866,6 +870,7 @@ function set_layout()
 
 /************************************************** */
 var animation_string = "";
+var animation_string2 = "";
 var frame_arr = "frames = [";
 document.addEventListener('DOMContentLoaded', function () 
 {
@@ -887,6 +892,7 @@ document.addEventListener('DOMContentLoaded', function ()
             return;
         }
         animation_string = "";
+        animation_string2 = "";
         frame_arr = "frames = [";
         // Process each PNG file
         for (let i = 0; i < files.length; i++) 
@@ -967,12 +973,35 @@ document.addEventListener('DOMContentLoaded', function ()
         }
         let name = 'frame' + i;
         animation_string += createPythonByteArray(binaryArray, name) + '\n';
+        animation_string2 += createPythonByteArray2(binaryArray, "");
         frame_arr += name + ",";
         document.getElementById("animation_code_box").value = animation_string + '\n' + frame_arr;
         document.getElementById("animation_code_box").value = document.getElementById("animation_code_box").value.slice(0, -1) + ']';
+        //document.getElementById("animation_code_box2").value = processLines(animation_string2);
+        document.getElementById("animation_code_box2").value = animation_string2;
+
         check_animation_codebox();
     }
 });
+function processLines(text) {
+    // Split the text into an array of lines
+    const lines = text.split('\n');
+
+    // Process each line
+    const processedLines = lines
+        //.filter(line => line.trim().startsWith('0x'))  
+        .map(line => {
+            const trimmedLine = line.trim().replace(/,\s*$/, '');  
+            if (trimmedLine === '0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00')
+                return '0';
+            else if(trimmedLine === '0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF')
+                return '1'
+            return trimmedLine;
+        });
+
+    // Join the processed lines back into a single string
+    return processedLines.join('\n');
+}
 
 
 function exportCanvasAsPNG() {
@@ -1006,6 +1035,25 @@ function exportCanvasAsPNG() {
 function save_animation_code(filename, type) 
 {
     var data = document.getElementById("animation_code_box").value;
+    var file = new Blob([data], {type: type});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
+function save_animation_code2(filename, type) 
+{
+    var data = document.getElementById("animation_code_box2").value;
     var file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);

@@ -100,12 +100,13 @@ def clear_led(pin):
     
 def activate_save_stats(timer):
     init.run_savestats = True
-    
+
 def print_memory_usage(timer):
     gc.collect()
     free_memory_kb = gc.mem_free() / 1024
     allocated_memory_kb = gc.mem_alloc() / 1024
     print(f"\rFree memory: {free_memory_kb:.2f} KB | Allocated memory: {allocated_memory_kb:.2f} KB", end='')
+
 
 #frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
 #freq=1 = 1hz = 1 interrupt every second
@@ -437,7 +438,7 @@ def no_buttons_pressed():
 
 def oled_animation_exists():
     try:
-        os.stat('oled_animation.py')
+        os.stat('oled_animation.txt')
         return True
     except OSError:
         return False

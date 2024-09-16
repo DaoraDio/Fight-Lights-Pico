@@ -6,12 +6,13 @@
 <link rel="stylesheet" type="text/css" href="CSS\eightway.css">
 <link rel="stylesheet" type="text/css" href="CSS\buttontable_controls.css">
 <link rel="stylesheet" type="text/css" href="CSS\oled_modal.css">
+<link rel="stylesheet" type="text/css" href="CSS\rightclick_menu.css">
 <html>
   <textarea id="new_codebox" autocomplete="off" hidden></textarea>
   <textarea id="code_box" name="code_box" hidden></textarea>
 
   <h2><a target="_blank" href="https://fight-lights.com">Fight Lights Pico</a></h2>
-  <h2>Configurator for V2.6.0</h2>
+  <h2>Configurator for V2.6.2</h2>
   <div id="file_wrapper">
     <div id="file_select_text">Open one or multiple config files:</div>
     <input type="file" id="open_button" onchange="get_names()" multiple accept=".py"><br>
@@ -46,8 +47,16 @@
         <script src="JS\led_count.js"></script>
         <script src="JS\oled_modal.js"></script>
         <script src="JS\select_directions_modal.js"></script>
+        <script src="JS\rightclick_menu.js"></script>
         
-        
+        <div id="rightclick-menu" class="hidden">
+          <ul>
+              <li onclick="">Load code from clipboard</li>
+              <li onclick="">Copy code to clipboard</li>
+              <li onclick="">Download code</li>
+              <li onclick="">Load preset code</li>
+          </ul>
+      </div>
 
         <!--<button id=""  onclick="check_name('asd_')">TEST</button>-->
         
@@ -819,12 +828,14 @@
     <div id="oled_animation_delay_label2">ms</div>
     <input id="oled_animation_delay" name="" type="number" value="0" min="0"  onchange="" oninput="">
     <button id="oled_upload_animation_button">Upload PNG Files</button>
-    <button class="dl_code" id="oled_download_animation" onclick="save_animation_code('oled_animation.py')" disabled>Download Animation Code</button>
+    <!--<button class="dl_code" id="oled_download_animation" onclick="save_animation_code('oled_animation.py')" disabled>Download Animation Code</button>-->
+    <button class="dl_code" id="oled_download_animation" onclick="save_animation_code2('oled_animation.txt')">Download Animation Code</button>
     <input type="file" id="uploadPngs" accept="image/png" multiple hidden>
     <canvas id="pngCanvas" style="display: none;" hidden></canvas>
     <br> <br> <br> <br><br> <br>
     <div id="animation_border"></div>
     <textarea id="animation_code_box" name="animation_code_box" hidden></textarea>
+    <textarea id="animation_code_box2" name="animation_code_box2" hidden></textarea>
     <!--Gif Stuff-->
     <button id="oled_close_modal_button" class="close_button" onclick="close_oled_modal()">Close</button>
     <div id="oled_idle_label">When entering Idle Mode:</div>
