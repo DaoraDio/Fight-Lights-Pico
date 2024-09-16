@@ -59,6 +59,8 @@ Also check out the Website: https://fight-lights.com/
 - Add custom animations and play them when doing certain inputs
 - Log the amount of button presses for each button and the time your stick is plugged in
 - Player LED support
+- OLED Support
+- OLED Animation support
 
   ...and many more to come
 
