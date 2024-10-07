@@ -17,7 +17,7 @@ You can also look at some of the community made project here: https://fight-ligh
 
 # Requirement
 
-If you want to use this you will need a Raspberry Pi Pico and a RGB LED-Strip with individually adressable LEDs known as Neopixel or WS2812/WS2812b/WS2812e
+If you want to use this you will need a Raspberry Pi Pico and a RGB LED-Strip with individually adressable LEDs known as Neopixel or WS2812b/WS2812e
 
 # Guides
 
