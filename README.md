@@ -1,65 +1,107 @@
-# Fight Lights Pico
-Fight Lights Pico is a LED-Driver for the Raspberry Pi Pico that gives Arcade Stick modders the neccessary software to implement beautiful RGB LEDs for their projects
+![FLP-Logo](images/Logo.png)
+# Fight Lights Pico 
+Fight Lights Pico is a versatile, customizable LED controller written in MicroPython for the Raspberry Pi Pico. It’s designed primarily for arcade stick modders who want to integrate dynamic RGB LED effects that respond to button presses or play smooth animations.
 
-# What does it do?
-
-This project is primarily aimed for Arcade stick modders to add custom RGB LEDs to Arcade sticks. The LEDs react to button presses and display custom colors and animations on press or when idle.
-
-I try to keep the code as versatile as possible, so it is not only limited to Arcade sticks, you could also use this for your big Arcade cabinet aswell or any project that needs to display LEDs when something is pressed.
+While built with arcade sticks in mind, the flexible design makes it suitable for a wide range of applications—from full-sized arcade cabinets to any DIY project that benefits from input-driven LED feedback.
 
 
 # How does it look?
+A short video showcasing some of the features to give an idea of the final look can be found here:
 
-I have made a short video showcasing some of the features to give you an idea on how it may look in the end:
-https://www.youtube.com/watch?v=nG0_0xVvnjk
+*Note: The video shows an early version of the project—many new features and improvements have been added since!*
 
-You can also look at some of the community made project here: https://fight-lights.com/Gallery/gallery/
+[![Watch the demo](images/thumbnail.png)](https://www.youtube.com/watch?v=nG0_0xVvnjk)
 
-# Requirement
+You can also explore **community-made builds and setups** in the [Fight Lights Gallery](https://fight-lights.com/Gallery/gallery/), featuring creative builds.
 
-If you want to use this you will need a Raspberry Pi Pico and a RGB LED-Strip with individually adressable LEDs known as Neopixel or WS2812b/WS2812e
+## Requirement
+
+To use **Fight Lights Pico**, you'll need the following:
+
+### Hardware:
+- **Raspberry Pi Pico** (or Raspberry Pi Pico 2)
+- **RGB LEDs** (WS2812b/WS2812e)
+- **Jumper wires** or other basic electronics components for wiring
+
+### Software:
+- **MicroPython** firmware installed on your Raspberry Pi Pico
+  - You can download the latest version from [MicroPython's official site](https://micropython.org/download/rp2-pico/).
+- **Thonny IDE** (or any other IDE that supports MicroPython)
+  - Thonny can be downloaded from [thonny.org](https://thonny.org).
+- **Fight Lights Pico** code (this repository)
 
 # Guides
 
-I have written a complete guide for assembly and installation here: https://docs.google.com/document/d/1qY4HESYdRyFT8OaB5leyHsWm4kfqoA74zqSLAdihuvo/edit?usp=sharing
+ A complete step by step guide for assembly and installation, with wiring Diagrams, soldering tips and customization options can be found here: https://docs.google.com/document/d/1qY4HESYdRyFT8OaB5leyHsWm4kfqoA74zqSLAdihuvo/edit?usp=sharing
 
-The guide may make the impression that you can only build this with a Brook fighting board, but this is not the case. This code runs standalone on the pico and only
-uses the brook fighting board as a means to get the signals from the buttons to the pico and to power the Pico together with the LEDs. I have chosen to write the guide
-with a brook fighting board in mind, since it is a very common fighting board, with great compatability and all the neccessary pins for this project, and thus makes it
-very easy for begginers to follow and realize.
-So as long as you can send the signals of your buttons to the pico, by whatever means you like, directly or through a different pcb,
-and have a way to power the Pico and the LEDs, a brook board is not required.
+It's important to note that Fight Lights Pico does not require a Brook fighting board. The code is designed to run standalone on the Raspberry Pi Pico. The Brook fighting board is used only as a means to transmit button signals to the Pico and to provide power for both the Pico and the LEDs. 
 
-Qanba Obsidian Wiring guide: https://drive.google.com/file/d/1-cKfSiCJdcfAH5P0MAaEu_BFiHHO-TIr/view?usp=sharing
-(I take no responsibility for damaged parts or voided warranty)
+As long as the button signals can be sent to the Pico—whether directly or through a different PCB—and a power source is available for both the Pico and the LEDs, a Brook board is not necessary for operation.
 
-# Contact
+## Contact
 
-![alt text](https://www.swe-chumbucket.com/index.php/s/gsq7pN8Loo236Qk/preview) 
-There is a Discord server for all your questions: https://discord.gg/9wSpNUprWT
+For any questions, feel free to join the **Discord server** where the community can assist:
 
-Also check out the Website: https://fight-lights.com/
+![Join the Discord](images/discord.png)https://discord.gg/9wSpNUprWT
 
-# Features
 
-- Configuration through UI
-- Choose any RGB color for a LED to get on button press
-- Choose any numbers of LEDs to light up on button press
-- Assign random colors for LEDs on button press
-- Give different buttons same color when pressed simultaniously
-- Assign fade-in and fade-out effect for LEDs
-- Choose any (or no) RGB color when buttons are not pressed
-- Choose any brightness when buttons are not pressed
-- Choose rainbow effect when buttons are not pressed
-- Disable background color temporarily when a button is pressed
-- Increase or decrease brightness on bootup or during play
-- Enter idle mode after any number of seconds and display different animations
-- Create custom profiles
-- Select custom profiles during play
-- Add custom animations and play them when doing certain inputs
-- Log the amount of button presses for each button and the time your stick is plugged in
-- Player LED support
-- OLED Support
-- OLED Animation support
+[**Fight Lights Official Website**](https://fight-lights.com/)
 
-  ...and many more to come
+## Features
+
+- **Configuration via User Interface**  
+  Easily configure all settings through a straightforward UI.
+
+- **Custom RGB Colors on Button Press**  
+  Choose any RGB color to light up LEDs when a button is pressed.
+
+- **Flexible LED Assignment**  
+  Assign any number of LEDs to activate on a button press.
+
+- **Random Color Assignment**  
+  Assign random colors to LEDs on button press for dynamic effects.
+
+- **Simultaneous Button Color Matching**  
+  Make multiple buttons light up with the same color when pressed simultaneously.
+
+- **Fade-In and Fade-Out Effects**  
+  Add smooth fade-in and fade-out transitions for your LED effects.
+
+- **Not Pressed LED Color Options**  
+  Choose any color (or none) for the LEDs when no buttons are pressed.
+
+- **Rainbow Effect**  
+  Select a colorful rainbow effect when buttons are not pressed.
+
+- **Temporary Background Color Disable**  
+  Disable background colors when a button is pressed for clearer focus.
+
+- **Brightness Control**  
+  Adjust brightness on bootup or during play for dynamic lighting.
+
+- **Idle Mode with Custom Animations**  
+  Set your LEDs to enter idle mode after a set time and display custom animations.
+
+- **Custom Profiles**  
+  Create multiple custom profiles and switch between them during gameplay.
+
+- **Profile Selection During Play**  
+  Easily select different profiles on the fly during play.
+
+- **Custom Animations on Input**  
+  Add your own animations and trigger them based on specific button inputs.
+
+- **Button Press and Usage Logging**  
+  Keep track of button presses and the total time the arcade stick has been plugged in.
+
+- **Player LED Support**  
+  Support for player-specific LEDs for multiplayer setups.
+
+- **OLED Display Support**  
+  Compatible with OLED displays for additional information.
+
+- **OLED Animation Support**  
+  Add multi-frame animations on the OLED display for even more customization.
+
+...and many more features to come!
+
