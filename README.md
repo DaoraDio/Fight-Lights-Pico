@@ -49,47 +49,69 @@ For any questions, feel free to join the **Discord server** where the community 
 
 ## Features
 
-- **Configuration via User Interface**  
-  Easily configure all settings through a straightforward UI.
+- [**Configuration via User Interface**  
+  Easily configure all settings through a straightforward UI.](https://fight-lights.com/configurator)
 
 - **Custom RGB Colors on Button Press**  
   Choose any RGB color to light up LEDs when a button is pressed.
 
+  ![Feature 1 demo](Previews/vid1.gif)
+
 - **Flexible LED Assignment**  
   Assign any number of LEDs to activate on a button press.
+
+  ![Feature 2 demo](Previews/vid2.gif)
 
 - **Random Color Assignment**  
   Assign random colors to LEDs on button press for dynamic effects.
 
+  ![Feature 3 demo](Previews/vid3.gif)
+
 - **Simultaneous Button Color Matching**  
   Make multiple buttons light up with the same color when pressed simultaneously.
+
+  ![Feature 4 demo](Previews/vid4.gif)
 
 - **Fade-In and Fade-Out Effects**  
   Add smooth fade-in and fade-out transitions for your LED effects.
 
+  ![Feature 5 demo](Previews/vid5.gif)
+
 - **Not Pressed LED Color Options**  
   Choose any color (or none) for the LEDs when no buttons are pressed.
+
+  ![Feature 6 demo](Previews/vid6.gif)
 
 - **Rainbow Effect**  
   Select a colorful rainbow effect when buttons are not pressed.
 
+  ![Feature 7 demo](Previews/vid7.gif)
+
 - **Temporary Background Color Disable**  
   Disable background colors when a button is pressed for clearer focus.
+
+  ![Feature 8 demo](Previews/vid8.gif)
 
 - **Brightness Control**  
   Adjust brightness on bootup or during play for dynamic lighting.
 
+  ![Feature 9 demo](Previews/vid9.gif)
+
 - **Idle Mode with Custom Animations**  
   Set your LEDs to enter idle mode after a set time and display custom animations.
+
+  ![Feature 10 demo](Previews/vid10.gif)
 
 - **Custom Profiles**  
   Create multiple custom profiles and switch between them during gameplay.
 
-- **Profile Selection During Play**  
-  Easily select different profiles on the fly during play.
+  ![Feature 11 demo](Previews/vid11.gif)
 
 - **Custom Animations on Input**  
   Add your own animations and trigger them based on specific button inputs.
+
+- **8-Way Joystick support**  
+  Recognize all 8 direction on a joystick indipendetly and assign color and LEDs.
 
 - **Button Press and Usage Logging**  
   Keep track of button presses and the total time the arcade stick has been plugged in.
@@ -102,6 +124,8 @@ For any questions, feel free to join the **Discord server** where the community 
 
 - **OLED Animation Support**  
   Add multi-frame animations on the OLED display for even more customization.
+
+  ![Feature 12 demo](Previews/vid12.gif)
 
 ...and many more features to come!
 
