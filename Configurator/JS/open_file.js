@@ -27,7 +27,7 @@ function set_eighway_directions(variable_line, arrow_classname, select_idname)
     
     document.getElementsByClassName(arrow_classname)[0].setAttribute("directioncolor", eighway_direction_color);
     document.getElementsByClassName(arrow_classname)[0].setAttribute("led_pos", led_pos_string);
-    console.log(eighway_direction_button);
+    //console.log(eighway_direction_button);
     if(eighway_direction_button == "notSet")
         document.getElementById(select_idname).value = -1;
     else
@@ -80,20 +80,17 @@ function set_brightness_slider(that)
 
 
 }
-function get_variable_line(str)
-{
+function get_variable_line(str) {
     var code = document.getElementById("new_codebox").value;
-    var indexOfStr = code.indexOf(str);
+    var lines = code.split('\n');
 
-    if (indexOfStr !== -1) 
-    {
-        var substring = code.substring(indexOfStr, code.length);
-        substring = substring.substring(0, substring.indexOf('\n'));
-        return substring;
-    } else 
-    {
-        return false;
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.indexOf(str) === 0) {
+            return line;
+        }
     }
+    return false;
 }
 
 function get_value(str)
@@ -102,6 +99,7 @@ function get_value(str)
     {
         var string = get_variable_line(str);
         string = string.split(' ');
+        //console.log(string[string.length-1]);
         return string[string.length-1]
     }
     else
@@ -128,9 +126,12 @@ function get_code()
 
     //get color_list
     var color_list = get_value("colors = ");
+    
     color_list = color_list.substring(1);
     color_list = color_list.slice(0,-1);
     color_list = color_list.split(',');
+            console.log(color_list);
+    
 
     //get colors
     //set color table
@@ -156,6 +157,8 @@ function get_code()
 
     for(var i = 0; i < color_list.length; i++)
     {
+        if (color_list.length === 1 && color_list[0] === "blank") 
+            break;
         var color = get_value(color_list[i]);
         col_arr = py_tuple_to_rgb_array(color);
 
@@ -284,6 +287,7 @@ function get_code()
     button_list = button_list.slice(0,-1);
     button_list = button_list.split(',');
     
+    
 
     //set button table
     //var button = get_value(button_list[0] + " = ");
@@ -339,6 +343,7 @@ function get_code()
     for(var i = 0; i < button_list.length; i++)
     {
         var button = get_variable_line(button_list[i]);
+
         button = button.replace(button_list[i] + ' = button.MyButton(', '');
         button = button.split(',');
     

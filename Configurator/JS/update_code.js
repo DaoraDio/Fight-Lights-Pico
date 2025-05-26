@@ -630,6 +630,8 @@ setInterval(function()
 
 function copy_to_clipboard()
 {
+  if(check_gpio_conflicts() == false)
+    return;
   var copyText = document.getElementById("code_box");
 
   copyText.select();
@@ -647,4 +649,116 @@ async function paste() {
   input.value = text;
 
   get_code();
+}
+
+function save_code(filename, type) 
+{
+    if(check_gpio_conflicts() == false)
+      return;
+    var data = document.getElementById("code_box").value;
+    var file = new Blob([data], {type: type});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
+
+function check_gpio_conflicts()
+{
+  var table = document.getElementById("button_table");
+  var gpio_pins = [];
+  for (var i = 1, row; row = table.rows[i]; i++) 
+  {
+    var button_name = row.cells[0].textContent.trim();
+    var gpio_pin = row.cells[4].childNodes[1].value;
+    gpio_pins.push({ pin: gpio_pin, label: button_name });
+  }
+
+  var led_out = document.getElementById("pin_num").value;
+  gpio_pins.push({ pin: led_out, label: "LED Chain GPIO" });
+
+  if(document.getElementById("playerled_cb").checked == false)
+  {
+    var player_led = document.getElementById("playerLED_pin_num").value;
+    gpio_pins.push({ pin: player_led, label: "Player LED" });
+  }
+
+  if(document.getElementById("oled_i2c_rad1").checked)
+  {
+    var oled_sda = document.getElementById("oled_sda0_select").value;
+    var oled_scl = document.getElementById("oled_scl0_select").value;
+    gpio_pins.push({ pin: oled_sda, label: "OLED SDA0" });
+    gpio_pins.push({ pin: oled_scl, label: "OLED SCL0" });
+  }
+  else if(document.getElementById("oled_i2c_rad2").checked)
+  {
+    var oled_sda = document.getElementById("oled_sda1_select").value;
+    var oled_scl = document.getElementById("oled_scl1_select").value;
+    gpio_pins.push({ pin: oled_sda, label: "OLED SDA1" });
+    gpio_pins.push({ pin: oled_scl, label: "OLED SCL1" });
+  }
+
+var pinMap = {};
+var mandatoryConflicts = [];
+var optionalConflicts = [];
+
+// Group pins by value and collect their labels
+for (let entry of gpio_pins) {
+  if (entry.pin in pinMap) {
+    pinMap[entry.pin].push(entry.label);
+  } else {
+    pinMap[entry.pin] = [entry.label];
+  }
+}
+
+for (let pin in pinMap) {
+  const labels = pinMap[pin];
+  if (labels.length > 1) {
+    const oledLabels = ["OLED SDA0", "OLED SCL0", "OLED SDA1", "OLED SCL1"];
+    const isOledLabel = label => oledLabels.includes(label);
+
+    const oledCount = labels.filter(isOledLabel).length;
+    const nonOledCount = labels.length - oledCount;
+
+    if (nonOledCount >= 2) {
+      // Two or more non-OLED labels = mandatory conflict
+      mandatoryConflicts.push(`GPIO pin ${pin} is used by: ${labels.join(", ")}`);
+    } else if (nonOledCount === 1 && oledCount >= 1) {
+      // Only one non-OLED label and rest are OLED = optional conflict
+      optionalConflicts.push(`GPIO pin ${pin} is used by: ${labels.join(", ")}`);
+    } else {
+      // All OLED labels = mandatory conflict
+      mandatoryConflicts.push(`GPIO pin ${pin} is used by: ${labels.join(", ")}`);
+    }
+  }
+}
+
+
+
+// Show alerts based on conflict type
+if (mandatoryConflicts.length > 0) {
+  alert("❌ GPIO Pin Conflict(s) Found (must be resolved):\n\n" + mandatoryConflicts.join("\n"));
+  return false; // Block further processing
+}
+
+if (optionalConflicts.length > 0) {
+  const proceed = confirm("⚠️ Optional Conflict(s) Found (OLED pins):\n\n" + optionalConflicts.join("\n") + "\n\nThis will only cause a problem when an OLED display is connected."+ "\n\nDo you want to continue anyway?");
+  if (!proceed) {
+    return false; // User chose to cancel
+  }
+}
+
+// No blocking conflicts
+return true;
+
 }

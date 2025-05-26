@@ -1,23 +1,3 @@
-function save_code(filename, type) 
-{
-    var data = document.getElementById("code_box").value;
-    var file = new Blob([data], {type: type});
-    if (window.navigator.msSaveOrOpenBlob) // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else { // Others
-        var a = document.createElement("a"),
-                url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
-    }
-}
-
 var color;
 function update_color_button_table()
 {
@@ -308,6 +288,15 @@ function update_button()
     document.getElementById("eightway_select-left").value = name;
   if(eightway_select_right_old == old_name)
     document.getElementById("eightway_select-right").value = name;
+
+  // update OLED Button Names
+  for (let btn of circles) 
+  {
+    if (btn.button_activation == old_name) 
+    {
+        btn.button_activation = name;
+    }
+  }
 }
 
 

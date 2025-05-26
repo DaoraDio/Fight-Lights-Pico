@@ -436,3 +436,15 @@
     color: #0056b3;
     text-decoration: underline;
 }
+
+#conversionProgress
+{
+    position: absolute;
+    top: 720px;
+    left: 360px;
+    width: 240px;
+    height: 20px;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    overflow: hidden;
+}

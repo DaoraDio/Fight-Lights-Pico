@@ -8,7 +8,8 @@
 <link rel="stylesheet" type="text/css" href="CSS\oled_modal.css">
 <link rel="stylesheet" type="text/css" href="CSS\rightclick_menu.css">
 <html>
-  <textarea id="new_codebox" autocomplete="off" hidden></textarea>
+  <textarea id="new_codebox" autocomplete="off" style="margin-top: 400px; width:300px; height:150px; border:1px solid #000;" hidden></textarea>
+
   <textarea id="code_box" name="code_box" hidden></textarea>
 
   <h2><a target="_blank" href="https://fight-lights.com">Fight Lights Pico</a></h2>
@@ -68,7 +69,7 @@
 
        <!--profile name-->
        <div>Profile Name </div>
-       <input id="profile_name" type="text" placeholder="Set name for this Profile"> <div class="helper" title="Name of the Profile&#10;only used to recognize the profile in the configurator">?</div>
+       <input id="profile_name" type="text" placeholder="Set name for this Profile"> <div class="helper" title="Name of the Profile&#10;Used to recognize the profile in the configurator and OLED Display">?</div>
 
         <!--NUM LEDS-->
         <div>Number of LEDs </div>
@@ -214,9 +215,9 @@
 
         <!--Dynamic Profile Selection-->
         <br>
-        <button class="general_button"  id="dynamic_profile" onclick="show_dynamic_profile_modal()">Quick Profile Selection</button>
+        <!--<button class="general_button"  id="dynamic_profile" onclick="show_dynamic_profile_modal()">Quick Profile Selection</button>
         <div class="helper" title="Set a button or a combination of buttons to instantly display the next profile.&#10;&#10;Unlike changing the profile from LED option mode, the selected profile is not saved for the next restart">?</div>
-        <br>
+        <br>-->
 
         <!--OLED configuration-->
         <br>
@@ -829,7 +830,8 @@
     <input id="oled_animation_delay" name="" type="number" value="0" min="0"  onchange="" oninput="">
     <button id="oled_upload_animation_button">Upload PNG Files</button>
     <!--<button class="dl_code" id="oled_download_animation" onclick="save_animation_code('oled_animation.py')" disabled>Download Animation Code</button>-->
-    <button class="dl_code" id="oled_download_animation" onclick="save_animation_code2('oled_animation.txt')">Download Animation Code</button>
+    <!--<button class="dl_code" id="oled_download_animation" onclick="save_animation_code2('oled_animation.txt')">Download Animation Code</button>-->
+    <progress id="conversionProgress" value="0" max="100"></progress>
     <input type="file" id="uploadPngs" accept="image/png" multiple hidden>
     <canvas id="pngCanvas" style="display: none;" hidden></canvas>
     <br> <br> <br> <br><br> <br>

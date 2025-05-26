@@ -21,7 +21,7 @@ function set_activation_button()
     const oled_select = document.getElementById("oled_select_activation_button");
     var text = oled_select.options[oled_select.selectedIndex].text;
     selectedCircle.button_activation = text;
-    console.log(text);
+    //console.log(text);
 }
 
 function updateCanvas() 
@@ -93,7 +93,7 @@ function draw_canvas()
 
 function show_oled_modal() 
 {
-    check_animation_codebox();
+    //check_animation_codebox();
     show_hide_i2c_selects();
     const modal = document.getElementById("oled_modal");
     loadImageToCanvas();
@@ -872,6 +872,8 @@ function set_layout()
 var animation_string = "";
 var animation_string2 = "";
 var frame_arr = "frames = [";
+var totalFiles = 0;
+var processedFiles = 0;
 document.addEventListener('DOMContentLoaded', function () 
 {
     // Trigger file input when button is pressed
@@ -882,32 +884,41 @@ document.addEventListener('DOMContentLoaded', function ()
 
     document.getElementById('uploadPngs').addEventListener('change', handlePngUpload);
 
-    function handlePngUpload(event) 
+function handlePngUpload(event) 
+{
+    const files = event.target.files;
+    if (files.length === 0) 
     {
+        console.error("No PNG files selected.");
+        return;
+    }
 
-        const files = event.target.files;
-        if (files.length === 0) 
+    // Reset state
+    animation_string = "";
+    animation_string2 = "";
+    frame_arr = "frames = [";
+    totalFiles = files.length;
+    processedFiles = 0;
+
+    // Reset progress bar
+    const progressBar = document.getElementById('conversionProgress');
+    progressBar.value = 0;
+    progressBar.max = totalFiles;
+
+    // Process each file
+    for (let i = 0; i < files.length; i++) 
+    {
+        const file = files[i];
+        if (file.type === "image/png") 
         {
-            console.error("No PNG files selected.");
-            return;
-        }
-        animation_string = "";
-        animation_string2 = "";
-        frame_arr = "frames = [";
-        // Process each PNG file
-        for (let i = 0; i < files.length; i++) 
+            readAndProcessPng(file, i);
+        } 
+        else 
         {
-            const file = files[i];
-            if (file.type === "image/png") 
-            {
-                readAndProcessPng(file, i);
-            } 
-            else 
-            {
-                console.warn(`Skipping non-PNG file: ${file.name}`);
-            }
+            console.warn(`Skipping non-PNG file: ${file.name}`);
         }
     }
+}
 
     function readAndProcessPng(file, i) 
     {
@@ -961,27 +972,38 @@ document.addEventListener('DOMContentLoaded', function ()
         return binaryImage;
     }
 
-    function convertToBinaryArray(binaryFrame, width, height, i) 
+function convertToBinaryArray(binaryFrame, width, height, i) 
+{
+    const binaryArray = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) 
     {
-        const binaryArray = new Uint8Array(width * height);
-        for (let y = 0; y < height; y++) 
+        for (let x = 0; x < width; x++) 
         {
-            for (let x = 0; x < width; x++) 
-            {
-                binaryArray[y * width + x] = binaryFrame[y * width + x] === 255 ? 255 : 0;
-            }
+            binaryArray[y * width + x] = binaryFrame[y * width + x] === 255 ? 255 : 0;
         }
-        let name = 'frame' + i;
-        animation_string += createPythonByteArray(binaryArray, name) + '\n';
-        animation_string2 += createPythonByteArray2(binaryArray, "");
-        frame_arr += name + ",";
-        document.getElementById("animation_code_box").value = animation_string + '\n' + frame_arr;
-        document.getElementById("animation_code_box").value = document.getElementById("animation_code_box").value.slice(0, -1) + ']';
-        //document.getElementById("animation_code_box2").value = processLines(animation_string2);
-        document.getElementById("animation_code_box2").value = animation_string2;
-
-        check_animation_codebox();
     }
+
+    let name = 'frame' + i;
+    animation_string += createPythonByteArray(binaryArray, name) + '\n';
+    animation_string2 += createPythonByteArray2(binaryArray, "");
+    frame_arr += name + ",";
+
+    document.getElementById("animation_code_box").value = animation_string + '\n' + frame_arr;
+    document.getElementById("animation_code_box").value = document.getElementById("animation_code_box").value.slice(0, -1) + ']';
+    document.getElementById("animation_code_box2").value = animation_string2;
+
+    //Update the progress bar
+    processedFiles++;
+    document.getElementById('conversionProgress').value = processedFiles;
+    if (processedFiles === totalFiles) 
+    {
+        //document.getElementById("oled_download_animation").disabled = false;
+        //document.getElementById("oled_download_animation").style.opacity = "100%";
+        //document.getElementById("oled_download_animation").style.cursor = "alias";
+        save_animation_code2("oled_animation.txt", "text/plain");
+    }
+}
+
 });
 function processLines(text) {
     // Split the text into an array of lines
