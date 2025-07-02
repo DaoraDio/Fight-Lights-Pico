@@ -1,0 +1,20 @@
+input[type="number"] {
+  font-size: 16px;
+  padding: 8px;
+  border: 2px solid #ffc1c1;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-buttons);
+  color: var(--text-general);
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: #7ab8ff;
+  box-shadow: 0 2px 8px rgba(122, 184, 255, 0.2);
+}
+
+input[type="number"]:hover {
+  border-color: #a0cfff;
+}

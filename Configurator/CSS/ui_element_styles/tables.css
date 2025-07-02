@@ -1,0 +1,76 @@
+#color_table tr:not(:nth-child(-n+2)) {
+    cursor: pointer;
+}
+
+#button_table tr:not(:nth-child(-n+1)),
+#background_table tr:not(:nth-child(-n+1)),
+#circle_table tr:not(:nth-child(-n+1)),
+#led_options_table tr:not(:nth-child(-n+1)),
+#on_off_table tr:not(:nth-child(-n+1))
+{
+    cursor: pointer;
+}
+
+
+.table-container {
+    overflow-x: auto;
+    max-height: calc(100vh - 180px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* Ensures equal column widths */
+    word-wrap: break-word;
+    /* Legacy */
+    word-break: break-word;
+    /* Modern browsers */
+    border: 1px solid #dee2e6;
+    /* Outer border */
+}
+
+table th,
+table td,
+#color_default_blank {
+    padding: 10px 5px;
+    border: 1px solid #dee2e6;
+    vertical-align: middle;
+    text-align: left;
+    white-space: normal;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding: 2px 8px;
+}
+
+table th {
+    background-color: var(--th-bg);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+table tr:hover {
+    background-color: var(--tr-hover);
+}
+
+/* Optional: Make specific columns narrower for better wrapping (e.g. LED Positions) */
+#button_table td:nth-child(2),
+#button_table td:nth-child(3) {
+    width: 100px;
+}
+
+#button_table th,
+#button_table td {
+    text-align: center;
+    padding: 1px 1px;
+    font-size: 14px;
+}
+
+#button_table select {
+    font-size: 13px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    max-width: 100%;
+    height: auto;
+}

@@ -1,0 +1,85 @@
+/* Center the whole block */
+#home-container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  /* optional, for nice fonts */
+  margin-top: 40px;
+  /* some spacing at the top */
+}
+
+/* Make the logo image centered and with some spacing below */
+img {
+  display: block;
+  margin: 0 auto 20px auto;
+  max-width: 150px;
+  /* adjust size as needed */
+  height: auto;
+}
+
+/* Style the links inside h2 */
+h2 a {
+  text-decoration: none;
+  /* remove underline */
+  font-weight: normal;
+  /* optionally adjust weight */
+}
+
+/* Optional: change link color on hover */
+
+#drop-area {
+  display: block;
+  /* make it a block element */
+  border: 4px dashed var(--border-drop);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: var(--text-drop);
+  cursor: pointer;
+  max-width: 400px;
+  margin: 50px auto;
+  font-size: 1.25rem;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+#drop-area:hover {
+  border-color: var(--drop-hover);
+  color: var(--drop-hover);
+}
+
+#fileElem {
+  display: none;
+}
+
+.footer-icons {
+  margin-top: 130px;
+  /* or whatever spacing you need */
+  padding-bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+}
+
+.footer-icons img {
+  height: 70px;
+  width: 70px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.footer-icons img:hover {
+  transform: scale(1.1);
+}
+
+.footer-icons img[alt="Discord"] {
+  opacity: 0.85;
+  /* 60% opacity */
+}
+
+.github-icon,
+.discord-icon {
+  filter: brightness(0) saturate(100%);
+  cursor: pointer;
+}

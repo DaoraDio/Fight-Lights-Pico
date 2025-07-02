@@ -1,0 +1,251 @@
+<div id="idle_head_container">
+    <h1 class="page-header">Configure OLED</h1>
+    <div id="idle_header_helper" class="helper"
+        title="When no OLED screen is connected, the GPIO pins are unused.&#10;OLED functionality only runs with a connected OLED screen">
+        ?</div>
+</div>
+<div id="oled_modal_body">
+    <!-- Section 1: Hardware Settings (Top) -->
+    <div class="oled-section">
+        <h3 class="section-title">Hardware Settings</h3>
+        <div class="hardware-grid">
+            <div class="form-row vertical-label">
+                <label id="oled_type_label">OLED Type:</label>
+                <select id="oled_type_select" class="form-select">
+                    <option value="0">SH1106</option>
+                    <option value="1">SSD1306</option>
+                </select>
+            </div>
+
+            <div class="i2c-interface">
+                <div class="i2c-radio-group">
+                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad1" onchange="show_hide_i2c_selects()"
+                        checked>
+                    <label for="oled_i2c_rad1">I2C0</label>
+                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad2" onchange="show_hide_i2c_selects()">
+                    <label for="oled_i2c_rad2">I2C1</label>
+                </div>
+
+                <div class="i2c-select-group">
+                    <div class="i2c-select-row">
+                        <label id="oled_sda_label">SDA:</label>
+                        <select id="oled_sda0_select" class="form-select">
+                            <option value="0">GP0</option>
+                            <option value="4">GP4</option>
+                            <option value="8">GP8</option>
+                            <option value="12">GP12</option>
+                            <option value="16">GP16</option>
+                            <option value="20">GP20</option>
+                        </select>
+
+                        <select name="" id="oled_sda1_select" onchange="" class="form-select" hidden>
+                            <option value="2">GP2</option>
+                            <option value="6">GP6</option>
+                            <option value="10">GP10</option>
+                            <option value="14">GP14</option>
+                            <option value="18">GP18</option>
+                            <option value="26">GP26</option>
+                        </select>
+                    </div>
+                    <div class="i2c-select-row">
+                        <label id="oled_scl_label">SCL:</label>
+                        <select id="oled_scl0_select" class="form-select">
+                            <option value="1">GP1</option>
+                            <option value="5">GP5</option>
+                            <option value="9">GP9</option>
+                            <option value="13">GP13</option>
+                            <option value="17">GP17</option>
+                            <option value="21">GP21</option>
+                        </select>
+
+                        <select name="" id="oled_scl1_select" onchange="" class="form-select" hidden>
+                            <option value="3">GP3</option>
+                            <option value="7">GP7</option>
+                            <option value="11">GP11</option>
+                            <option value="15">GP15</option>
+                            <option value="19">GP19</option>
+                            <option value="27">GP27</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Layout Configuration -->
+    <div class="oled-section">
+        <h3 class="section-title">Layout Configuration</h3>
+        <div class="layout-grid">
+            <!-- Layout Canvas -->
+            <div class="canvas-container main-layout">
+                <div class="canvas-header">
+                    <span>Layout Preview</span>
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 10px;">
+                    <canvas id="myCanvas" class="oled-display"></canvas>
+                    <button id="exportBtn" class="action-btn secondary" onclick="exportCanvasAsPNG()"
+                        title="Export current layout as PNG">&#8595;</button>
+                </div>
+                <div class="canvas-footer">
+                    <div class="form-row">
+                        <select id="oled_set_predef_layout" class="form-select" onchange="set_layout()">
+                            <option value="0" selected disabled>Preset Layouts</option>
+                            <option value="1">Vewlix</option>
+                            <option value="2">Noir</option>
+                            <option value="3">Leverless</option>
+                            <option value="4">WASD</option>
+                            <option value="5">Clear Layout</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Controls -->
+            <div class="layout-controls">
+                <div class="button-group">
+                    <button class="action-btn third" id="oled_add_button" onclick="oled_add_button()">+ Button</button>
+                    <button class="action-btn third" id="oled_add_lever" onclick="oled_add_lever()">+ Lever</button>
+                    <button class="action-btn third" id="oled_add_key" onclick="oled_add_key()">+ Key</button>
+                    <button class="action-btn danger" id="delete_oled_button" onclick="delete_oled_button()"
+                        title="Delete" disabled>Delete</button>
+                </div>
+
+                <div class="form-row">
+                    <div class="control-row">
+                        <label id="oled_radius_label" for="oled_button_radius">Size:</label>
+                        <input id="oled_button_radius" name="oled_button_radius" type="number" value="8" min="1"
+                            max="25" class="form-input">
+                    </div>
+                    <div class="control-row">
+                        <label id="oled_rotation_label" for="oled_key_angle">Rotation:</label>
+                        <input id="oled_key_angle" name="oled_key_angle" type="number" value="0" min="0" max="359"
+                            class="form-input">
+                    </div>
+                </div>
+
+                <!-- Hidden Activation Button Controls -->
+                <div class="form-row" hidden>
+                    <label id="act_button_label" for="oled_select_activation_button" hidden>Activation Button:</label>
+                    <select id="oled_select_activation_button" class="form-select" onchange="set_activation_button()"
+                        hidden>
+                        <option value="0">notSet</option>
+                    </select>
+                </div>
+                <button class="action-btn secondary" id="oled_open_directions" onclick="show_directions_modal()"
+                    hidden>Set
+                    Directions</button>
+            </div>
+        </div>
+
+        <!-- Separator -->
+        <div class="layout-separator"></div>
+
+        <!-- Overlay and Splash Canvases -->
+        <div class="secondary-canvases">
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <div class="label-wrapper">
+                        <span>Overlay</span>
+                        <div id="oled_overlay_helper" class="helper" title="Graphics drawn above layout">?</div>
+                    </div>
+                </div>
+                <canvas id="my_overlay_canvas" class="oled-display"></canvas>
+                <div class="canvas-footer">
+                    <input type="file" id="imageLoader2" accept="image/*" hidden>
+                    <button id="upload_overlay_button" onclick="handleUploadOverlay()"
+                        class="action-btn primary">Upload</button>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <span>Splash Screen</span>
+                </div>
+                <canvas id="my_splash_canvas" class="oled-display"></canvas>
+                <div class="canvas-footer">
+                    <input type="file" id="imageLoader" accept="image/*" hidden>
+                    <button id="customButton" class="action-btn primary">Upload</button>
+                    <button id="oled_invert_button" class="action-btn secondary"
+                        onclick="invertColors()">Invert</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Display Behavior and Animation (side by side) -->
+    <div class="behavior-animation-grid">
+        <!-- Display Behavior -->
+        <div class="oled-section">
+            <h3 class="section-title">Display Behavior</h3>
+
+            <!-- Checkbox row with forced side-by-side layout -->
+            <div class="form-row" style="display: flex; flex-wrap: nowrap; gap: 20px; margin-bottom: 15px;">
+                <div class="checkbox-control">
+                    <input type="checkbox" id="oled_invert_oled">
+                    <label for="oled_invert_oled">Invert Colors</label>
+                </div>
+                <div class="checkbox-control">
+                    <input type="checkbox" id="oled_rotate_oled">
+                    <label for="oled_rotate_oled">Rotate display</label>
+                    <div id="oled_rotate_helper" class="helper" title="Flip horizontally">?</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="control-row">
+                    <label id="oled_normal_operation_label">During Play:</label>
+                    <select id="oled_layout" class="form-select">
+                        <option value="0">Display Layout</option>
+                        <option value="1">Display Splash</option>
+                        <option value="2">Clear OLED</option>
+                        <option value="3">Display Animation</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label id="oled_idle_label">Idle Mode:</label>
+                    <select id="oled_idle" class="form-select">
+                        <option value="2">Display Layout</option>
+                        <option value="0">Display Splash</option>
+                        <option value="1">Clear OLED</option>
+                        <option value="3">Display Animation</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animation Settings -->
+        <div class="oled-section">
+            <h3 class="section-title">Animation</h3>
+
+            <div class="form-row">
+                <div class="animation-controls">
+                    <div class="animation-row">
+                        <label id="oled_animation_delay_label1">Frame Delay:</label>
+                        <input id="oled_animation_delay" type="number" value="0" min="0" class="form-input">
+                        <label id="oled_animation_delay_label2">ms</label>
+                        <div id="oled_anim_delay_helper" class="helper"
+                            title="Delay each frame of the animation by a given amount (in milliseconds)&#10;&#10;Value is stored in the config.py">
+                            ?</div>
+                    </div>
+
+                    <div class="button-group full-width">
+                        <input type="file" id="uploadPngs" accept="image/png" multiple hidden>
+                        <button id="oled_upload_animation_button" class="action-btn primary">Upload Frames</button>
+                        <progress id="conversionProgress" value="0" max="100"></progress>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Elements for Animation Processing -->
+    <canvas id="pngCanvas" style="display: none;"></canvas>
+    <textarea id="animation_code_box" name="animation_code_box" style="display: none;"></textarea>
+    <textarea id="animation_code_box2" name="animation_code_box2" style="display: none;"></textarea>
+
+    <!-- Footer 
+    <div class="footer-row">
+        <a href="https://docs.google.com/document/d/1sRzsu_7MLZvugeR4t4hok-HUen5nlwNqmLjYXqlQP0s/edit" target="_blank" id="oled_guide_link" class="guide-link">OLED Guide</a>
+        <button id="oled_close_modal_button" class="close_button">Save & Close</button>
+    </div>-->
+</div>

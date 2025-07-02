@@ -1,0 +1,35 @@
+:disabled {
+  opacity: 0.5;
+  pointer-events: none; /* Optional: prevents interaction */
+}
+
+.disabled-container {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+label[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fade-controls[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+
+.fade-controls[disabled] input,
+.fade-controls[disabled] button,
+.fade-controls[disabled] .helper {
+  opacity: inherit;
+  pointer-events: inherit;
+  cursor: not-allowed;
+}
+
+
+.fade-controls[disabled] .general_button {
+  background-color: #cccccc;
+}
+

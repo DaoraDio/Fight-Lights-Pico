@@ -1,0 +1,101 @@
+<body>
+  <div class="button-config-container">
+    <!-- Left sidebar for controls -->
+    <div class="controls-sidebar">
+      <div id="idle_head_container">
+        <h2 id="buttons_page_header">Button Configuration</h2>
+        <div id="idle_header_helper" class="helper"
+          title="Add Buttons to the table and configure the behaviour of the LEDs on press.">
+          ?
+        </div>
+      </div>
+
+      <!-- Main controls moved to top -->
+      <div class="controls-container">
+        <div style="display: flex; gap: 10px;">
+          <button class="action-btn danger" id="delete_button" onclick="delete_button()" title="Delete"
+            disabled>Delete</button>
+          <button class="action-btn primary" id="update_button" onclick="update_button()" disabled>Update</button>
+          <button class="action-btn third" id="add_button" onclick="add_button()">Add</button>
+        </div>
+
+        <div class="input-container">
+          <input id="button_name" type="text" placeholder="Button Name">
+          <button class="action-btn secondary" id="refresh_button" onclick="reset_all()"
+            title="reset inputs">Reset</button>
+        </div>
+
+        <button id="set_leds_button" disabled onclick="led_open_modal()">Set LEDs</button>
+
+        <div class="button-select-container">
+          <label id="color_label" for="color_select" disabled>Button Color</label>
+          <select id="color_select" onmouseenter="" onchange="set_color_from_select()" disabled>
+            <option>random</option>
+          </select>
+        </div>
+
+        <!--<div class="range-container">
+          <label id="brightness_label" for="button_brightness">Brightness: 100%</label>
+          <input id="button_brightness" type="range" min="0" max="100" value="100" oninput="set_brightness_slider(this)">
+        </div>-->
+      </div>
+
+      <!-- Fade controls moved to bottom -->
+      <div class="fade-controls" id="fade-controls" disabled>
+        <div class="fade-control-group">
+          <span>Fade-in speed:</span>
+          <input type="number" min="0" max="100" id="fade_in" value="20" step="0.2" oninput="update_fadein()">
+          <div class="helper"
+            title="When fade enabled for a button this sets how fast that buttons fades from 0% brightness to full brightness when pressed. Can take floating point numbers as value&#10;Higher values = faster fade">
+            ?
+          </div>
+          <button class="action-btn secondary" onclick="set_fadein_for_all()">Set all</button>
+        </div>
+
+        <div class="fade-control-group">
+          <span>Fade-out speed:</span>
+          <input type="number" min="0" max="100" id="fade_out" value="6" step="0.2" oninput="update_fadeout()">
+          <div class="helper"
+            title="When fade enabled for a button this sets how fast that buttons fades from full brightness to 0% brightness when released. Can take floating point numbers as value&#10;Higher values = faster fade">
+            ?
+          </div>
+          <button class="action-btn secondary" onclick="set_fadeout_for_all()">Set all</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area for table -->
+    <div class="table-container">
+      <table class="button-table" id="button_table" onmouseover="select_button_table()">
+        <thead>
+          <tr>
+            <th title="Name of the button">Button Name</th>
+            <th title="Positions of the LEDs which light up when the button is pressed">LED Positions</th>
+            <th title="Color the LEDs take when the button is pressed">Color</th>
+            <th title="set if fade is enabled or disabled for the Button">Fade</th>
+            <th title="the GPIO pin for the Button">GPIO Pin</th>
+            <th title="Fade-in speed">Fade-in</th>
+            <th title="Fade-out speed">Fade-out</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table content will be generated dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <dialog class="modal" id="led_conf_modal">
+    <h2 id="modal_headline"></h2>
+    <button class="action-btn primary" onclick="set_all()">Set All</button>
+    <button class="action-btn primary" onclick="unset_all()">Unset All</button>
+    <br>
+    <br>
+    <div id="modal_body">
+    </div>
+    <button class="action-btn danger" id="close_modal" onclick="led_close_modal()">Cancel</button>
+    <button class="action-btn third" id="save_modal" onclick="led_save_modal()">Save</button>
+  </dialog>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+nav {
+  background-color: #333;
+  color: white;
+  padding: 0rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 8px solid rgb(255, 255, 255);
+}
+
+.nav-left {
+  display: flex;
+  gap: 1rem;
+  margin-left: 3rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+.nav-left a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  white-space: nowrap;
+  padding: 0.5rem 0;
+}
+
+.nav-left a:hover {
+  color: #ffcc00;
+}
+
+.container {
+  padding: 2rem;
+  min-height: 300px;
+}
+
+.nav-right {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+.nav-right a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  white-space: nowrap;
+  padding: 0.5rem 0;
+}
+
+.nav-right a:hover {
+  color: #ffcc00;
+}
+
+.dl_code_buttons {
+  cursor: pointer;
+  background-color: #4CAF50;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 5px 20px;
+  text-align: center;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.75rem;
+  }
+  
+  .nav-left, .nav-right {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  
+  .nav-left {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.75rem;
+  }
+  
+  .nav-right {
+    padding-top: 0.75rem;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .nav-left, .nav-right {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .nav-left a, .nav-right a, .dl_code_buttons {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+  }
+}
+
+.logo-overlay {
+  position: fixed; /* or absolute depending on your layout */
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
+
+.logo-overlay img {
+  width: 40px; /* Adjust size as needed */
+  height: 40px;
+}
+
+/* Hide on small screens */
+@media (max-width: 768px) {
+  .logo-overlay {
+    display: none;
+  }
+}
+
+.nav-left a.nav-disabled,
+.nav-right a.nav-disabled  {
+  color: rgb(160, 160, 160);
+}
+
+/* Keep hover effect only for enabled links */
+.nav-left a:not(.nav-disabled):hover,
+.nav-right a:not(.nav-disabled):hover {
+  color: #ffcc00;
+}
+
+.nav-left a.active,
+.nav-right a.active {
+  color: #ffcc00;
+}

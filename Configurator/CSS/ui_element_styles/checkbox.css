@@ -1,0 +1,65 @@
+
+/* checkboxes */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  margin: 0 8px 0 0;
+  background-color: var(--cb_background);
+  border: 2px solid #c1e0ff;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative; /* Keep this but add z-index control */
+  z-index: auto; /* Prevents stacking context issues */
+  transition: all 0.3s ease;
+  vertical-align: middle;
+
+}
+
+
+/* Checkmark - perfectly centered */
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px; 
+  top: 1px;  
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg); /* Removed translate */
+}
+
+/* Keep all other states */
+input[type="checkbox"]:hover {
+  border-color: #a0cfff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  border-color: #7ab8ff;
+  box-shadow: 0 2px 8px rgba(122, 184, 255, 0.2);
+}
+
+input[type="checkbox"]:checked {
+  background-color: #3a7bb8;
+  border-color: #3a7bb8;
+}
+
+input[type="checkbox"]:checked::after {
+  display: block;
+}
+
+/* Label styling */
+input[type="checkbox"] + label {
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text-general);
+  cursor: pointer;
+  vertical-align: middle;
+}

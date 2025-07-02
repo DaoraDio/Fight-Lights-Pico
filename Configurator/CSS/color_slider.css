@@ -1,0 +1,182 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Menu toggle button - partially visible */
+.menu-toggle {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    padding: 15px 10px 15px 15px;
+    background: linear-gradient(90deg,
+            red,
+            orange,
+            yellow,
+            green,
+            blue,
+            indigo,
+            violet);
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    border-radius: 4px 0 0 4px;
+    cursor: pointer;
+    z-index: 900;
+    width: 70px;
+    transition: right 0.3s ease;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #707070;
+}
+
+/* When menu is open, move button with menu */
+.menu-toggle.menu-open {
+    right: 400px;
+}
+
+/* Slide menu */
+.slide-menu {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100%;
+    background: var(--bg-buttons);
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.slide-menu.open {
+    right: 0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Container for color control elements */
+.action-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Top row with color picker and 3 buttons */
+.action-buttons-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Bottom row with text input and another button */
+.color-name-row {
+    display: flex;
+    gap: 10px;
+}
+
+/* Style for the color name input */
+#color_name {
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+}
+
+
+#buttons_page_header
+{
+    text-align: center;
+    font-size: 30px;
+}
+/* Status badges */
+.status {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 999;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#color_selector_header {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#color_adder, #color_adder_ov {
+    width: 60px;
+    cursor: pointer;
+}
+
+
+/* Table fixes */
+.data-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.data-table th,
+.data-table td {
+    width: 50%;
+    vertical-align: middle;
+}
+
+.data-table td:last-child {
+    padding: 0; /* Remove padding from color cells */
+}
+
+/* Color box styling */
+.color-box {
+    width: 100%;
+    height: 40px; /* Fixed height */
+    display: block;
+}
+
+/* Name column styling */
+.def_col {
+    padding: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+

@@ -1,0 +1,184 @@
+/* Main Container */
+#player_leds_container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Header Styles */
+.page-header-wrapper {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.page-header {
+    font-size: 2rem;
+    font-weight: 450;
+    margin: 0;
+}
+
+/* Checkbox Container - Matches idle page style */
+.player-led-checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0;
+    padding: 10px 0;
+}
+
+#player_led_cb {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    appearance: none;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+#player_led_cb:checked {
+    background-color: #ff0000;
+    border-color: #000000;
+}
+
+#player_led_cb:checked::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 1px;
+    width: 8px;
+    height: 16px;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+#player_led_cb_label {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+
+/* Content Layout */
+.content-wrapper {
+    display: flex;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.controls-section {
+    width: 300px;
+}
+
+.player-section {
+    flex: 1;
+}
+
+/* Section Boxes */
+.section-box {
+    background: var(--bg-buttons);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    border: 1px solid #eaeaea;
+}
+
+
+/* Control Groups */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    font-weight: 500;
+}
+
+/* Separator */
+.section-separator {
+    height: 1px;
+    background: var(--separator-color);
+    margin: 20px 0;
+    width: 100%;
+}
+
+
+
+/* Player LED Circles */
+.player-leds-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 30px 0;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.player-led-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 3px solid #ccc;
+    font-weight: bold;
+    font-size: 24px;
+    position: relative;
+}
+
+.player-led-circle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.player-led-circle.active {
+    border-color: #4CAF50;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.player-led-circle span {
+    position: relative;
+    z-index: 1;
+    color: var(--text-general);
+}
+
+/* Color Classes */
+
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .content-wrapper {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .controls-section {
+        width: 100%;
+    }
+    
+    .player-leds-container {
+        margin: 20px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .player-led-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+    
+    .page-header {
+        font-size: 1.5rem;
+    }
+    
+    #player_led_cb_label {
+        font-size: 20px;
+    }
+}

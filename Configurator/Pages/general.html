@@ -1,0 +1,169 @@
+<h1 class="page-header">General Configurations</h1>
+<div id="general_container">
+  <!-- First Row: Number of LEDs and GPIO Pin -->
+  <div class="config-row">
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>Number of LEDs</div>
+        <div class="helper" title="Total number of LEDs in your LED chain">?</div>
+      </div>
+      <input id="led_count" name="led_count" type="number" value="8" min="1"
+        onchange="update_exclude_leds(); set_bg_table(); update_bg_table_colors()">
+    </div>
+
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>LED Chain GPIO Pin</div>
+        <div class="helper" title="GPIO Pin that the LED chain connects to">?</div>
+      </div>
+      <select name="pin_num" id="pin_num">
+        <option value="0">GP0</option>
+        <option value="1">GP1</option>
+        <option value="2">GP2</option>
+        <option value="3">GP3</option>
+        <option value="4">GP4</option>
+        <option value="5">GP5</option>
+        <option value="6">GP6</option>
+        <option value="7">GP7</option>
+        <option value="8">GP8</option>
+        <option value="9">GP9</option>
+        <option value="10">GP10</option>
+        <option value="11">GP11</option>
+        <option value="12">GP12</option>
+        <option value="13">GP13</option>
+        <option value="14">GP14</option>
+        <option value="15">GP15</option>
+        <option value="16">GP16</option>
+        <option value="17">GP17</option>
+        <option value="18">GP18</option>
+        <option value="19">GP19</option>
+        <option value="20">GP20</option>
+        <option value="21">GP21</option>
+        <option value="22">GP22</option>
+        <option value="23">GP23</option>
+        <option value="24">GP24</option>
+        <option value="25">GP25</option>
+        <option value="26">GP26</option>
+        <option value="27">GP27</option>
+        <option value="28">GP28</option>
+        <option value="29">GP29</option>
+        <option value="30">GP30</option>
+        <option value="31">GP31</option>
+        <option value="32">GP32</option>
+        <option value="33">GP33</option>
+        <option value="34">GP34</option>
+        <option value="35">GP35</option>
+        <option value="36">GP36</option>
+        <option value="37">GP37</option>
+        <option value="38">GP38</option>
+        <option value="39">GP39</option>
+        <option value="40">GP40</option>
+        <option value="41">GP41</option>
+        <option value="42">GP42</option>
+        <option value="43">GP43</option>
+        <option value="44">GP44</option>
+        <option value="45">GP45</option>
+        <option value="46">GP46</option>
+        <option value="47">GP47</option>
+        <option value="48">GP48</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Second Row: Profile Name and Color -->
+  <div class="config-row">
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>Profile Name</div>
+        <div class="helper"
+          title="Name of the Profile&#10;Used to recognize the profile in the configurator and OLED Display">?</div>
+      </div>
+      <input id="profile_name" type="text" placeholder="Set name for this Profile">
+    </div>
+
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>Profile Color</div>
+        <div class="helper" title="When in LED Options mode&#10;the profile color helps identify the profile to select">
+          ?</div>
+      </div>
+      <div class="input-wrapper">
+        <div class="colpicker full">
+          <input type="text" class="coloris instance2" id="profile_color" value="rgb(255, 0, 0)"
+            oninput="document.querySelector('nav').style.borderBottomColor = this.value">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third Row: Brightness Slider (now pushed to the right) -->
+  <div class="config-row">
+    <div class="brightness-control">
+      <div class="brightness-label">
+        <div>Startup Brightness: </div>
+        <span id="brightness-value">100%</span>
+        <div class="helper" title="This controls with how much brightness the LEDs have when plugged in.">?</div>
+      </div>
+      <input type="range" min="0" max="100" value="100" class="slider" id="startup_brightness"
+        onchange="update_brightness_input()" oninput="update_brightness_input()">
+    </div>
+  </div>
+
+  <!-- Fourth Row: Multipress Leniency and Checkboxes -->
+  <div class="config-row">
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div id="leniency_tx">Multipress leniency</div>
+        <div class="helper"
+          title="Button colors that are set to 'random' have the feature, when pressed together at the same time, will light up with the same color. This controls how lenient the recognition is">
+          ?</div>
+      </div>
+      <div class="label-wrapper">
+        <input id="leniency_tb" name="input" type="number" value="1" min="1">
+        <input type="checkbox" id="leniency_cb" name="leniency_cb" onchange="update_leniency_input()">
+        <label for="leniency_cb">Disable</label>
+      </div>
+    </div>
+
+    <div class="checkboxes-column">
+      <div class="checkbox-item">
+        <input type="checkbox" id="onboard_LED">
+        <label for="onboard_LED">Enable Onboard LED</label>
+        <div class="helper" title="Enable or disable the Onboard LED of the Raspberry Pi Pico&#10;Sets Pin25">?</div>
+      </div>
+
+      <div class="checkbox-item">
+        <input type="checkbox" id="stats_cb" name="stats_cb">
+        <label for="stats_cb">Enable Stat Logging</label>
+        <div class="helper"
+          title="Enabling stat logging will create a log file inside your Pi Pico that logs how long your stick has been used, and how many times each button has been pressed&#10;Warning: Do this only after all your buttons have been set. New buttons will not automatically be added to an existing file, and changing names aswell. New buttons and changed names have to be added and changed manually">
+          ?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fifth Row: LED ON/OFF Buttons -->
+  <div class="config-row">
+    <h3 id="on_off_header">Buttons to Press Together to Turn LEDs ON/OFF</h3>
+
+    <div class="table-controls">
+      <button id="on_off_delete" onclick="delete_onoff_table()" class="action-btn danger" title="Delete"
+        disabled>Delete</button>
+      <button class="action-btn third" id="on_off_add" onclick="onoff_add()">Add</button>
+      <select id="on_off_select"></select>
+      <button id="on_off_reset" onclick="reset_onoff_table()" title="reset inputs"
+        class="action-btn secondary">Reset</button>
+    </div>
+
+    <table id="on_off_table" onmouseover="select_onoff_table()">
+      <thead>
+        <tr>
+          <th>Buttons</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table content will be generated dynamically -->
+      </tbody>
+    </table>
+  </div>
+</div>

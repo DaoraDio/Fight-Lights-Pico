@@ -23,12 +23,18 @@ except IndexError:
     init.oled_active = False
     del oled.i2c
 
+import os
+fs_stat = os.statvfs('/')
+free_bytes = fs_stat[0] * fs_stat[3]
+free_kb = free_bytes // 1024
+print("Free space:", free_kb, "KB")
+
 #clear the init.code variable to free up the memory, if main was executed from another file 
 del init.code
 #machine.freq(125000000) #<--Pico1 Standard clockspeed
 #machine.freq(150000000) #<--Pico2 Standard clockspeed
 #machine.freq(180000000) #<--medium Overclock
-#machine.freq(210000000) #<--medium/high Overclock
+machine.freq(200000000) #<--medium/high Overclock
 #machine.freq(240000000) #<--high Overclock
 #machine.freq(270000000) #<--very high Overclock
 
@@ -61,63 +67,7 @@ if config.save_stats == True:
 file_list = os.listdir()
 init.config_names = [s for s in file_list if "config" in s]
 init.current_config_index = 0
-
-def load_config(importfile):
-    if importfile is 'config.py':
-        del sys.modules['config']
-    
-    
-    import_statement = 'import ' + importfile[:-3]
-    exec(import_statement)
-    module_name = importfile[:-3]
-    
-    if importfile != 'config.py':
-        config.colors = sys.modules[module_name].colors
-        config.idle_mode1_colors = sys.modules[module_name].idle_mode1_colors
-        config.idle_mode1_speed = sys.modules[module_name].idle_mode1_speed
-        config.profile_name = sys.modules[module_name].profile_name
-        config.led_count = sys.modules[module_name].led_count
-        config.PIN_NUM = sys.modules[module_name].PIN_NUM
-        config.leniency = sys.modules[module_name].leniency
-        config.brightness_mod = sys.modules[module_name].brightness_mod
-        config.brightness_steps = sys.modules[module_name].brightness_steps
-        config.idle_mode = sys.modules[module_name].idle_mode
-        config.idle_after = sys.modules[module_name].idle_after
-        config.save_stats = sys.modules[module_name].save_stats
-        config.input_reset_time = sys.modules[module_name].input_reset_time
-        config.profile_color = sys.modules[module_name].profile_color
-        config.clear_background_on_press = sys.modules[module_name].clear_background_on_press
-        config.background = sys.modules[module_name].background
-        config.button_list = sys.modules[module_name].button_list
-        config.next_config = sys.modules[module_name].next_config
-        config.prev_config = sys.modules[module_name].prev_config
-        
-        for button in config.button_list:
-            button.set_config(button.led_list,button.config[1],button.fade, button.brightness,button.fadein_speed,button.fadeout_speed)
-        
-        config.ledOptions_color = sys.modules[module_name].ledOptions_color
-        config.ledOptions_profile_color_use_all_LEDs = sys.modules[module_name].ledOptions_profile_color_use_all_LEDs
-        config.ledOptions_led_buttons = sys.modules[module_name].ledOptions_led_buttons
-        config.ledOptions_start_time = sys.modules[module_name].ledOptions_start_time
-        config.ledOptions_increase_brightness = sys.modules[module_name].ledOptions_increase_brightness
-        config.ledOptions_decrease_brightness = sys.modules[module_name].ledOptions_decrease_brightness
-        config.ledOptions_left_button = sys.modules[module_name].ledOptions_left_button
-        config.ledOptions_right_button = sys.modules[module_name].ledOptions_right_button
-        config.ledOptions_confirm = sys.modules[module_name].ledOptions_confirm
-        config.OnOff_button = sys.modules[module_name].OnOff_button
-        config.rainbow_speed = sys.modules[module_name].rainbow_speed
-        config.activate_player_led = sys.modules[module_name].activate_player_led
-        config.playerLED_brightness = sys.modules[module_name].playerLED_brightness
-        config.playerLED_PIN_NUM = sys.modules[module_name].playerLED_PIN_NUM
-        config.P1_color = sys.modules[module_name].P1_color
-        config.P2_color = sys.modules[module_name].P2_color
-        config.P3_color = sys.modules[module_name].P3_color
-        config.P4_color = sys.modules[module_name].P4_color
-        config.smooth_brightness_speed = sys.modules[module_name].smooth_brightness_speed
-    
-        del sys.modules[module_name] # Remove reference    
-
-
+  
 counter = 0
 for button in config.button_list:
     button.run(0)
@@ -132,7 +82,7 @@ if init.oled_active:
         second_thread = _thread.start_new_thread(oled.play_animation, ())
         print("Second Thread Started")
         #oled.play_animation()
-        
+    
 #--------------------------main program-------------------------------------------------------
 #@functions.measure_execution_time
 def main():
@@ -231,6 +181,8 @@ def main():
             animation.idle_mode4()
         if config.idle_mode == 5:
             animation.idle_mode5()
+        if config.idle_mode == 6:
+            animation.idle_mode6()
 
     
     
@@ -271,6 +223,7 @@ def main():
         for i in range(init.start_pos, len(config.button_list)+init.start_pos):
             i = i % len(config.button_list)
             config.button_list[i].run((time.ticks_cpu()) % len(config.colors))
+        
           
 
     functions.run_eight_way_joystick()
@@ -307,37 +260,6 @@ def main():
         else:
             init.on_off_cnt = 0
             
-    #dynamic profile - foward
-    if config.next_config:
-        nextconfig = []
-        for button in config.next_config:
-            nextconfig.append(button.is_pressed)
-        if all(nextconfig):
-            init.prof_next_cnt += 1
-            if init.prof_next_cnt == 1:
-                init.current_config_index = (init.current_config_index + 1) % len(init.config_names)
-                print("loaded",init.config_names[init.current_config_index])
-                functions.reset_background()
-                load_config(init.config_names[init.current_config_index])
-                init.background = config.background
-        else:
-            init.prof_next_cnt = 0
-            
-    #dynamic profile - back
-    if config.prev_config:
-        prevconfig = []
-        for button in config.prev_config:
-            prevconfig.append(button.is_pressed)
-        if all(prevconfig):
-            init.prof_prev_cnt += 1
-            if init.prof_prev_cnt == 1:
-                init.current_config_index = (init.current_config_index - 1) % len(init.config_names)
-                print("loaded",init.config_names[init.current_config_index])
-                functions.reset_background()
-                load_config(init.config_names[init.current_config_index])
-                init.background = config.background
-        else:
-            init.prof_prev_cnt = 0
 
     #give a nice ramp up at the beginning of the program
     if init.temp_brightness < config.brightness_mod:
@@ -350,7 +272,8 @@ def main():
     if init.run_savestats:
         functions.save_stats()
         init.run_savestats = False
-        
+    
+    #print(config.X_1K_MyButton.pin_num)
     
         
 #main loop

@@ -1,0 +1,124 @@
+<div id="default_colors_container">
+    <div id="idle_head_container">
+        <h1 class="page-header">Set Default LED Colors</h1>
+        <div id="idle_header_helper" class="helper"
+            title="The default color sets what colors the LEDs have when not pressed or not lit up by any other action like Idle mode. ">
+            ?
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="controls-section section-box">
+            <h2 class="section-title">Color Settings</h2>
+
+            <div class="control-group">
+                <label for="bg_color_select">Color:</label>
+                <select id="bg_color_select" onchange="select_set_color()">
+                    <optgroup label="Special option">
+                        <option>rainbow</option>
+                    </optgroup>
+                    <optgroup label="Colors">
+                        <option>blank</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="bg_brightness">Brightness: <span id="brightness_text">100</span>%</label>
+                <input type="range" min="0" max="100" value="100" id="bg_brightness" oninput="set_brightness()">
+            </div>
+
+            <div class="section-separator"></div>
+
+            <div class="control-group horizontal-group">
+                <input type="checkbox" id="clear_bg_on_press">
+                <label for="clear_bg_on_press">Clear default color on button press</label>
+                <div class="helper"
+                    title="When checked, pressing a button will temporarily turn all background colors off until the button is released again. So only the LEDs of the button that is currently pressed are lit">
+                    ?
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="rainbow_speed">Rainbow Speed:</label>
+                <div class="input-with-helper">
+                    <input type="number" id="rainbow_speed" min="0" value="1000"
+                        title="default value = 1000, higher values = slower">
+                    <div class="helper" title="Higher values = slower animation">?</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="bg_set_all()">Set for all</button>
+                <button class="action-btn secondary" onclick="bg_set_color_all()">Set color for all</button>
+                <button class="action-btn secondary" onclick="bg_set_brightness_all()">Set brightness for all</button>
+            </div>
+        </div>
+
+        <div class="table-section section-box">
+            <h2 class="section-title">Unpressed Colors</h2>
+            <div class="table-container">
+                <table id="background_table" onmouseover="select_bg_table()">
+                    <thead>
+                        <tr>
+                            <th>LED Number</th>
+                            <th>Color</th>
+                            <th>Brightness</th>
+                            <th class="color-preview-header"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="cursor: pointer;">
+                            <td>1</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

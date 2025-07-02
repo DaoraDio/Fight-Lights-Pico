@@ -40,7 +40,7 @@ def ws2812():
 
 
 # Create the StateMachine with the ws2812 program, outputting on pre-defined pin
-# at the 8MHz frequency (changed to 5)
+# at the 8MHz frequency 
 sm = rp2.StateMachine(0, ws2812, freq=5_000_000, sideset_base=Pin(PIN_NUM))
 
 
@@ -49,3 +49,4 @@ sm.active(1)
 
 # Range of LEDs stored in an array
 ar = array.array("I", [0 for _ in range(led_count)])
+visible_ar = array.array("I", [0] * config.led_count)

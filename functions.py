@@ -142,7 +142,7 @@ def decrease_brightness(steps_size):
 
         
 def pixels_show(brightness_input):
-    dimmer_ar = array.array("I", [0 for _ in range(config.led_count)])
+    dimmer_ar = array.array("I", [0] * config.led_count)
     brightness_scale = int(255 * brightness_input)
     for ii, cc in enumerate(statemachine.ar):
         r = (cc >> 8) & 0xFF
@@ -153,6 +153,42 @@ def pixels_show(brightness_input):
         b_scaled = (b * brightness_scale) >> 8
         dimmer_ar[ii] = (g_scaled << 16) | (r_scaled << 8) | b_scaled
     statemachine.sm.put(dimmer_ar, 8)
+
+    statemachine.visible_ar = array.array("I", dimmer_ar) #save for use in pixels_show_idle
+
+
+#show function for idle mode, skips LEDs
+def pixels_show_idle(brightness_input, active_leds=None):
+    dimmer_ar = array.array("I", [0] * config.led_count)
+
+    for ii in range(config.led_count):
+        base_cc = statemachine.ar[ii]
+        base_r = (base_cc >> 8) & 0xFF
+        base_g = (base_cc >> 16) & 0xFF
+        base_b = base_cc & 0xFF
+
+        if active_leds is not None and ii in active_leds:
+            r_scaled = int(base_r * brightness_input)
+            g_scaled = int(base_g * brightness_input)
+            b_scaled = int(base_b * brightness_input)
+        else:
+            r_scaled = base_r
+            g_scaled = base_g
+            b_scaled = base_b
+
+        r_scaled = min(255, max(0, r_scaled))
+        g_scaled = min(255, max(0, g_scaled))
+        b_scaled = min(255, max(0, b_scaled))
+
+        dimmer_ar[ii] = (g_scaled << 16) | (r_scaled << 8) | b_scaled
+
+    statemachine.visible_ar = array.array("I", dimmer_ar)
+    statemachine.sm.put(dimmer_ar, 8)
+
+
+
+
+
     
 def pixels_set(i, color):
     statemachine.ar[i] = (color[1]<<16) + (color[0]<<8) + color[2] # set 24-bit color
@@ -445,35 +481,7 @@ def oled_animation_exists():
     
     
 def set_background(background):
-    #speed = 1000 #speed for colorwheel, higher = slower
-    
-    #if background it only a color
-    if isinstance(background[0], int):
-        if init.bg_initialized == False:
-            init.bg_initialized = True
-        
-        pixels_fill(background)
-        return
-    elif background == 'rainbow':#if background is only 'rainbow'
-        print("test1")
-        hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100)
-        pixels_fillHSV(hsv_col)
-        return
-    elif not isinstance(background[0], tuple) and init.bg_initialized == False:#if background is a single tuple
-        init.ranges = list(background)
-        init.brightness_values.append(init.ranges.pop(0))
-        if init.brightness_values[0] > 1:
-            init.brightness_values[0] = 1
-        init.colors.append(init.ranges.pop(0))
-        if not isinstance(init.colors[0], str):
-            init.background_color = list(RGBtoHSV(init.colors[0]))
-            init.background_color[2] *= init.brightness_values[0]
-            init.background_color = HSVtoRGB(init.background_color)
-             
-        init.bg_initialized = True
-        init.single_tuple = True
-        
-    elif init.bg_initialized == False:#if background is tuple of tuple
+    if init.bg_initialized == False:
         #initialize the background colors
         different_tuple = len(background)
         
@@ -769,6 +777,7 @@ def mode_select(brightness_steps):
                 path = os.rename('config.py', config_name)
                 path = os.rename('configtmp.py', 'config.py')
                 machine.reset()
+
             
 
                 

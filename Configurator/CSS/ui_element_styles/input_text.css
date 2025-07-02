@@ -1,0 +1,29 @@
+input[type="text"] {
+  font-family: inherit;
+  font-size: 16px;
+  padding: 8px 15px;
+  border: 2px solid #c1e0ff;
+  border-radius: 8px;
+  width: 52%;
+  background-color: var(--bg-buttons);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  margin-top: 4px;
+  color: var(--text-general);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #7ab8ff;
+  box-shadow: 0 2px 8px rgba(122, 184, 255, 0.2);
+}
+
+input[type="text"]::placeholder {
+  color: #aaa;
+  font-weight: 300;
+}
+
+input[type="text"]:hover {
+  border-color: #a0cfff;
+}

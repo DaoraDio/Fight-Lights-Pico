@@ -1,0 +1,101 @@
+<div id="idle_head_container">
+    <h1 class="page-header">Idle Mode Configuration</h1>
+    <div id="idle_header_helper" class="helper"
+        title="Idle mode activates after a certain amount of time, when no inputs have been made.&#10;Disabling Idle Mode will prevent the device from entering idle mode entirely">
+        ?</div>
+</div>
+<div class="idle_checkbox-container">
+    <input type="checkbox" id="idle_cb" name="idle_cb" onchange="toggle_idle_mode()">
+    <label id="idle_cb_label" for="idle_cb">Disable Idle Mode</label>
+</div>
+
+
+<div id="idlemode_container">
+    <div id="idle_general_container">
+        <div class="form-row">
+            <div>Select Idle Mode Animation:</div>
+            <select name="idle_select" id="idle_select" onchange="show_idle_extra_config()">
+                <option value="1">Breathing Lights</option>
+                <option value="2">Rainbow</option>
+                <option value="3">Dim Brightness</option>
+                <option value="4">Rain</option>
+                <option value="5">Color Chaser</option>
+                <option value="6">Do Nothing (for OLED)</option>
+            </select>
+            <div class="helper"
+                title="When no button is pressed for a time, the LEDs will enter a Idle mode where they display certain animationsMode 1 (Breathing) - The LEDs will circle between colors, each color slowly fades in an out.&#10;Mode 2 (Rainbow) - All LEDs will change their colors through the RGB spectrum&#10;Mode 3 (Dim Brightness) - Decrease brightness&#10;Mode 4 (Rain) - credits to Frawsty&#10;Mode 5 (Color Chaser) - snake like effect through all LEDs&#10;Mode 6 (Do Nothing) - The LEDs will not change at all. Used for triggering the OLED Idle mode without affecting the LEDs.">
+                ?</div>
+        </div>
+
+        <div class="form-row">
+            <label for="idle_tb">Enter Idle mode after </label>
+            <input id="idle_tb" name="input" type="number" value="30" min="0">
+            <label for="idle_tb">Seconds</label>
+            <div class="helper"
+                title="This controls how long it takes to enter idle mode after your last action. (in seconds)">?</div>
+        </div>
+    </div>
+
+    <div id="idle_exclude_container">
+        <div class="form-row" style="justify-content: center;">
+            <h3>Exclude LEDs from Idle mode</h3>
+            <div class="helper"
+                title="By default Idle Modes affect all LEDs&#10;Here you can set LEDs to be excluded from Idle Mode">?
+            </div>
+        </div>
+        <div id="idle_exlude_modal_body"></div>
+    </div>
+
+    <div id="idle1_config_container">
+        <h3>Breathing Lights Configuration</h3>
+
+        <div class="form-row">
+            <label>Speed:</label>
+            <input id="idle1_speed" type="number" value="0.05" min="0.05" step="0.05" onchange="">
+        </div>
+
+        <div class="form-row">
+            <input type="radio" name="idle_conf_radio" id="circle_checkbox" onclick="update_checkbox_hide()" checked>
+            <label for="circle_checkbox">Circle between all defined colors</label>
+        </div>
+        <div class="form-row">
+            <input type="radio" name="idle_conf_radio" id="circle_checkbox2" onclick="update_checkbox_show()">
+            <label for="circle_checkbox2">Set colors to circle between</label>
+        </div>
+
+        <div class="form-row">
+            <button class="action-btn danger" id="delete_idle_table" onclick="delete_idle_color()" title="Delete"
+                disabled>Delete</button>
+            <button class="action-btn third" id="add_idle_table" onclick="add_idle_color()">Add</button>
+            <select id="idle_circle_select" onmouseenter="update_idle_circle_select()">
+                <option>blank</option>
+            </select>
+            <button class="action-btn primary" id="reset_idle_table" onclick="reset_idle_selection()"
+                title="reset inputs">Reset</button>
+        </div>
+
+        <div id="circle_row_id" hidden></div>
+        <table class="tg" id="circle_table" onmouseover="select_circle_table()">
+            <thead>
+                <tr>
+                    <th style="font-weight: bold;">Colors</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="idle1_config_container_dim" hidden>
+        <div class="form-row">
+            <div class="dim-header-wrapper">
+                <h3 id="dim_header">Dim Brightness Configuration</h3>
+                <div class="helper"
+                    title="Sets the Brightness to a specific value.&#10;Set to 0% to turn the LEDs off&#10;Brightness can only be dimmed not increased">
+                    ?</div>
+            </div>
+            <div class="dim-brightness-row">
+                <span>Set Brightness to: <span id="brightness-value_dim">10%</span></span>
+                <input type="range" min="0" max="100" value="10" class="slider" id="dim_brightness_slider" oninput="update_dim_brightness_input()">
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,265 @@
+/* eightway.css */
+#eightway-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--bg-buttons);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+/* New header style outside the box */
+.eightway-header {
+  font-size: 1.8rem;
+  text-align: center;
+  margin: 20px 0 10px 0;
+  font-weight: 500;
+}
+
+/* Second header stays inside */
+#eightway-container h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Arrow Container */
+.arrow-container {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 30px auto;
+  background-color: var(--bg-arrows);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Arrow styles */
+.arrow {
+  cursor: pointer;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  transition: transform 0.2s ease;
+}
+
+
+.arrow-up {
+  border-width: 0 20px 40px 20px;
+  border-color: transparent transparent #000000 transparent;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.arrow-down {
+  border-width: 40px 20px 0 20px;
+  border-color: #000000 transparent transparent transparent;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.arrow-left {
+  border-width: 20px 40px 20px 0;
+  border-color: transparent #000000 transparent transparent;
+  top: 50%;
+  left: 0px;
+  transform: translateY(-50%);
+}
+
+.arrow-right {
+  border-width: 20px 0 20px 40px;
+  border-color: transparent transparent transparent #000000;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+}
+
+.arrow-up-left {
+  border-width: 40px 20px 0 20px;
+  border-color: #000000 transparent transparent transparent;
+  top: 27px;
+  left: 27px;
+  transform: rotate(135deg);
+}
+
+.arrow-up-right {
+  border-width: 40px 20px 0 20px;
+  border-color: #000000 transparent transparent transparent;
+  top: 27px;
+  right: 27px;
+  transform: rotate(-135deg);
+}
+
+.arrow-down-left {
+  border-width: 0 20px 40px 20px;
+  border-color: transparent transparent #000000 transparent;
+  bottom: 27px;
+  left: 27px;
+  transform: rotate(-135deg);
+}
+
+.arrow-down-right {
+  border-width: 0 20px 40px 20px;
+  border-color: transparent transparent #000000 transparent;
+  bottom: 27px;
+  right: 27px;
+  transform: rotate(135deg);
+}
+
+/* Controls Section */
+.eightway_controls-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px auto;
+  flex-wrap: nowrap;
+  max-width: 600px;
+}
+
+#eightway_color_select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  min-width: 150px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+/* Info Display */
+.info-display {
+  text-align: center;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 5px;
+  max-width: 500px;
+}
+
+.info-display div {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.info-display span {
+  font-weight: 500;
+}
+
+#eighway_leds_num_container {
+  white-space: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 5px 0;
+}
+
+#eightway_leds_nums {
+  background-color: var(--bg-led-num);
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+  .eightway_controls-section {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  #eightway_color_select {
+    width: calc(100% - 24px);
+  }
+}
+
+/* Eightway LED Modal - Consistent Styling */
+#eightway_led_modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90%, 600px);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    border: none;
+    z-index: 1000;
+    opacity: 0;
+    scale: 0.95;
+    transition: all 0.2s ease-out;
+}
+
+#eightway_led_modal[open] {
+    opacity: 1;
+    scale: 1;
+}
+
+#eightway_led_modal::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Header */
+#eightway_led_modal_headline {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--separator-color);
+}
+
+/* Modal Body - Grid Layout */
+#eightway_modal_body {
+    padding-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+    max-height: 50vh;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+/* Checkbox Items */
+#eightway_modal_body label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--bg-led-label);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    border: 1px solid var(--separator-color);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+#eightway_modal_body label:hover {
+    background: var(--bg-led-hover);
+    border-color: var(--unknown-color-1);
+}
+
+/* Scrollbar */
+#eightway_modal_body::-webkit-scrollbar {
+    width: 6px;
+}
+
+#eightway_modal_body::-webkit-scrollbar-track {
+    border-radius: 3px;
+    /*color: rgb(110, 110, 110);*/
+}
+
+#eightway_modal_body::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    #eightway_modal_body {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}

@@ -1,0 +1,191 @@
+/* Base Modal Styling - Works for all modals */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90%, 600px);
+    background: var(--bg-buttons);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    border: none;
+    z-index: 1000;
+    opacity: 0;
+    scale: 0.95;
+    transition: all 0.2s ease-out;
+    color: var(--text-general);
+}
+
+.modal[open] {
+    opacity: 1;
+    scale: 1;
+}
+
+.modal::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Header - Works for all modals */
+.modal-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #482d2d;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Modal Body - Works for all modals */
+.modal-body {
+    padding-bottom: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Button Container - Works for all modals */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 12px;
+}
+
+/* Scrollbar Styling - Works for all modals */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+/* Responsive Adjustments - Works for all modals */
+@media (max-width: 600px) {
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+}
+
+
+/* Modern Modal Styling */
+#led_conf_modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90%, 600px);
+    background: var(--bg-buttons);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    border: none;
+    z-index: 1000;
+    opacity: 0;
+    scale: 0.95;
+    transition: all 0.2s ease-out;
+}
+
+#led_conf_modal[open] {
+    opacity: 1;
+    scale: 1;
+}
+
+#led_conf_modal::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Header */
+#modal_headline {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-general);
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* LED Selection Grid */
+#modal_body {
+    padding-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* wider columns for text */
+    gap: 6px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Custom Checkbox Styling */
+#modal_body label {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* spacing between checkbox and text */
+    padding: 8px 10px;
+    background: var(--bg-elements);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+#modal_body label:hover {
+    background: var(--bg-led-hover);
+    border-color: var(--unknown-color-1);
+}
+
+#modal_body input[type="checkbox"] {
+    accent-color: #4299e1; /* customize checkbox color */
+    width: 18px;
+    height: 18px;
+}
+
+/* Button Container */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 12px;
+}
+
+/* Scrollbar Styling */
+#modal_body::-webkit-scrollbar {
+    width: 6px;
+}
+
+#modal_body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+#modal_body::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    #modal_body {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .general_button,
+    .close_button,
+    .save_button {
+        width: 100%;
+    }
+}

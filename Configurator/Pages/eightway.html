@@ -1,0 +1,54 @@
+<div id="idle_head_container">
+    <h1 class="page-header">8-Way Joystick LED Setup</h1>
+    <div id="idle_header_helper" class="helper"
+        title="Map all 8 directions of a 8-way joystick to LEDs.&#10;1.To get started set the directions for UP, DOWN, LEFT and RIGHT.&#10;2.Remove the LED positions for those directions in the 'Button Config' page&#10;3.Select the arrows and set the LED positions and colors.">
+        ?</div>
+</div>
+
+<div id="eightway-container">
+    <div class="eightway_controls-section">
+        <button class="action-btn third" onclick="show_directions_modal()" id="eightway_open_directions_modal">
+            Set Directions
+        </button>
+    </div>
+
+    <h2>Set LEDs and Color</h2>
+
+    <div class="eightway_controls-section">
+        <button class="" id="eighway_set_leds" onclick="eightway_show_led_modal()" disabled>
+            Set LEDs
+        </button>
+        <select id="eightway_color_select" onchange="eightway_set_select_color(this)" disabled>
+            <option>random</option>
+            <option>blank</option>
+        </select>
+        <button class="action-btn secondary" id="eightway_reset" onclick="eightway_reset()">Reset</button>
+    </div>
+
+    <div class="arrow-container">
+        <div class="arrow arrow-up" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-down" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-left" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-right" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-up-left" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-up-right" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)">
+        </div>
+        <div class="arrow arrow-down-left" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)">
+        </div>
+        <div class="arrow arrow-down-right" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)">
+        </div>
+    </div>
+
+    <div class="info-display">
+        <div>Direction: <span id="eightway_direction_text">-</span></div>
+        <div id="eighway_leds_num_container">LEDs: <span id="eightway_leds_nums">-</span></div>
+        <div>Color: <span id="eightway_leds_color">-</span></div>
+    </div>
+</div>
+
+<dialog class="modal" id="eightway_led_modal">
+    <h2 id="eightway_led_modal_headline">Set LEDs for </h2>
+    <div id="eightway_modal_body">
+    </div>
+    <button class="action-btn danger" onclick="close_eightway_led_modal()">Close</button>
+</dialog>

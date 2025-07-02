@@ -36,7 +36,7 @@ def setup_oled():
         oled = SSD1306_I2C(WIDTH, HEIGHT, i2c)
 
     oled.invert(config.invert_oled) #invert colors
-    oled.rotate(not config.rotate_oled) #rotate display 180°
+    oled.rotate(not config.rotate_oled) #rotate display
     
 
 def round_half_up(n):
@@ -244,24 +244,32 @@ def string_to_bytearray(data_str):
 def play_animation():
     characters_to_read = 32
     while True:
-        y=0
+        y = 0
         if init.oled_stop_animation == False:
             with open('oled_animation.txt', 'r') as f:
+                init.t2 = time.ticks_ms()  # Start time
                 while init.oled_stop_animation == False:
-                    chars = f.read(characters_to_read)  
-                    if not chars:  
+                    chars = f.read(characters_to_read)
+                    if not chars:
                         break
                     num = bytearray.fromhex(chars)
-                    init.framebuffer = framebuf.FrameBuffer(num, characters_to_read*4, 1, framebuf.MONO_HLSB)
+                    init.framebuffer = framebuf.FrameBuffer(num, characters_to_read * 4, 1, framebuf.MONO_HLSB)
                     oled.blit(init.framebuffer, 0, y)
-            
-                    y = (y+1) % 64
+
+                    y = (y + 1) % 64
                     if y == 0:
                         with init.lock:
-                            time.sleep_ms(config.oled_animation_delay)
                             oled.show()
-                                #print(init.t1 - init.t2)
-                                #init.t2 = init.t1
+                            init.t1 = time.ticks_ms()  # End time
+                            frame_duration = time.ticks_diff(init.t1, init.t2)
+                            if frame_duration > 0:
+                                fps = 1000 / frame_duration
+                                #print("FPS:", fps)
+                            else:
+                                #print("Frame too fast to measure accurately.")
+                                pass
+                            init.t2 = init.t1
+                            time.sleep_ms(config.oled_animation_delay)
                 
                 
 

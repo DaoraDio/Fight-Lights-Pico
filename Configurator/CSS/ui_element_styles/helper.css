@@ -1,0 +1,26 @@
+.helper {
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  background: linear-gradient(0deg, rgba(255, 200, 100, 1) 0%, rgba(255, 230, 180, 1) 100%);
+
+  color: #3a7bb8;
+  border: 1px solid rgba(151, 151, 151, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  cursor: help;
+  user-select: none;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+
+.helper:hover {
+  transform: scale(1.1);
+}

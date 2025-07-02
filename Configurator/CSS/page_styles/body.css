@@ -1,0 +1,20 @@
+* {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg-general);
+  color: var(--text-general);
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+

@@ -1,0 +1,151 @@
+<div id="led_options_container">
+    <div id="idle_head_container">
+        <h2 class="page-header" id="led_options_header">Configure LED Options Mode</h2>
+        <div id="idle_header_helper" class="helper"
+            title="LED options mode is a menu that you can enter by holding buttons for a certain duration. It allows you to change the brightness and select profiles during play. The Profiles can be identified by their profile color.">
+            ?</div>
+    </div>
+    <!-- Section 1: LED Options Settings - Centered -->
+    <div class="section header-section centered-section">
+
+        <div class="centered-controls">
+            <div class="top-row-controls">
+                <div class="color-control-group">
+                    <div class="label-input-pair">
+                        <div class="label-wrapper">
+                            <span>LED Options Color</span>
+                            <div class="helper" title="Color the LEDs become while entering LED Options Mode">?</div>
+                        </div>
+                        <div class="input-wrapper">
+                            <div class="colpicker full">
+                                <input type="text" class="coloris instance2" id="led_options_color"
+                                    value="rgb(255, 0, 0)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="duration-control">
+                    <label>Hold duration to enter (s):</label>
+                    <input id="led_options_start_time" type="number" min="0" value="3">
+                </div>
+            </div>
+
+            <div class="checkbox-control">
+                <input type="checkbox" id="led_options_color_cb">
+                <label for="led_options_color_cb">Use all LEDs</label>
+                <div class="helper" title="When checked, all LEDs will light up in the profile color">?</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Button Combination Table -->
+    <div class="section table-section">
+        <h3 class="section-title">Button Combination to Enter Options Mode</h3>
+
+        <div class="table-controls">
+            <button class="action-btn danger" id="delete_led_options_table" onclick="delete_led_options_table()"
+                title="Delete" disabled>Delete</button>
+            <button class="action-btn third" id="add_led_options_table" onclick="add_led_option_button()">Add</button>
+            <select id="led_options_select" onmouseenter="">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <button class="action-btn secondary" id="reset_led_options_table" onclick="reset_led_options_table()"
+                title="Reset inputs">Reset</button>
+        </div>
+
+        <div id="led_options_table_row_id" hidden></div>
+        <table id="led_options_table" onmouseover="select_led_option_table()">
+            <thead>
+                <tr>
+                    <th>Buttons</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table content will be generated dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 3: Button Bindings -->
+    <div class="section bindings-section">
+        <h3 class="section-title">Button Bindings for Options Mode</h3>
+
+        <!-- Brightness Steps -->
+        <div class="brightness-steps-control">
+            <div class="steps-wrapper">
+                <label>Brightness Steps:</label>
+                <select id="brightness_steps" onchange="show_smooth_slider()">
+                    <option value="10">10 Steps</option>
+                    <option value="5">5 Steps</option>
+                    <option value="4">4 Steps</option>
+                    <option value="2">2 Steps</option>
+                    <option value="1">Toggle On/Off</option>
+                    <option value="smooth">Smooth</option>
+                </select>
+                <div class="helper"
+                    title="When increasing or decreasing the brightness via LED options mode, the step size controls how much the brightness changes per instance.&#10;10 steps - 10% change per click&#10;5 steps - 20% change per click&#10;4 steps - 25% change per click&#10;2 steps - 50% change per click&#10;Toggle On/Off - 100% change per click&#10;Smooth - The change in brightness is no longer in steps but increases/decreases smoothly as long as the corresponding button is held &#10;&#10;Example: If your startup brightness is set to 50% and step size set to 4 steps, increasing the brightness once will set your LEDs brightness to 75% ">
+                    ?</div>
+            </div>
+
+            <div class="smooth-control" id="smooth_control">
+                <input type="range" id="smooth_speed" min="0.005" max="0.1" step="0.005" oninput="update_smooth_value()"value="0.01" hidden>
+                <label for="smooth_speed" id="smooth_label" hidden>Speed: 0.010</label>
+                
+            </div>
+        </div>
+
+        <!-- Brightness Controls -->
+        <div class="bindings-row">
+            <div class="bindings-group">
+                <label>Increase brightness:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_inc_brightness" class="led_option_selects"></select>
+                    <div class="helper" title="Select which button increases brightness during LED Options mode">?</div>
+                </div>
+            </div>
+
+            <div class="bindings-group">
+                <label>Decrease brightness:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_dec_brightness" class="led_option_selects"></select>
+                    <div class="helper" title="Select which button decreases brightness during LED Options mode">?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Navigation -->
+        <div class="bindings-row">
+            <div class="bindings-group">
+                <label>Profile advance:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_left" class="led_option_selects"></select>
+                    <div class="helper" title="Select which button selects the next profile during LED Options mode">?
+                    </div>
+                </div>
+            </div>
+
+            <div class="bindings-group">
+                <label>Profile back:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_right" class="led_option_selects"></select>
+                    <div class="helper"
+                        title="Select which button selects the previous profile during LED Options mode">?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Button -->
+        <div class="bindings-single centered-confirm">
+            <div class="bindings-group confirm-group">
+                <label>Confirm:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_confirm" class="led_option_selects"></select>
+                    <div class="helper"
+                        title="Select which button serves as the confirmation button to exit LED Options mode. Alternatively pressing the buttons to enter LED Options mode simultaniously can act as the confirm/exit">
+                        ?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

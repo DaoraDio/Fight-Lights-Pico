@@ -1,0 +1,36 @@
+.select-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 10px;
+    align-items: center;
+    justify-items: center;
+}
+
+#eightway_select-up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#eightway_select-left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#eightway_select-right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+#eightway_select-down {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+/* Enhanced header styling */
+h2 {
+    text-align: center;
+    font-weight: bold;       /* Makes text bold */
+    margin-bottom: 1.5em;   /* Adds more space below the header */
+    font-size: 1.2em;       /* Slightly larger font (optional) */
+}

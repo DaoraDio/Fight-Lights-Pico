@@ -1,18 +1,4 @@
-if __name__ == '__main__':
-    import init
-    with open('main.py', 'r') as f:
-        init.code = f.read()
-    exec(init.code)
-
-print("\033[32mconfig\033[0m")
-#Fight Lights Pico V2.7.0
-
-from machine import Pin
-from init import random, rainbow, smooth, notSet
-import button
-import functions
-import init
-
+const codeString = `
 blank = (0,0,0)
 RED = (255,0,0)
 ORANGE = (255,127,0)
@@ -86,7 +72,7 @@ ledOptions_color = (255,0,0)
 ledOptions_profile_color_use_all_LEDs = True
 smooth_brightness_speed = 0.03
 ledOptions_led_buttons = [START_MyButton,SELECT_MyButton]
-ledOptions_start_time = 1
+ledOptions_start_time = 2
 ledOptions_increase_brightness = [UP_MyButton]
 ledOptions_decrease_brightness = [DOWN_MyButton]
 ledOptions_left_button = [LEFT_MyButton]
@@ -266,3 +252,11 @@ overlay = bytearray([
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 ])
 ############do not delete this line#######################
+`;
+
+
+function fill_with_default_config()
+{
+    document.getElementById("new_codebox").value = codeString;
+    fill_configurator();
+}

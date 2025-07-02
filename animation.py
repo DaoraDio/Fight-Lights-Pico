@@ -33,6 +33,7 @@ def idle_mode1():
                     functions.pixels_setHSV(led,color_hsv)
                     color_hsv = (color_hsv[0],color_hsv[1], functions.fade_val_inc(color_hsv[2], speed))
                     functions.pixels_show(config.brightness_mod)
+
             
             while color_hsv[2] > 0:
                 for led in led_list:
@@ -75,25 +76,22 @@ def idle_mode2(): #Color Palette
                 functions.pixels_set(i, functions.wheel(rc_index & 255))
             functions.pixels_show(config.brightness_mod)
             
-def idle_mode3(): #lights out
+def idle_mode3(): #dim brightness
     brightness = config.brightness_mod
-    step_speed = brightness / 100
-    while brightness > 0:
+    step_speed = 0.01
+    target_brightness = config.idle_mode3_brightness
+    while brightness > target_brightness:
         brightness -= step_speed
         if brightness < 0:
             brightness = 0
-        for led in config.idlemode_leds:
-            if init.idle_counter <= init.idle_ticks:
-                return
-            pxl_color = list(functions.get_pixelcolor(led))
-            pxl_color = (int(pxl_color[0] * brightness), int(pxl_color[1] * brightness), int(pxl_color[2] * brightness))
-            
-            functions.pixels_set(led,pxl_color)
-            functions.pixels_show(config.brightness_mod)
-
+        functions.pixels_show_idle(brightness, config.idlemode_leds)
+        functions.set_background(init.background)
     
     while init.idle_counter > init.idle_ticks:
-        pass
+        functions.set_background(init.background)
+        functions.pixels_show_idle(brightness, config.idlemode_leds)
+
+        
     
 #Rain (by FrawstyBawlz & ChatGPT) **EXPERIMENTAL** 
 def idle_mode4():
@@ -253,6 +251,10 @@ def idle_mode5():
                 if sleep_time >= 0.05:
                     backwards = False
 
+
+def idle_mode6():
+    while init.idle_counter > init.idle_ticks:
+        pass
 
 def color_change():
     for i in range(360):

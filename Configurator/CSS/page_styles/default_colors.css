@@ -1,0 +1,134 @@
+
+/* Main Container */
+#default_colors_container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.page-header-wrapper {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+/* Content Layout */
+.content-wrapper {
+    display: flex;
+    gap: 30px;
+}
+
+.controls-section {
+    width: 300px;
+}
+
+.table-section {
+    flex: 1;
+}
+
+/* Section Boxes */
+.section-box {
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.section-title {
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+/* Control Groups */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.horizontal-group {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-with-helper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Section Separator */
+.section-separator {
+    height: 1px;
+    margin: 25px 0;
+}
+
+/* Helper Icon */
+.horizontal-group .helper {
+    margin-left: 4px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Table Header Styles */
+#background_table th {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .content-wrapper {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .controls-section {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-box {
+        padding: 20px 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .horizontal-group {
+        flex-wrap: wrap;
+    }
+    
+    .section-separator {
+        margin: 15px 0;
+    }
+}
+
+/* Make the last column (color preview) smaller */
+#background_table th:last-child,
+#background_table td:last-child {
+    width: 60px; /* Adjust this value to your preference */
+    min-width: 60px;
+    max-width: 60px;
+    padding: 2px;
+}
+
+/* Optional: Center the content in the preview column */
+.default-colors_color_row {
+    text-align: center;
+    background-color: black;
+}

@@ -1,0 +1,56 @@
+
+
+.textarea-container {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  height: 100vh;  /* full viewport height */
+}
+
+.textarea-wrapper {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;    /* fill container height */
+}
+
+.textarea-wrapper label {
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+  flex-shrink: 0;
+}
+
+textarea {
+  width: 100%;
+  flex-grow: 1;         /* fill remaining vertical space */
+  resize: vertical;
+  font-family: monospace, monospace;
+  font-size: 1rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid var(--led-border);
+  color: var(--text-general);
+}
+
+textarea[readonly] {
+  background-color: var(--bg-codebox);
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 700px) {
+  .textarea-container {
+    flex-direction: column;
+    height: 100vh;  /* keep full height */
+  }
+
+  .textarea-wrapper {
+    flex: none;
+    width: 100%;
+    height: 50%; /* half height each stacked */
+  }
+
+  textarea {
+    height: 100%; /* fill wrapper */
+  }
+}

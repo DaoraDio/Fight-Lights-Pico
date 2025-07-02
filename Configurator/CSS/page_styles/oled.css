@@ -1,0 +1,363 @@
+/* OLED Modal Styles */
+#oled_modal_headline {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+#oled_modal_body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: Arial, sans-serif;
+}
+
+/* Sections */
+.oled-section {
+    background-color: var(--bg-buttons);
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    font-weight: 500;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 6px;
+}
+
+/* Hardware Section */
+.hardware-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+/* Vertical label style */
+.form-row.vertical-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+/* Layout Section */
+.layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 15px;
+    padding-left: 15px;
+}
+
+.layout-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Main Layout Canvas */
+.canvas-container.main-layout {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.canvas-container.main-layout .canvas-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.canvas-container.main-layout .form-row {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.canvas-container.main-layout #exportBtn {
+    margin-left: 8px;
+}
+
+/* Separator */
+.layout-separator {
+    height: 1px;
+    background-color: var(--separator-color);
+    margin: 15px 0;
+    width: 100%;
+}
+
+/* Secondary Canvases */
+.secondary-canvases {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Behavior and Animation Grid */
+.behavior-animation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* OLED Display Canvases */
+.oled-display {
+    width: 128px;
+    height: 64px;
+    background-color: black;
+}
+
+.canvas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.canvas-footer {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 6px;
+    gap: 8px;
+}
+
+/* Form Elements */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.form-select {
+    padding: 6px 10px;
+    border-radius: 4px;
+    min-width: 180px;
+    font-size: 0.9rem;
+}
+
+.form-input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    width: 70px;
+    font-size: 0.9rem;
+}
+
+/* Checkbox row */
+.checkbox-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: nowrap;
+    margin-bottom: 12px;
+}
+
+.checkbox-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+/* Button Groups */
+.button-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* I2C Interface */
+.i2c-interface {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.i2c-radio-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.i2c-select-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.i2c-select-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Animation Section */
+.animation-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.animation-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+
+/* Progress Bar */
+progress {
+    height: 30px;
+    border-radius: 5px;
+    background-color: var(--progress-bg);
+    width: 100%;
+    margin-top: 4px;
+}
+
+progress::-webkit-progress-bar {
+    background-color: var(--progress-bg);
+    border-radius: 5px;
+}
+
+progress::-webkit-progress-value {
+    background-color: var(--progress-active);
+    border-radius: 5px;
+}
+
+progress::-moz-progress-bar {
+    background-color: var(--progress-active);
+    border-radius: 5px;
+}
+
+/* Full width button group */
+.button-group.full-width {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.button-group.full-width .general_button {
+    width: 100%;
+}
+
+/* Footer */
+.footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.guide-link {
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.guide-link:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive */
+@media (max-width: 992px) {
+    .layout-grid {
+        padding-left: 10px;
+    }
+
+    .behavior-animation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .secondary-canvases {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .layout-grid {
+        padding-left: 8px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .checkbox-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .button-group {
+        width: 100%;
+    }
+
+    .general_button,
+    .delete_buttons {
+        flex-grow: 1;
+    }
+
+    .footer-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .canvas-container.main-layout .canvas-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .canvas-container.main-layout #exportBtn {
+        margin-left: 0;
+        align-self: flex-end;
+    }
+}
+
+
+
+#oled_add_button,
+#oled_add_lever,
+#oled_add_key {
+    padding: 2px 8px;
+    font-size: 0.9rem;
+    line-height: 1.1;
+    min-height: unset;
+}
+
+
+#upload_overlay_button,
+#customButton,
+#oled_invert_button {
+    width: auto;
+    min-width: 90px;
+    padding-left: 10px;
+    padding-right: 10px;
+    flex: none;
+}
+
+#exportBtn {
+    width: auto;
+    min-width: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+    flex: none;
+}

@@ -1,0 +1,155 @@
+/* Container styles */
+.button-config-container {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--bg-buttons);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  gap: 20px;
+}
+
+/* Left sidebar for controls */
+.controls-sidebar {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Main controls container - moved to top */
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  background: var(--bg-elements);;
+  border-radius: 5px;
+  order: 1; /* Ensure it appears first */
+}
+
+/* Fade controls section - moved to bottom */
+.fade-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  background: var(--bg-elements);
+  border-radius: 5px;
+  order: 2; /* Ensure it appears after main controls */
+}
+
+.fade-control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Consistent fade control buttons */
+.fade-controls .action-btn {
+  min-width: 80px;
+  text-align: center;
+  padding: 8px 12px;
+  flex: 0 0 auto;
+}
+
+/* Input container */
+.input-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.input-container input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  border: 1px solid #c1e0ff;
+  border-radius: 4px;
+}
+
+/* Select and range controls */
+.button-select-container,
+.range-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.button-select-container select {
+  padding: 8px;
+  border: 1px solid #c1e0ff;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.range-container input[type="range"] {
+  flex-grow: 1;
+}
+
+
+/* Table styles */
+.button-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+}
+
+.button-table th,
+.button-table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.button-table th 
+{
+  font-weight: bold;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .button-config-container {
+    flex-direction: column;
+  }
+  
+  .controls-sidebar {
+    width: 100%;
+  }
+  
+  .controls-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .input-container,
+  .button-select-container,
+  .range-container {
+    min-width: 200px;
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .controls-container {
+    flex-direction: column;
+  }
+  
+  .input-container,
+  .button-select-container,
+  .range-container {
+    min-width: 100%;
+  }
+  
+  .fade-control-group {
+    flex-wrap: wrap;
+  }
+  
+  .button-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+

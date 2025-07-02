@@ -1,0 +1,174 @@
+/* Add these styles to your general.css file */
+
+.page-header {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 450;
+  margin-bottom: 1rem;
+}
+
+#general_container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.config-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--bg-buttons);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.config-item {
+  flex: 1;
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.label-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.full .clr-field button {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  top: 20px;
+}
+
+#profile_color {
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Brightness slider styles */
+.brightness-control {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: var(--bg-buttons);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.brightness-label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.brightness-control input[type="range"] {
+  width: 100%;
+}
+
+/* Checkboxes styles */
+.checkboxes-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-left: 20px;
+  background-color: var(--bg-buttons);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .config-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .checkboxes-column {
+    margin-left: 0;
+    margin-top: 15px;
+  }
+
+  .config-item {
+    min-width: 100%;
+  }
+}
+
+
+/* LED ON/OFF Buttons Section - Horizontal Layout */
+#general_container .config-row:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+#general_container .config-row:last-child>p {
+  margin: 0 0 5px 0;
+  font-weight: 500;
+  text-align: left;
+  /* Changed from center to left */
+  font-size: 1rem;
+}
+
+#general_container .config-row:last-child .table-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  /* Prevent wrapping */
+  margin-bottom: 0;
+  width: 100%;
+}
+
+#on_off_select {
+  padding: 5px 8px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  flex: 1;
+  /* Take available space */
+  min-width: 120px;
+  /* Minimum reasonable width */
+}
+
+#on_off_select {
+  max-width: 100%;
+  width: 100%;
+}
+
+#on_off_header {
+    text-align: center;
+    margin: 0 0 8px 0; /* Reduced bottom margin */
+    font-weight: 500;
+    font-size: 1.1rem;
+    width: 100%; /* Ensure full width for proper centering */
+}
+/* Responsive adjustments - keep horizontal layout */
+@media (max-width: 768px) {
+  #general_container .config-row:last-child .table-controls {
+    flex-wrap: wrap;
+    /* Allow wrapping only when necessary */
+  }
+
+  #on_off_select {
+    min-width: 150px;
+    /* More space on mobile */
+  }
+}

@@ -1,0 +1,208 @@
+#idle_head_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-header {
+    text-align: center;
+    margin: 0;
+}
+
+#idle_header_helper {
+    width: 30px;
+    height: 30px;
+}
+
+.idle_checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    /* Adds some space between checkbox and label */
+}
+
+#idle_cb_label {
+    font-size: 25px;
+}
+
+#idle_cb {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    /* Slightly larger radius to match bigger size */
+}
+
+#idle_cb::after {
+    left: 8px;
+    /* Adjusted for larger checkbox */
+    top: 1px;
+    /* Adjusted for larger checkbox */
+    width: 8px;
+    /* Slightly thicker checkmark */
+    height: 16px;
+    /* Longer checkmark */
+    border-width: 0 3px 3px 0;
+    /* Thicker checkmark */
+}
+
+
+#idle_cb:checked {
+    background-color: #ff0000;
+    border-color: #000000;
+}
+
+#idle_cb:checked::after {
+    display: block;
+    /* Ensure checkmark shows when checked */
+}
+
+/* Main container */
+#idlemode_container {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Section containers */
+#idle_general_container,
+#idle_exclude_container,
+#idle1_config_container,
+#idle1_config_container_dim {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--bg-buttons);
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Flexible row layout - core of the alignment */
+.form-row {
+    display: flex;
+    /* Enables flexbox */
+    align-items: center;
+    /* Vertically centers all items */
+    margin-bottom: 10px;
+    /* Space between rows */
+    flex-wrap: wrap;
+    /* Allows wrapping on small screens */
+    gap: 5px;
+    /* Consistent spacing between items */
+}
+
+/* Helpers now properly adjacent to their elements */
+.helper {
+    display: inline-flex;
+    /* For perfect centering */
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    /* Space from previous element */
+}
+
+/* Radio button specific styling */
+.form-row input[type="radio"]+label {
+    margin-right: 15px;
+    /* Extra space after radio options */
+}
+
+
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .helper {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
+#idle_exclude_container {
+    padding: 15px;
+    background-color: var(--bg-buttons);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#idle_exlude_modal_body {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--bg-elements);
+    border-radius: 6px;
+}
+
+#idle_exlude_modal_body span {
+    display: inline-flex;
+    align-items: center;
+}
+
+#idle_exlude_modal_body label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.idle_modal_led_cb {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    #idle_exlude_modal_body {
+        gap: 10px;
+    }
+
+    #idle_exlude_modal_body span {
+        min-width: 70px;
+    }
+}
+
+.dim-header-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    /* optional spacing between text and ? */
+    width: 100%;
+}
+
+#dim_header {
+    margin: 0;
+    text-align: center;
+}
+
+.dim-brightness-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;                
+  width: 60%;              
+  max-width: 600px;        
+  margin: 0 auto;          
+}
+
+.dim-brightness-row span {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.dim-brightness-row .slider {
+  width: 100%;
+  min-width: 0;
+}
+

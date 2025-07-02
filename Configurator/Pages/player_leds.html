@@ -1,0 +1,120 @@
+<body>
+    <div id="player_leds_container">
+        <div id="idle_head_container">
+            <h1 class="page-header">Player LED Configuration</h1>
+            <div id="idle_header_helper" class="helper"
+                title="(WIP)&#10;DISABLED WHEN NOT IN USE&#10;Use the P1,P2,P3,P4 pins of a Brook Board to indipendently light up 4-WS2812 LEDs to indicate your player position.&#10;LED Out can be set in the configurator. The Brook player pins have to be connected to:&#10;P1 = GP21&#10;P2 = GP20&#10;P3 = GP19&#10;P4 = GP18&#10;Disable when not used to free the GPIO pins from being used">
+                ?</div>
+        </div>
+
+        <!-- Added checkbox container similar to idle page -->
+        <div class="player-led-checkbox-container">
+            <input type="checkbox" id="player_led_cb" name="player_led_cb" onchange="enable_disable_cb()" checked>
+            <label id="player_led_cb_label" for="player_led_cb">Disable Player LEDs</label>
+            <div class="helper" title="When checked, all player LED functionality will be disabled">?</div>
+        </div>
+
+        <div class="content-wrapper disabled-container" id="player_led_main_content">
+            <div class="controls-section section-box">
+                <div class="section-title">LED Settings</div>
+
+                <div class="control-group">
+                    <label for="playerLED_pin_num">GPIO PIN:</label>
+                    <select name="playerLED_pin_num" id="playerLED_pin_num" disabled>
+                        <option value="0">GP0</option>
+                        <option value="1">GP1</option>
+                        <option value="2">GP2</option>
+                        <option value="3">GP3</option>
+                        <option value="4">GP4</option>
+                        <option value="5">GP5</option>
+                        <option value="6">GP6</option>
+                        <option value="7">GP7</option>
+                        <option value="8">GP8</option>
+                        <option value="9">GP9</option>
+                        <option value="10">GP10</option>
+                        <option value="11">GP11</option>
+                        <option value="12">GP12</option>
+                        <option value="13">GP13</option>
+                        <option value="14">GP14</option>
+                        <option value="15">GP15</option>
+                        <option value="16">GP16</option>
+                        <option value="17">GP17</option>
+                        <option value="18">GP18</option>
+                        <option value="19">GP19</option>
+                        <option value="20">GP20</option>
+                        <option value="21">GP21</option>
+                        <option value="22">GP22</option>
+                        <option value="23">GP23</option>
+                        <option value="24">GP24</option>
+                        <option value="25">GP25</option>
+                        <option value="26">GP26</option>
+                        <option value="27">GP27</option>
+                        <option value="28">GP28</option>
+                        <option value="29">GP29</option>
+                        <option value="30">GP30</option>
+                        <option value="31">GP31</option>
+                        <option value="32">GP32</option>
+                        <option value="33">GP33</option>
+                        <option value="34">GP34</option>
+                        <option value="35">GP35</option>
+                        <option value="36">GP36</option>
+                        <option value="37">GP37</option>
+                        <option value="38">GP38</option>
+                        <option value="39">GP39</option>
+                        <option value="40">GP40</option>
+                        <option value="41">GP41</option>
+                        <option value="42">GP42</option>
+                        <option value="43">GP43</option>
+                        <option value="44">GP44</option>
+                        <option value="45">GP45</option>
+                        <option value="46">GP46</option>
+                        <option value="47">GP47</option>
+                        <option value="48">GP48</option>
+                    </select>
+                </div>
+
+                <div class="section-separator"></div>
+
+                <div class="control-group">
+                    <label for="playerLED_brightness">Brightness: <span
+                            id="playerLED_brightness_text">100</span>%</label>
+                    <input type="range" min="0" max="100" value="100" id="playerLED_brightness"
+                        oninput="set_playerLED_brightness()" disabled>
+                </div>
+
+                <div class="control-group">
+                    <label for="playerled_color_select">LED Color:</label>
+                    <select value="playerled_color_select" id="playerled_color_select"
+                        onchange="select_playerled_color(this)" disabled>
+                        <optgroup label="Colors">
+                            <option>blank</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <div class="player-section section-box">
+                <div class="section-title">Player Indicators</div>
+
+                <div class="player-leds-container">
+                    <div class="player-led-circle" id="player_led1" title="Player 1" onclick="on_playerled_click(1)"
+                        colorname="blank">
+                        <span>1</span>
+                    </div>
+                    <div class="player-led-circle" id="player_led2" title="Player 2" onclick="on_playerled_click(2)"
+                        colorname="blank">
+                        <span>2</span>
+                    </div>
+                    <div class="player-led-circle" id="player_led3" title="Player 3" onclick="on_playerled_click(3)"
+                        colorname="blank">
+                        <span>3</span>
+                    </div>
+                    <div class="player-led-circle" id="player_led4" title="Player 4" onclick="on_playerled_click(4)"
+                        colorname="blank">
+                        <span>4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

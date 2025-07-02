@@ -1,0 +1,99 @@
+/* From Uiverse.io by JustCode14 */ 
+/* Theme Switch */
+/* The switch - the box around the slider */
+.switch {
+  font-size: 14px; /* Reduced from 17px */
+  position: relative;
+  display: inline-block;
+  width: 3.2em; /* Reduced from 4em */
+  height: 1.8em; /* Reduced from 2.2em */
+  border-radius: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.night_slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2a2a2a;
+  transition: 0.4s;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.night_slider:before {
+  position: absolute;
+  content: "";
+  height: 1em;
+  width: 1em;
+  border-radius: 20px;
+  left: 0.3em; /* Changed from 0.4em to move slightly left */
+  bottom: 0.4em;
+  transition: 0.4s;
+  transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
+  box-shadow: inset 6px -3px 0px 0px #fff;
+}
+
+.switch input:checked + .night_slider {
+  background-color: #00a6ff;
+}
+
+.switch input:checked + .night_slider:before {
+  transform: translateX(1.2em); /* Reduced from 1.4em to move left in checked state */
+  box-shadow: inset 12px -3px 0px 12px #ffcf48;
+}
+
+
+.star {
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  width: 4px; /* Reduced from 5px */
+  transition: all 0.4s;
+  height: 4px; /* Reduced from 5px */
+}
+
+.star_1 {
+  left: 2em; /* Adjusted from 2.5em */
+  top: 0.4em; /* Adjusted from 0.5em */
+}
+
+.star_2 {
+  left: 1.8em; /* Adjusted from 2.2em */
+  top: 1em; /* Adjusted from 1.2em */
+}
+
+.star_3 {
+  left: 2.4em; /* Adjusted from 3em */
+  top: 0.7em; /* Adjusted from 0.9em */
+}
+
+.switch input:checked ~ .night_slider .star {
+  opacity: 0;
+}
+
+.cloud {
+  width: 2.8em; /* Reduced from 3.5em */
+  position: absolute;
+  bottom: -1.1em; /* Adjusted from -1.4em */
+  left: -0.9em; /* Adjusted from -1.1em */
+  opacity: 0;
+  transition: all 0.4s;
+}
+
+.switch input:checked ~ .night_slider .cloud {
+  opacity: 1;
+}
+
+/* Additional theme styles */
