@@ -1,85 +1,229 @@
-/* Center the whole block */
+/* General Styles */
+
+
 #home-container {
-  text-align: center;
-  font-family: Arial, sans-serif;
-  /* optional, for nice fonts */
-  margin-top: 40px;
-  /* some spacing at the top */
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+    padding-bottom: 10px;
 }
 
-/* Make the logo image centered and with some spacing below */
 img {
-  display: block;
-  margin: 0 auto 20px auto;
-  max-width: 150px;
-  /* adjust size as needed */
-  height: auto;
+    display: block;
+    margin: 0 auto 15px auto;
+    max-width: 120px;
+    height: auto;
 }
 
-/* Style the links inside h2 */
-h2 a {
-  text-decoration: none;
-  /* remove underline */
-  font-weight: normal;
-  /* optionally adjust weight */
+h1 a {
+    text-decoration: none;
+    font-size: 1.8rem;
+    color: var(--link-color);
 }
 
-/* Optional: change link color on hover */
+h1 a:hover {
+    color: var(--link-hover);
+}
 
+/* Drop Area Styles */
 #drop-area {
-  display: block;
-  /* make it a block element */
-  border: 4px dashed var(--border-drop);
-  border-radius: 8px;
-  padding: 40px;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  color: var(--text-drop);
-  cursor: pointer;
-  max-width: 400px;
-  margin: 50px auto;
-  font-size: 1.25rem;
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    display: block;
+    border: 4px dashed var(--border-drop);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: var(--text-drop);
+    cursor: pointer;
+    max-width: 380px;
+    margin: 20px auto;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 #drop-area:hover {
-  border-color: var(--drop-hover);
-  color: var(--drop-hover);
+    border-color: var(--drop-hover);
+    color: var(--drop-hover);
 }
 
 #fileElem {
-  display: none;
+    display: none;
 }
 
+/* Footer Styles */
 .footer-icons {
-  margin-top: 130px;
-  /* or whatever spacing you need */
-  padding-bottom: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  align-items: center;
+    margin-top: 30px;
+    padding-bottom: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: center;
 }
 
 .footer-icons img {
-  height: 70px;
-  width: 70px;
-  object-fit: contain;
-  transition: transform 0.2s ease;
+    height: 60px;
+    width: 60px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
 }
 
 .footer-icons img:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .footer-icons img[alt="Discord"] {
-  opacity: 0.85;
-  /* 60% opacity */
+    opacity: 0.85;
 }
 
 .github-icon,
 .discord-icon {
-  filter: brightness(0) saturate(100%);
-  cursor: pointer;
+    filter: brightness(0) saturate(100%);
+    cursor: pointer;
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.dropdown-arrow {
+    font-size: 0.8em;
+    color: var(--arrow-color);
+    cursor: pointer;
+    margin-left: 5px;
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--bg-elements);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: var(--text-general);
+    padding: 10px 14px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--tr-hover);
+}
+
+.dropdown.active .dropdown-content {
+    display: block;
+}
+
+.dropdown.active .dropdown-arrow {
+    transform: rotate(90deg);
+}
+
+.dropdown h1 {
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+/* Logo Styles */
+.logo-link {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.logo-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Config Upload Section */
+.config-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Download Box Styles */
+.download-box {
+    background-color: var(--bg-general);
+    border: 1px solid var(--led-border);
+    border-radius: 8px;
+    padding: 15px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin: 0 auto;
+}
+
+.download-box h3 {
+    margin-top: 0;
+    color: var(--text-general);
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.download-box p {
+    color: var(--text-general);
+    margin-bottom: 15px;
+    line-height: 1.4;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.status-message {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: #6c757d;
+    min-height: 18px;
+    text-align: center;
+}
+
+/* Action Button */
+.action-btn {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-height: 700px) {
+    .logo-container img {
+        max-width: 100px;
+    }
+    
+    h1 {
+        font-size: 1.4rem;
+    }
+    
+    #drop-area {
+        padding: 20px;
+        font-size: 1rem;
+        max-width: 320px;
+    }
+    
+    .footer-icons img {
+        height: 50px;
+        width: 50px;
+    }
+    
+    .dropdown h1 {
+        font-size: 1.3rem;
+    }
 }

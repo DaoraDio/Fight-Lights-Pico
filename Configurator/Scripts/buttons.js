@@ -1,39 +1,39 @@
 function add_button() {
-    var name = document.getElementById("button_name").value;
-    var table = document.getElementById("button_table");
+  var name = document.getElementById("button_name").value;
+  var table = document.getElementById("button_table");
 
-    name = name.trim();
-    name = name.replace(/\s/g, '');
+  name = name.trim();
+  name = name.replace(/\s/g, '');
 
-    if (check_name(name) != true) {
-        reset_all();
-        showMessage(check_name(name), 'error');
-        return;
+  if (check_name(name) != true) {
+    reset_all();
+    showMessage(check_name(name), 'error');
+    return;
+  }
+
+  for (var i = 1, row; row = table.rows[i]; i++) {
+    var col_name = row.innerText;
+    col_name = col_name.split("\t");
+    if (name == col_name[0]) {
+      reset_all();
+      showMessage('Name already exists', 'error');
+      return;
     }
+  }
 
-    for (var i = 1, row; row = table.rows[i]; i++) {
-        var col_name = row.innerText;
-        col_name = col_name.split("\t");
-        if (name == col_name[0]) {
-            reset_all();
-            showMessage('Name already exists', 'error');
-            return;
-        }
-    }
+  var row = table.insertRow();
 
-    var row = table.insertRow();
-
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
-    var cell6 = row.insertCell(5);
-    var cell7 = row.insertCell(6);
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  var cell3 = row.insertCell(2);
+  var cell4 = row.insertCell(3);
+  var cell5 = row.insertCell(4);
+  var cell6 = row.insertCell(5);
+  var cell7 = row.insertCell(6);
 
 
-    var fade = '<input type="checkbox" id="fade_cb" name="fade_cb" onchange="">';
-    var gpio_pins = '<td>\
+  var fade = '<input type="checkbox" id="fade_cb" name="fade_cb" onchange="">';
+  var gpio_pins = '<td>\
                           <select name="gpio_select" id="gpio_select">\
                             <option value="0">GP0</option>\
                             <option value="1">GP1</option>\
@@ -86,209 +86,198 @@ function add_button() {
                             <option value="48">GP48</option>\
                         </select></td> ';
 
-    cell1.innerHTML = name;
-    cell2.innerHTML = "Not Set";
-    cell3.innerHTML = "random";
-    cell4.innerHTML = fade;
-    cell5.innerHTML = gpio_pins;
-    cell6.innerHTML = 20;
-    cell7.innerHTML = 7;
+  cell1.innerHTML = name;
+  cell2.innerHTML = "Not Set";
+  cell3.innerHTML = "random";
+  cell4.innerHTML = fade;
+  cell5.innerHTML = gpio_pins;
+  cell6.innerHTML = 20;
+  cell7.innerHTML = 7;
 
 
-    //update_color_button_table();
-    showMessage("Button: " + name + " has been added", 'success');
-    reset_all();
-    update_onoff_select();
+  //update_color_button_table();
+  showMessage("Button: " + name + " has been added", 'success');
+  reset_all();
+  update_onoff_select();
 }
 
 var button_row_id = -1;
 
 function select_button_table() {
-    var table = document.getElementById("button_table"), rIndex;
-    var startindex = 1;
+  var table = document.getElementById("button_table"), rIndex;
+  var startindex = 1;
 
-    for (var i = startindex; i < table.rows.length; i++) {
-        table.rows[i].onclick = function () {
-            document.getElementById("delete_button").disabled = false;
-            document.getElementById("update_button").disabled = false;
-            document.getElementById("color_select").disabled = false;
-            document.getElementById("color_select").value = this.cells[2].innerHTML;
-            document.getElementById("set_leds_button").disabled = false;
-            document.getElementById("fade-controls").removeAttribute('disabled');
-            document.getElementById("color_label").removeAttribute('disabled');
-            for (var i = startindex; i < table.rows.length; i++) {
-                var css = '#button_table tr:not(:first-child):hover';
-                table.rows[i].style = css;
-            }
-            this.style.setProperty('background-color', 'var(--row-selected)');
+  for (var i = startindex; i < table.rows.length; i++) {
+    table.rows[i].onclick = function () {
+      document.getElementById("delete_button").disabled = false;
+      document.getElementById("update_button").disabled = false;
+      document.getElementById("color_select").disabled = false;
+      document.getElementById("color_select").value = this.cells[2].innerHTML;
+      document.getElementById("set_leds_button").disabled = false;
+      document.getElementById("fade-controls").removeAttribute('disabled');
+      document.getElementById("color_label").removeAttribute('disabled');
+      for (var i = startindex; i < table.rows.length; i++) {
+        var css = '#button_table tr:not(:first-child):hover';
+        table.rows[i].style = css;
+      }
+      this.style.setProperty('background-color', 'var(--row-selected)');
 
-            rIndex = this.rowIndex;
-            button_row_id = rIndex;
-            document.getElementById("button_name").value = this.cells[0].innerHTML;
-            document.getElementById("fade_in").value = parseFloat(this.cells[5].innerHTML);
-            document.getElementById("fade_out").value = parseFloat(this.cells[6].innerHTML);
-        }
+      rIndex = this.rowIndex;
+      button_row_id = rIndex;
+      document.getElementById("button_name").value = this.cells[0].innerHTML;
+      document.getElementById("fade_in").value = parseFloat(this.cells[5].innerHTML);
+      document.getElementById("fade_out").value = parseFloat(this.cells[6].innerHTML);
     }
+  }
 }
 
 function reset_all() {
-    document.getElementById("button_name").value = "";
-    document.getElementById("update_button").disabled = true;
-    document.getElementById("delete_button").disabled = true;
-    document.getElementById("color_select").value = "random";
-    document.getElementById("color_select").disabled = true;
-    document.getElementById("set_leds_button").disabled = true;
-    document.getElementById("fade-controls").setAttribute('disabled', '');
-    document.getElementById("color_label").setAttribute('disabled', '');
+  document.getElementById("button_name").value = "";
+  document.getElementById("update_button").disabled = true;
+  document.getElementById("delete_button").disabled = true;
+  document.getElementById("color_select").value = "random";
+  document.getElementById("color_select").disabled = true;
+  document.getElementById("set_leds_button").disabled = true;
+  document.getElementById("fade-controls").setAttribute('disabled', '');
+  document.getElementById("color_label").setAttribute('disabled', '');
 
-    var table = document.getElementById("button_table");
-    for (var i = 1; i < table.rows.length; i++) {
-        var css = '#button_table tr:not(:first-child):hover';
-        table.rows[i].style = css;
-    }
-    button_row_id = -1;
+  var table = document.getElementById("button_table");
+  for (var i = 1; i < table.rows.length; i++) {
+    var css = '#button_table tr:not(:first-child):hover';
+    table.rows[i].style = css;
+  }
+  button_row_id = -1;
 }
 
 
 function delete_button() {
-    var button_name = document.getElementById("button_name").value;
+  var button_name = document.getElementById("button_name").value;
 
-    if (confirm("Do you really want to delete Button: " + button_name + "?")) {
-        ;
+  if (confirm("Do you really want to delete Button: " + button_name + "?")) {
+    ;
+  }
+  else {
+    return;
+  }
+
+  var led_options_table = document.getElementById("led_options_table");
+  var OnOff_table = document.getElementById("on_off_table");
+  var button_table = document.getElementById("button_table");
+  var row_id = button_row_id;
+
+
+
+
+
+  for (var i = 1, row; row = led_options_table.rows[i]; i++) {
+    if (row.cells[0].innerHTML == button_name) {
+      led_options_table.deleteRow(i);
+      i--;
     }
-    else {
-        return;
+  }
+
+
+  for (var i = 1, row; row = OnOff_table.rows[i]; i++) {
+    if (row.cells[0].innerHTML == button_name) {
+      OnOff_table.deleteRow(i);
+      i--;
     }
-
-    var led_options_table = document.getElementById("led_options_table");
-    var OnOff_table = document.getElementById("on_off_table");
-    var button_table = document.getElementById("button_table");
-    var row_id = button_row_id;
+  }
 
 
+  for (let i = 0; i < circles.length; i++) {
+    if (circles[i].button_activation == button_name)
+      circles[i].button_activation = "notSet";
+  }
 
+  button_table.deleteRow(row_id);
+  reset_all();
 
-    
-    for (var i = 1, row; row = led_options_table.rows[i]; i++) {
-        if (row.cells[0].innerHTML == button_name) {
-            led_options_table.deleteRow(i);
-            i--;
-        }
-    }
+  show_eightway_modal();
+  //show_led_options(false); //open led_options function to update the selects
+  show_led_options();
 
-
-    for (var i = 1, row; row = OnOff_table.rows[i]; i++) {
-        if (row.cells[0].innerHTML == button_name) {
-            OnOff_table.deleteRow(i);
-            i--;
-        }
-    }
-
-    
-    for (let i = 0; i < circles.length; i++) {
-        if (circles[i].button_activation == button_name)
-            circles[i].button_activation = "notSet";
-    }
-
-    button_table.deleteRow(row_id);
-    reset_all();
-
-    show_eightway_modal();
-    //show_led_options(false); //open led_options function to update the selects 
-    
 }
 
 ///////////////////////////////LED MODAL////////////////
-function led_open_modal()
-{
-    var modal = document.querySelector('#led_conf_modal');
-    var modal_body = document.getElementById("modal_body");
-    var button_table = document.getElementById("button_table");
-    var headline = document.getElementById("modal_headline");
+function led_open_modal() {
+  var modal = document.querySelector('#led_conf_modal');
+  var modal_body = document.getElementById("modal_body");
+  var button_table = document.getElementById("button_table");
+  var headline = document.getElementById("modal_headline");
 
-    var row_id = button_row_id;
-    var button_name = button_table.rows[row_id].cells[0].innerHTML;
-    headline.innerHTML = "Set " + button_name + " button LED positions";
-
-
-    var table_led_positions = button_table.rows[row_id].cells[1].innerHTML; 
-    var led_num = document.getElementById("led_count").value;
-    var body_string = "";
+  var row_id = button_row_id;
+  var button_name = button_table.rows[row_id].cells[0].innerHTML;
+  headline.innerHTML = "Set " + button_name + " button LED positions";
 
 
-    table_led_positions = table_led_positions.trim().split(/\s+/) //led positions to in selected row to array
-    
-    var found = false;
-    for(var i = 0; i < led_num; i++)
-    {
-        found = false;
-        for(var j = 0; j < table_led_positions.length; j++)
-        {
-            if((i+1) == table_led_positions[j])
-            {
-                body_string += '<label><input class="modal_led_cb" type="checkbox" checked>' + 'LED ' + (i+1) + '</label>';
-                found = true;
-                break;
-            } 
-        }
-        if(!found)
-            body_string += '<label><input class="modal_led_cb" type="checkbox">' + 'LED ' + (i+1) + '</label>';
+  var table_led_positions = button_table.rows[row_id].cells[1].innerHTML;
+  var led_num = document.getElementById("led_count").value;
+  var body_string = "";
 
+
+  table_led_positions = table_led_positions.trim().split(/\s+/) //led positions to in selected row to array
+
+  var found = false;
+  for (var i = 0; i < led_num; i++) {
+    found = false;
+    for (var j = 0; j < table_led_positions.length; j++) {
+      if ((i + 1) == table_led_positions[j]) {
+        body_string += '<label><input class="modal_led_cb" type="checkbox" checked>' + 'LED ' + (i + 1) + '</label>';
+        found = true;
+        break;
+      }
     }
-    
+    if (!found)
+      body_string += '<label><input class="modal_led_cb" type="checkbox">' + 'LED ' + (i + 1) + '</label>';
 
-    modal_body.innerHTML = body_string;
-    modal.showModal();
+  }
+
+
+  modal_body.innerHTML = body_string;
+  modal.showModal();
 }
 
-function led_close_modal()
-{
-    var modal = document.querySelector('#led_conf_modal');
-    modal.close();
+function led_close_modal() {
+  var modal = document.querySelector('#led_conf_modal');
+  modal.close();
 }
 
-function led_save_modal()
-{   
-    var checked_leds = document.getElementsByClassName('modal_led_cb');
-    var row_id = button_row_id;
-    var button_table = document.getElementById("button_table");
+function led_save_modal() {
+  var checked_leds = document.getElementsByClassName('modal_led_cb');
+  var row_id = button_row_id;
+  var button_table = document.getElementById("button_table");
 
-    var led_pos = "";
-    for(var i = 0; i < checked_leds.length; i++)
-    {
-        if(checked_leds[i].checked == true)
-        led_pos += (i+1) + ' ';
-    }
+  var led_pos = "";
+  for (var i = 0; i < checked_leds.length; i++) {
+    if (checked_leds[i].checked == true)
+      led_pos += (i + 1) + ' ';
+  }
 
-    if(led_pos == "")
-        led_pos = "Not Set";
+  if (led_pos == "")
+    led_pos = "Not Set";
 
-    button_table.rows[row_id].cells[1].innerHTML = led_pos; 
-    
-        
-    led_close_modal();
+  button_table.rows[row_id].cells[1].innerHTML = led_pos;
+
+
+  led_close_modal();
 }
 
-function set_all()
-{
-    var checked_leds = document.getElementsByClassName('modal_led_cb');
-    for(var i = 0; i < checked_leds.length; i++)
-    {
-        checked_leds[i].checked = true;
-    }
+function set_all() {
+  var checked_leds = document.getElementsByClassName('modal_led_cb');
+  for (var i = 0; i < checked_leds.length; i++) {
+    checked_leds[i].checked = true;
+  }
 }
 
-function unset_all()
-{
-    var checked_leds = document.getElementsByClassName('modal_led_cb');
-    for(var i = 0; i < checked_leds.length; i++)
-    {
-        checked_leds[i].checked = false;
-    }
+function unset_all() {
+  var checked_leds = document.getElementsByClassName('modal_led_cb');
+  for (var i = 0; i < checked_leds.length; i++) {
+    checked_leds[i].checked = false;
+  }
 }
 
-function update_button()
-{
+function update_button() {
   //update_color_select();
   var table = document.getElementById("button_table");
   var row_id = button_row_id;
@@ -302,18 +291,15 @@ function update_button()
   old_name = old_name.replace(/\s/g, '');
 
 
-  if(check_name(name) != true)
-  {
-     reset_all();
-     showMessage(check_name(name), 'error');
-     return;
+  if (check_name(name) != true) {
+    reset_all();
+    showMessage(check_name(name), 'error');
+    return;
   }
-  for (var i = 1, row; row = table.rows[i]; i++) 
-  {
+  for (var i = 1, row; row = table.rows[i]; i++) {
     var col_name = row.innerText;
     col_name = col_name.split("\t");
-    if(name == col_name[0])
-    {
+    if (name == col_name[0]) {
       reset_all();
       showMessage('Name already exists', 'error');
       return;
@@ -322,22 +308,20 @@ function update_button()
 
   table.rows[row_id].cells[0].innerHTML = name;
 
-  
+
   //update other tables/selects
   var led_options_table = document.getElementById("led_options_table");
-  for (var i = 1, row; row = led_options_table.rows[i]; i++) 
-  {
-    if(row.cells[0].innerHTML == old_name)
+  for (var i = 1, row; row = led_options_table.rows[i]; i++) {
+    if (row.cells[0].innerHTML == old_name)
       row.cells[0].innerHTML = name;
-  } 
+  }
 
 
   var on_off_table = document.getElementById("on_off_table");
-  for (var i = 1, row; row = on_off_table.rows[i]; i++) 
-  {
-    if(row.cells[0].innerHTML == old_name)
+  for (var i = 1, row; row = on_off_table.rows[i]; i++) {
+    if (row.cells[0].innerHTML == old_name)
       row.cells[0].innerHTML = name;
-  } 
+  }
 
   update_onoff_select();
 
@@ -355,18 +339,18 @@ function update_button()
   var led_options_confirm_old = led_options_confirm.value;
   show_led_options();
 
-  if(led_options_inc_brightness_old == old_name)
+  if (led_options_inc_brightness_old == old_name)
     led_options_inc_brightness.value = name;
-  if(led_options_dec_brightness_old == old_name)
+  if (led_options_dec_brightness_old == old_name)
     led_options_dec_brightness.value = name;
-  if(led_options_left_old == old_name)
+  if (led_options_left_old == old_name)
     led_options_left.value = name;
-  if(led_options_right_old == old_name)
+  if (led_options_right_old == old_name)
     led_options_right.value = name;
-  if(led_options_confirm_old == old_name)
+  if (led_options_confirm_old == old_name)
     led_options_confirm.value = name;
 
-  
+
   var eightway_select_up_old = document.getElementById("eightway_select-up").value;
   var eightway_select_down_old = document.getElementById("eightway_select-down").value;
   var eightway_select_left_old = document.getElementById("eightway_select-left").value;
@@ -374,37 +358,33 @@ function update_button()
 
   show_eightway_modal();
 
-  if(eightway_select_up_old == old_name)
+  if (eightway_select_up_old == old_name)
     document.getElementById("eightway_select-up").value = name;
-  if(eightway_select_down_old == old_name)
+  if (eightway_select_down_old == old_name)
     document.getElementById("eightway_select-down").value = name;
-  if(eightway_select_left_old == old_name)
+  if (eightway_select_left_old == old_name)
     document.getElementById("eightway_select-left").value = name;
-  if(eightway_select_right_old == old_name)
+  if (eightway_select_right_old == old_name)
     document.getElementById("eightway_select-right").value = name;
 
   // update OLED Button Names
-  for (let btn of circles) 
-  {
-    if (btn.button_activation == old_name) 
-    {
-        btn.button_activation = name;
+  for (let btn of circles) {
+    if (btn.button_activation == old_name) {
+      btn.button_activation = name;
     }
   }
- reset_all();
- showMessage('Name changed from: ' + old_name + ' to ' + name, 'success', 5000);
+  reset_all();
+  showMessage('Name changed from: ' + old_name + ' to ' + name, 'success', 5000);
 }
 
 
-function update_color_select()
-{
+function update_color_select() {
   var table = document.getElementById("color_table");
   var color_select = document.getElementById("color_select");
   var selected_item = color_select.value;
   var select = '<select><option>random</option>';
 
-  for (var i = 1, row; row = table.rows[i]; i++) 
-  {
+  for (var i = 1, row; row = table.rows[i]; i++) {
     var col_name = row.innerText;
     col_name = col_name.split("\t");
     select += '<option>' + col_name[0] + '</option>';
@@ -415,8 +395,7 @@ function update_color_select()
   color_select.value = selected_item;
 }
 
-function set_color_from_select()
-{
+function set_color_from_select() {
   var select_value = document.getElementById("color_select").value;
   var color_table = document.getElementById("color_table");
   var selected_row = button_row_id;
@@ -427,44 +406,53 @@ function set_color_from_select()
 }
 
 
-function update_fadein()
-{
+function update_fadein() {
   var table = document.getElementById("button_table");
   var row_id = button_row_id;
 
-  if(row_id == undefined)
-      return;
+  if (row_id == undefined)
+    return;
 
   table.rows[row_id].cells[5].innerHTML = document.getElementById("fade_in").value;
 }
 
-function update_fadeout()
-{
+function update_fadeout() {
   var table = document.getElementById("button_table");
   var row_id = button_row_id;
 
-  if(row_id == undefined)
-      return;
+  if (row_id == undefined)
+    return;
 
   table.rows[row_id].cells[6].innerHTML = document.getElementById("fade_out").value;
 }
 
-function set_fadein_for_all()
-{
+function set_fadein_for_all() {
   var table = document.getElementById("button_table");
+  var fade_in_val = document.getElementById("fade_in").value;
 
-  for (var i = 1, row; row = table.rows[i]; i++) 
-  {
-      table.rows[i].cells[5].innerHTML = document.getElementById("fade_in").value;
+  if (confirm("Do you want to set the Fadein speed to " + fade_in_val + " for all buttons?")) {
+    ;
+  }
+  else {
+    return;
+  }
+
+  for (var i = 1, row; row = table.rows[i]; i++) {
+    table.rows[i].cells[5].innerHTML = fade_in_val;
   }
 }
 
-function set_fadeout_for_all()
-{
+function set_fadeout_for_all() {
   var table = document.getElementById("button_table");
+  var fade_out_val = document.getElementById("fade_out").value;
+  if (confirm("Do you want to set the Fadeout speed to " + fade_out_val + " for all buttons?")) {
+    ;
+  }
+  else {
+    return;
+  }
 
-  for (var i = 1, row; row = table.rows[i]; i++) 
-  {
-      table.rows[i].cells[6].innerHTML = document.getElementById("fade_out").value;
+  for (var i = 1, row; row = table.rows[i]; i++) {
+    table.rows[i].cells[6].innerHTML = fade_out_val;
   }
 }

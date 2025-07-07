@@ -19,10 +19,11 @@ import micropython
 import animation
 import sys
 import gc
-try:
-    import oled
-except IndexError:
-    pass
+if config.activate_oled:
+    try:
+        import oled
+    except IndexError:
+        pass
 
 micropython.alloc_emergency_exception_buf(100)
 

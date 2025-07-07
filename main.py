@@ -14,14 +14,15 @@ import gc
 import _thread
 if config.activate_player_led:
     import playerLED
-try:
-    import oled
-    oled.setup_oled()
-    init.oled_active = True
-except IndexError:
-    print("\033[31mOled Not Found\033[0m")
-    init.oled_active = False
-    del oled.i2c
+if config.activate_oled:
+    try:
+        import oled
+        oled.setup_oled()
+        init.oled_active = True
+    except IndexError:
+        print("\033[31mOled Not Found\033[0m")
+        init.oled_active = False
+        del oled.i2c
 
 import os
 fs_stat = os.statvfs('/')

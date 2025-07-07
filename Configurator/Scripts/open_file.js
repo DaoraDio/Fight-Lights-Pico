@@ -396,9 +396,12 @@ function fill_configurator() {
         button = button.replace(button_list[i] + ' = button.MyButton(', '');
         button = button.split(',');
 
-        var button_name = button[1];
+        var button_name = button[1] || " ";
         button_name = button_name.replaceAll("'", '');
         button_name = button_name.trim();
+        if (!button_name) {
+            continue; //skip this iteration if config is missing
+        }
 
         var button_gpio = parseInt(button[0]);
 
@@ -564,7 +567,6 @@ function fill_configurator() {
     //playerLED
     var activate_player_led = get_value("activate_player_led = ");
 
-
     if (activate_player_led == "True") {
         document.getElementById("player_led_cb").checked = false;
     }
@@ -726,6 +728,17 @@ function fill_configurator() {
         //console.log(x_pos,y_pos,size,is_lever,is_key,associated_btn,angle);
     }
 
+    //oled disable cb
+    var activate_oled = get_value("activate_oled = ");
+
+    if (activate_oled == "True") {
+        document.getElementById("oled_cb").checked = false;
+    }
+    else if (activate_oled == "False") {
+        document.getElementById("oled_cb").checked = true;
+    }
+    toggle_oled_checkbox();
+
     //oled idle
     var oled_idle = parseInt(get_value("oled_idle = "));
     const oled_idle_select = document.getElementById("oled_idle");
@@ -788,6 +801,7 @@ async function paste() {
     input.value = text;
 
     fill_configurator();
+    generate_code();
     showMessage(`Code loaded successfully!`, 'success');
 }
 

@@ -359,6 +359,7 @@ function close_eightway_led_modal()
         led_pos_string = "not Set";
     
     current_direction.setAttribute("led_pos", led_pos_string);
+    //console.log(led_pos_string);
     document.getElementById("eightway_leds_nums").innerHTML = led_pos_string;
     modal.close();
 }

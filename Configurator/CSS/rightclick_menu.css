@@ -1,14 +1,14 @@
 #rightclick-menu {
     position: absolute;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--bg-elements);
+    border: 1px solid var(--bg-led-num);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     padding: 8px 0;
     font-size: 14px;
     min-width: 150px;
-    color: #333;
+    color: var(--text-general);
 }
 
 #rightclick-menu ul {
@@ -23,8 +23,14 @@
     transition: background-color 0.3s ease;
 }
 
+/* Add separator after the first item */
+#rightclick-menu li:first-child {
+    border-bottom: 1px solid var(--bg-led-num);
+    margin-bottom: 4px;
+}
+
 #rightclick-menu li:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bg-arrows);
     color: #007bff; /* Optional: Add a color change on hover */
 }
 

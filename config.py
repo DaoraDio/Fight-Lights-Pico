@@ -4,6 +4,7 @@ if __name__ == '__main__':
         init.code = f.read()
     exec(init.code)
 
+activate_oled = True
 print("\033[32mconfig\033[0m")
 #Fight Lights Pico V2.7.0
 

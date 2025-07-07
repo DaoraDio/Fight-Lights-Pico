@@ -24,6 +24,8 @@
     --cb_background: white;
     --row-selected: #ddd;
     --coloris-bg: #fff;
+    --link-color: #1a73e8;
+    --link-hover: #0d5bba;
 }
 
 [data-theme="dark"] {
@@ -50,6 +52,8 @@
     --cb_background: rgb(207, 207, 207);
     --row-selected: #4a4a4a;
     --coloris-bg: #1f1f1f;
+    --link-color: #bb86fc;
+    --link-hover: #9b5bf0;
 }
 
 /* Theme toggle switch styles */

@@ -361,3 +361,63 @@ progress::-moz-progress-bar {
     padding-right: 5px;
     flex: none;
 }
+
+/* Centered Header with Helper */
+.section-header-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--separator-color);
+    padding-bottom: 6px;
+    width: 100%;
+}
+
+.section-title-container {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    gap: 8px;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.oled_checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+#oled_cb_label {
+    font-size: 25px;
+}
+
+#oled_cb {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+}
+
+#oled_cb::after {
+    left: 8px;
+    top: 1px;
+    width: 8px;
+    height: 16px;
+    border-width: 0 3px 3px 0;
+}
+
+
+#oled_cb:checked {
+    background-color: #ff0000;
+    border-color: #000000;
+}
+
+#oled_cb:checked::after {
+    display: block;
+}

@@ -1,8 +1,12 @@
 <div id="idle_head_container">
     <h1 class="page-header">Configure OLED</h1>
     <div id="idle_header_helper" class="helper"
-        title="When no OLED screen is connected, the GPIO pins are unused.&#10;OLED functionality only runs with a connected OLED screen">
+        title="Disable OLED to free up GPIO pins for other uses.&#10;When enabled, you can configure the OLED display settings, layout, and animations.&#10;Make sure to set the correct I2C interface and pins for your OLED type.">
         ?</div>
+</div>
+<div class="oled_checkbox-container">
+    <input type="checkbox" id="oled_cb" name="oled_cb" onchange="toggle_oled_checkbox()">
+    <label id="oled_cb_label" for="oled_cb">Disable OLED</label>
 </div>
 <div id="oled_modal_body">
     <!-- Section 1: Hardware Settings (Top) -->
@@ -19,10 +23,10 @@
 
             <div class="i2c-interface">
                 <div class="i2c-radio-group">
-                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad1" onchange="show_hide_i2c_selects()"
-                        checked>
+                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad1" onchange="show_hide_i2c_selects()">
                     <label for="oled_i2c_rad1">I2C0</label>
-                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad2" onchange="show_hide_i2c_selects()">
+                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad2" onchange="show_hide_i2c_selects()"
+                        checked>
                     <label for="oled_i2c_rad2">I2C1</label>
                 </div>
 
@@ -215,7 +219,14 @@
 
         <!-- Animation Settings -->
         <div class="oled-section">
-            <h3 class="section-title">Animation</h3>
+            <div class="section-header-wrapper">
+                <div class="section-title-container">
+                    <h3 class="section-title">Animation</h3>
+                    <div id="oled_anim_helper" class="helper"
+                        title="Select PNG files for each frame of animation.&#10;For example select: frame1.png, frame2.png, frame3.png, and then Download the code and upload it to your Pico.&#10;(Names don't have to be 'frameX.png' but should all be the same and ordered by number at the end)">
+                        ?</div>
+                </div>
+            </div>
 
             <div class="form-row">
                 <div class="animation-controls">
@@ -243,9 +254,9 @@
     <textarea id="animation_code_box" name="animation_code_box" style="display: none;"></textarea>
     <textarea id="animation_code_box2" name="animation_code_box2" style="display: none;"></textarea>
 
-    <!-- Footer 
+    <!-- Footer -->
     <div class="footer-row">
-        <a href="https://docs.google.com/document/d/1sRzsu_7MLZvugeR4t4hok-HUen5nlwNqmLjYXqlQP0s/edit" target="_blank" id="oled_guide_link" class="guide-link">OLED Guide</a>
-        <button id="oled_close_modal_button" class="close_button">Save & Close</button>
-    </div>-->
+        <a href="https://docs.google.com/document/d/1sRzsu_7MLZvugeR4t4hok-HUen5nlwNqmLjYXqlQP0s/edit" target="_blank"
+            id="oled_guide_link" class="guide-link">Need help? Check out the guide</a>
+    </div>
 </div>

@@ -51,14 +51,15 @@
   </div>
 
 
-  <div id="rightclick-menu" class="hidden">
-    <ul>
-      <li onclick="">Load code from clipboard</li>
-      <li onclick="">Copy code to clipboard</li>
-      <li onclick="">Download code</li>
-      <li onclick="">Load preset code</li>
-    </ul>
-  </div>
+<div id="rightclick-menu" class="hidden">
+  <ul>
+    <li id="rightclick_copy">Copy selected text</li>
+    <li>Copy code to clipboard</li>
+    <li>Load code from clipboard</li>
+    <li>Download code</li>
+    <li>Load preset code</li>
+  </ul>
+</div>
 
   <div id="color_slider">
     <button class="menu-toggle" id="menuToggle">Colors</button>
@@ -120,7 +121,7 @@
       <a id="idle_link" href="#" onclick="setActiveLink(event); showPage('idle'); idle_open_page()">Idle Mode</a>
       <a href="#" onclick="setActiveLink(event); showPage('led_options'); show_led_options()">Options Mode</a>
       <a href="#" onclick="setActiveLink(event); showPage('eightway');">8-Way Stick LEDs</a>
-      <a href="#" onclick="setActiveLink(event); showPage('oled'); show_oled_modal()">OLED Config</a>
+      <a id="oled_link" href="#" onclick="setActiveLink(event); showPage('oled'); show_oled_modal()">OLED Config</a>
       <a id="player_led_link" href="#" onclick="setActiveLink(event); showPage('player_leds');" class="nav-disabled">Player LED</a>
     </div>
     <div class="nav-right">
@@ -203,6 +204,9 @@
   <script src="Scripts/oled.js" defer></script>
   <script src="Scripts/nightmode_slider.js" defer></script>
   <script src="Scripts/default_code.js" defer></script>
+  <script src="Scripts/home.js" defer></script>
+  <script src="Scripts/download_github_files.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </body>
 
 </html>

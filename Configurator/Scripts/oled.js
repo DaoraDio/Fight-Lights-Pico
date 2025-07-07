@@ -1,3 +1,21 @@
+function toggle_oled_checkbox() {
+    const container = document.getElementById('oled_modal_body');
+    var checkbox = document.getElementById("oled_cb");
+    const link = document.getElementById("oled_link");
+
+    if (checkbox.checked) {
+        container.classList.add('disabled-container');
+        container.querySelectorAll('input, select, button, textarea')
+            .forEach(el => el.disabled = true);
+        link.classList.add('nav-disabled');
+    } else {
+        container.classList.remove('disabled-container');
+        container.querySelectorAll('input, select, button, textarea')
+            .forEach(el => el.disabled = false);
+        link.classList.remove('nav-disabled');
+    }
+}
+
 function disable_enable_elements(bool1, bool2, bool3) {
     document.getElementById("oled_open_directions").hidden = bool1;
     document.getElementById("act_button_label").hidden = bool2;

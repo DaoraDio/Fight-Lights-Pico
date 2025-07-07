@@ -156,7 +156,7 @@ function generate_code() {
     dim = parseInt(dim);
     dim /= 100;
     var dim = "idle_mode3_brightness = " + dim;
-    
+
 
     //buttons
     var buttons = "";
@@ -438,6 +438,16 @@ function generate_code() {
     var down_right_color = arrow_down_right.getAttribute("directioncolor");
     var eight_way_down_right = "eight_way_rightdown = [" + down_right_positions + "," + down_right_color + "]";
 
+
+    //OLED disable
+    var activate_oled = document.getElementById("oled_cb");
+    if (activate_oled.checked)
+        activate_oled = "activate_oled = False";
+    else
+        activate_oled = "activate_oled = True";
+
+
+    //Oled buttons
     var oled_button = ""
     var oled_array = "oled_buttons = ["
     for (var i = 0; i < circles.length; i++) {
@@ -542,7 +552,8 @@ function generate_code() {
 
 
 
-    document.getElementById("code_box").value = failsave + header
+    document.getElementById("code_box").value =
+        failsave + activate_oled + '\n' + header
         + colors + "\n"
         + colors_arr + "\n"
         + profile_name2 + "\n"
@@ -609,4 +620,71 @@ function generate_code() {
         + "############do not delete this line#######################";
 
 
+}
+
+function check_gpio_conflicts() {
+    var table = document.getElementById("button_table");
+    var gpio_pins = [];
+    for (var i = 1, row; row = table.rows[i]; i++) {
+        var button_name = row.cells[0].textContent.trim();
+        var gpio_pin = row.cells[4].childNodes[1].value;
+        gpio_pins.push({ pin: gpio_pin, label: button_name });
+    }
+
+    var led_out = document.getElementById("pin_num").value;
+    gpio_pins.push({ pin: led_out, label: "LED Chain GPIO" });
+
+    if (document.getElementById("player_led_cb").checked == false) {
+        var player_led = document.getElementById("playerLED_pin_num").value;
+        gpio_pins.push({ pin: player_led, label: "Player LED" });
+    }
+    if (document.getElementById("oled_cb").checked == false) {
+        if (document.getElementById("oled_i2c_rad1").checked) {
+            var oled_sda = document.getElementById("oled_sda0_select").value;
+            var oled_scl = document.getElementById("oled_scl0_select").value;
+            gpio_pins.push({ pin: oled_sda, label: "OLED SDA0" });
+            gpio_pins.push({ pin: oled_scl, label: "OLED SCL0" });
+        }
+        else if (document.getElementById("oled_i2c_rad2").checked) {
+            var oled_sda = document.getElementById("oled_sda1_select").value;
+            var oled_scl = document.getElementById("oled_scl1_select").value;
+            gpio_pins.push({ pin: oled_sda, label: "OLED SDA1" });
+            gpio_pins.push({ pin: oled_scl, label: "OLED SCL1" });
+        }
+    }
+
+    var pinMap = {};
+    var mandatoryConflicts = [];
+
+    // Group pins by value and collect their labels
+    for (let entry of gpio_pins) {
+        if (entry.pin in pinMap) {
+            pinMap[entry.pin].push(entry.label);
+        } else {
+            pinMap[entry.pin] = [entry.label];
+        }
+    }
+
+    // Check for any duplicate pins
+    for (let pin in pinMap) {
+        const labels = pinMap[pin];
+        if (labels.length > 1) {
+            mandatoryConflicts.push(`GPIO pin ${pin} is used by: ${labels.join(", ")}`);
+        }
+    }
+
+    // Show alert if conflicts found
+    if (mandatoryConflicts.length > 0) {
+        const conflictMessage = "⚠️ GPIO Conflicts Found:\n\n" +
+            mandatoryConflicts.join("\n") +
+            "\n\nThese pins are assigned to multiple functions. " +
+            "This may cause unexpected behavior.\n\n" +
+            "Do you want to proceed anyway?";
+
+        const proceed = confirm(conflictMessage);
+        return proceed; // Return true if user confirms, false if they cancel
+    }
+
+    // No conflicts
+    return true;
 }

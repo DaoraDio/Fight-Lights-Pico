@@ -1,21 +1,69 @@
-<img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/Fight%20Lights%20Logo%20big.png"
-  alt="Logo" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fight Lights Configurator</title>
+    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="logo-container">
+        <a href="https://fight-lights.com" target="_blank" class="logo-link">
+            <img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/Fight%20Lights%20Logo%20big.png"
+                alt="Fight Lights Logo" />
+        </a>
+    </div>
+    
+    <div id="home-container">
+        <h1><a target="_blank" href="https://fight-lights.com">Fight Lights</a></h1>
+        
+        <div class="dropdown">
+            <h1 onclick="toggleDropdown()">Configurator for V2.7.0 <span class="dropdown-arrow">▼</span></h1>
+            <div class="dropdown-content">
+                <a href="https://fight-lights.com/Configurator/270/" target="_blank">Version 2.7.0</a>
+                <a href="https://fight-lights.com/Configurator/263/" target="_blank">Version 2.6.3</a>
+                <a href="https://fight-lights.com/Configurator/262/" target="_blank">Version 2.6.2</a>
+                <a href="https://fight-lights.com/Configurator/260/" target="_blank">Version 2.6.0</a>
+                <a href="https://fight-lights.com/Configurator/252/" target="_blank">Version 2.5.2</a>
+                <a href="https://fight-lights.com/Configurator/247/" target="_blank">Version 2.4.7</a>
+                <a href="https://fight-lights.com/Configurator/240/" target="_blank">Version 2.4.0</a>
+                <a href="https://fight-lights.com/Configurator/230/" target="_blank">Version 2.3.0</a>
+                <a href="https://fight-lights.com/Configurator/225/" target="_blank">Version 2.2.5</a>
+                <a href="https://fight-lights.com/Configurator/220/" target="_blank">Version 2.2.0</a>
+                <a href="https://fight-lights.com/Configurator/210/" target="_blank">Version 2.1.0</a>
+                <a href="https://fight-lights.com/Configurator/203/" target="_blank">Version 2.0.3</a>
+            </div>
+        </div>
 
-<div id="home-container">
-  <h1><a target="_blank" href="https://fight-lights.com">Fight Lights</a></h1>
-  <h1>Configurator for V2.7.0</h1>
+        <div class="config-upload-section">
+            <label id="drop-area" for="fileElem">
+                <p>Click to load config.py file <br> or Drag & Drop it anywhere on any page!</p>
+            </label>
+            <input type="file" id="fileElem" accept=".py">
+            
+            <div class="download-box">
+                <h3>Get Project Files</h3>
+                <p>Download all necessary files for your Fight Lights project. All files are downloaded from the newest GitHub release</p>
+                <button onclick="downloadFilesAsZip()" class="action-btn primary">
+                    <i class="fas fa-download"></i> Download Project Files
+                </button>
+                <div id="zipStatus" class="status-message"></div>
+            </div>
+        </div>
+    </div>
 
-  <label id="drop-area" for="fileElem" style="cursor: pointer;">
-    <p>Click to load config.py file <br> or Drag & Drop it anywhere on any page!</p>
-  </label>
-  <input type="file" id="fileElem" onchange="handleFileLoad()" accept=".py" style="display:none;">
-</div>
+    <div class="footer-icons">
+        <a href="https://github.com/DaoraDio/Fight-Lights-Pico" target="_blank">
+            <img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/github.png" alt="GitHub"
+                class="github-icon" />
+        </a>
+        <a href="https://discord.gg/QZnwVMuW5T" target="_blank">
+            <img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/discord-bw.png" alt="Discord"
+                class="discord-icon" />
+        </a>
+    </div>
 
-<div class="footer-icons">
-  <a href="https://github.com/DaoraDio/Fight-Lights-Pico" target="_blank">
-    <img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/github.png" alt="GitHub" class="github-icon" />
-  </a>
-  <a href="https://discord.gg/QZnwVMuW5T" target="_blank">
-    <img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/discord-bw.png" alt="Discord" class="discord-icon"/>
-  </a>
-</div>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
