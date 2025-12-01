@@ -274,12 +274,19 @@ def main():
         functions.save_stats()
         init.run_savestats = False
     
-    #print(config.X_1K_MyButton.pin_num)
-    
         
 #main loop
 while True:
-    main()
+    try:
+        main()
+    except Exception as e:
+        print("--------------------------------")
+        print("CRASH CAUGHT!")
+        print(f"Error type: {type(e)}")
+        print(f"Error message: {e}")
+        print("--------------------------------")
+        time.sleep(0.1)
+        machine.reset()
 
      
 
