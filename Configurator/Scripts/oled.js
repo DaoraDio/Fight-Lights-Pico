@@ -862,7 +862,12 @@ function convertToBinaryArray(binaryFrame, width, height, i) {
     processedFiles++;
     document.getElementById('conversionProgress').value = processedFiles;
     if (processedFiles === totalFiles) {
-        save_animation_code2("oled_animation.txt", "text/plain");
+        const selectedRadio = document.querySelector('input[name="animation_mode"]:checked');
+        const filename = selectedRadio && selectedRadio.value === 'mode1'
+            ? 'oled_animation.txt'
+            : 'oled_combo_sprites.txt';
+
+        save_animation_code2(filename, "text/plain");
     }
 }
 

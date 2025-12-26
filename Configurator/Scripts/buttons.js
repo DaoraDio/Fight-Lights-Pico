@@ -99,6 +99,9 @@ function add_button() {
   showMessage("Button: " + name + " has been added", 'success');
   reset_all();
   update_onoff_select();
+
+  combo_sprites_available_buttons.push(name); //Add new button to combo sprite available buttons
+  updateAllComboDropdowns();  //Update all combo sprite dropdowns
 }
 
 var button_row_id = -1;
@@ -196,7 +199,9 @@ function delete_button() {
   show_eightway_modal();
   //show_led_options(false); //open led_options function to update the selects
   show_led_options();
-
+  removeComboButtonByName(button_name); //Remove button from combo sprite available buttons
+  updateAllChips(); //Update all combo chips
+  showMessage(button_name + ' Button deleted', 'success');
 }
 
 ///////////////////////////////LED MODAL////////////////

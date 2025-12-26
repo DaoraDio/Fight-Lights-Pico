@@ -237,6 +237,14 @@
                         <div id="oled_anim_delay_helper" class="helper"
                             title="Delay each frame of the animation by a given amount (in milliseconds)&#10;&#10;Value is stored in the config.py">
                             ?</div>
+
+                        <div class="animation-radio-group">
+                            <input type="radio" id="radio1" name="animation_mode" value="mode1" checked>
+                            <label for="radio1">File for Animation</label>
+
+                            <input type="radio" id="radio2" name="animation_mode" value="mode2">
+                            <label for="radio2">File for Combo Sprites</label>
+                        </div>
                     </div>
 
                     <div class="button-group full-width">
@@ -245,6 +253,54 @@
                         <progress id="conversionProgress" value="0" max="100"></progress>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="oled-section">
+        <div class="section-header-wrapper">
+            <div class="section-title-container">
+                <h3 class="section-title">Combo Sprites</h3>
+                <div class="helper" title="Add sprites to display on the OLED when buttons are pressed&#10;Select 'File for Combo Sprites' when generating a sprite animation file">?</div>
+            </div>
+        </div>
+        <div class="combo-grid">
+            <div class="canvas-container">
+                <div class="canvas-header"><span>Sprite Preview</span></div>
+                <div id="oled_sprite_index">0/0</div>
+                <div class="canvas-nav-wrapper">
+                    <button class="action-btn secondary nav-btn"
+                        onmousedown="hold = setInterval(() => cycleSprite(-1), 120)" onmouseup="clearInterval(hold)"
+                        onmouseleave="clearInterval(hold)" onclick="cycleSprite(-1)">
+                        &lt;
+                    </button>
+                    <canvas id="my_combo_canvas" class="oled-display"></canvas>
+                    <button class="action-btn secondary nav-btn"
+                        onmousedown="hold = setInterval(() => cycleSprite(1), 120)" onmouseup="clearInterval(hold)"
+                        onmouseleave="clearInterval(hold)" onclick="cycleSprite(1)">
+                        &gt;
+                    </button>
+                </div>
+                <div class="canvas-footer">
+                    <button onclick="document.getElementById('comboImageLoader').click()"
+                        class="action-btn primary">Upload Sprite file</button>
+                    <input type="file" id="comboImageLoader" hidden onchange="handleSpriteUpload(event)">
+                </div>
+            </div>
+            <div class="combo-controls">
+                <div class="control-row" style="display: flex; align-items: center; gap: 5px;">
+                    <label id="combo-default_label" disabled>Default Frame:</label>
+                    <input id="oled_default_sprite" type="number" min="0" value="0" class="form-input"
+                        style="width: 70px;" disabled>
+                    <input type="checkbox" id="oled_enable_default_sprite" onchange="toggle_combo_sprite_checkbox()"
+                        checked><label for="oled_enable_default_sprite">Disable</label>
+                    <div class="helper" title="Set a frame to display when no buttons are pressed.&#10;THIS WILL OVERRIDE THE 'During Play' BEHAVIOUR OF THE OLED">?</div>
+                </div>
+                <div class="combo-list-header"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <button class="action-btn primary" onclick="addComboRow()">+ Add Combo</button>
+                </div>
+                <div id="combo_rows_container" class="combo-list-container"></div>
             </div>
         </div>
     </div>

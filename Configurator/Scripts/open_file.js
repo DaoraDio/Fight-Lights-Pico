@@ -389,7 +389,7 @@ function fill_configurator() {
                             <option value="48">GP48</option>\
                         </select></td> ';
     update_color_select();
-
+    combo_sprites_available_buttons = []; //Reset combo sprite buttons array before filling it
     for (var i = 0; i < button_list.length; i++) {
         var button = get_variable_line(button_list[i]);
 
@@ -458,8 +458,10 @@ function fill_configurator() {
             n_row.cells[3].childNodes[0].checked = false;
 
         n_row.cells[4].childNodes[1].value = button_gpio;
+        combo_sprites_available_buttons.push(button_name); //Add buttons for combo sprites
 
     }
+    updateAllComboDropdowns();  //Update all combo sprite dropdowns
     show_led_options(); //Fill selects in LED options tab after buttons are loaded
 
     var start_time = get_value("ledOptions_start_time = ")
@@ -792,6 +794,65 @@ function fill_configurator() {
     document.getElementById("oled_animation_delay").value = animation_delay;
     show_oled_modal();
 
+    //combo sprites
+    var user_combos = get_variable_line("user_combos = ");
+    loadUserCombosFromString(user_combos);
+
+    //combo sprites default value
+    var oled_combo_idle_frame = Number(get_value("oled_combo_idle_frame = "));
+    if (oled_combo_idle_frame < 0)
+        document.getElementById('oled_enable_default_sprite').checked = true;
+    else {
+        document.getElementById('oled_enable_default_sprite').checked = false;
+        document.getElementById('oled_default_sprite').value = oled_combo_idle_frame;
+    }
+
+    toggle_combo_sprite_checkbox();
+
+
+    //var user_combos = user_combos.split('=')[1].trim();
+    //var user_combos = parseUserCombos(user_combos);
+    //console.log(user_combos);
+}
+
+function parseUserCombos(input) {
+    const combos = [];
+
+    // match each [...] group
+    const groups = input.match(/\[([^\]]+)\]/g) || [];
+
+    groups.forEach(group => {
+        const parts = group
+            .replace(/[\[\]]/g, '')
+            .split(',')
+            .map(p => p.trim());
+
+        const buttons = parts
+            .slice(0, -1)
+            .map(p => p.split('_')[0]); // DOWN_MyButton → DOWN
+
+        const value = Number(parts.at(-1));
+
+        combos.push({ buttons, sprite: Number(value) || 0 });
+    });
+
+    return combos;
+}
+
+function loadUserCombosFromString(str) {
+    const combos = parseUserCombos(str);
+    const container = document.getElementById('combo_rows_container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    //console.log(combos);
+
+    combos.forEach(combo => {
+        addComboRow({
+            buttons: combo.buttons,
+            sprite: combo.sprite
+        });
+    });
 }
 
 //paste function to paste clipboard content into the codebox

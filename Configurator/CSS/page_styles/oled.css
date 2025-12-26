@@ -421,3 +421,157 @@ progress::-moz-progress-bar {
 #oled_cb:checked::after {
     display: block;
 }
+
+/* Rest of original CSS goes here... */
+
+/* --- New Combo Sprites Section Classes --- */
+.combo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.canvas-nav-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-btn {
+    min-width: 35px !important;
+    height: 64px;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.button-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.button-group-vertical .action-btn {
+    width: 100%;
+}
+
+.combo-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 992px) {
+    .combo-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Combo Sprites UI Updates */
+.combo-list-container {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    padding: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.combo-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.combo-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-main);
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border: 1px solid var(--separator-color);
+}
+
+.combo-buttons-chips {
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.sprite-selector-small {
+    width: 60px !important;
+}
+
+.chip {
+    background: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #cbd5e1;
+}
+
+.combo-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.combo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-main);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--separator-color);
+}
+
+.btn-chips-container {
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 30px;
+    align-items: center;
+    background: rgba(0,0,0,0.03);
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.chip {
+    background: #1a73e8;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.chip .remove-chip {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.recording {
+    background: #d93025 !important;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.6; }
+}

@@ -550,7 +550,11 @@ function generate_code() {
     var animation_delay = document.getElementById("oled_animation_delay").value;
     animation_delay = "oled_animation_delay = " + animation_delay;
 
-
+    //oled combo default frame
+    var oled_combo_idle_frame_value = document.getElementById("oled_default_sprite").value;
+    if(document.getElementById("oled_enable_default_sprite").checked)
+        oled_combo_idle_frame_value = -1;
+    var oled_combo_idle_frame = "oled_combo_idle_frame = " + oled_combo_idle_frame_value;
 
     document.getElementById("code_box").value =
         failsave + activate_oled + '\n' + header
@@ -615,6 +619,8 @@ function generate_code() {
         + sdapin + '\n'
         + sclpin + '\n'
         + animation_delay + '\n'
+        + oled_combo_idle_frame + '\n'
+        + exportCombosToString() + '\n'
         + createPythonByteArray(getBinaryPixelValuesArray('my_splash_canvas'), 'splash') + '\n'
         + createPythonByteArray(getBinaryPixelValuesArray('my_overlay_canvas'), 'overlay') + '\n'
         + "############do not delete this line#######################";
@@ -688,3 +694,24 @@ function check_gpio_conflicts() {
     // No conflicts
     return true;
 }
+
+function exportCombosToString() {
+    const rows = document.querySelectorAll('.combo-row');
+    const combos = [];
+
+    rows.forEach(row => {
+        const buttons = row.selectedButtons || [];
+
+        if (buttons.length === 0) return; // 🔥 skip empty rows
+
+        const spriteInput = row.querySelector('.sprite-idx-input');
+        const sprite = spriteInput ? Number(spriteInput.value) || 0 : 0;
+
+        const buttonsWithSuffix = buttons.map(btn => btn + '_MyButton');
+
+        combos.push([...buttonsWithSuffix, sprite]);
+    });
+
+    return 'user_combos = [' + combos.map(arr => '[' + arr.join(', ') + ']').join(',') + ']';
+}
+
