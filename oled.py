@@ -352,6 +352,44 @@ def oled_draw_overlay():
     for values in init.pixel_coordinates:
         x, y = values
         oled.pixel(x,y,1)
+        
+def display_single_frame(frame_index):
+    CHARS_PER_FRAME = 2048 
+    
+    try:
+        with open('oled_combo_sprites.txt', 'r') as f:
+            f.seek(frame_index * CHARS_PER_FRAME)
+            hex_data = f.read(CHARS_PER_FRAME)
+            
+            if len(hex_data) < CHARS_PER_FRAME:
+                return #incomplete data
+
+            raw_bytes = bytearray.fromhex(hex_data)
+            fb = framebuf.FrameBuffer(raw_bytes, 128, 64, framebuf.MONO_HLSB)
+            
+            oled.blit(fb, 0, 0)
+            with init.lock:
+                oled.show()
+                
+    except Exception as e:
+        print("Frame Error:", e)
+            
+def oled_draw_combo_animation():
+    config.user_combos.sort(key=lambda x: (len(x[:-1]), any(getattr(b, 'highest_prio', False) for b in x[:-1])),reverse=True)
+    
+    init.combo_triggered = False 
+    
+    for combo_data in config.user_combos:
+        frame_index = combo_data[-1]
+        combo_buttons = combo_data[:-1] 
+        
+        if all(button.is_pressed for button in combo_buttons):
+            display_single_frame(frame_index)
+            init.combo_triggered = True 
+            break 
+
+    if not init.combo_triggered and config.oled_combo_idle_frame >= 0:
+        display_single_frame(config.oled_combo_idle_frame)
     
         
 #--------------------------------------------------------------------------------------------

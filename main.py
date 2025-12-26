@@ -90,21 +90,28 @@ def main():
     #gc.collect()
    # free_memory = gc.mem_free()
     #print("Available memory:", free_memory, "bytes")
+    if not init.entering_options_mode and (config.user_combos or config.oled_combo_idle_frame > -1):
+        oled.oled_draw_combo_animation()
     if init.oled_active:
         if config.oled_layout == 0:
             init.oled_stop_animation = True
-            oled.oled_draw_stick()
+            if init.combo_triggered == False and config.oled_combo_idle_frame == -1:
+                oled.oled_draw_stick()
         if config.oled_layout == 1:
-            if init.oled_splash_drawn == False:
+            if init.combo_triggered == True:
+                init.oled_splash_drawn = False
+            elif init.oled_splash_drawn == False:
                 init.oled_stop_animation = True
                 oled.oled_draw_splash()
                 init.oled_splash_drawn = True
         if config.oled_layout == 2:
             init.oled_stop_animation = True
-            oled.oled_clear_screen()
+            if config.oled_combo_idle_frame == -1 and not init.combo_triggered and not init.entering_options_mode:
+                oled.oled_clear_screen()
         if config.oled_layout == 3 and init.timer_lock == False:
             init.oled_stop_animation = False
 
+    
     
     init.main_cnt += 1    
     init.leniency_counter += 1
@@ -117,10 +124,12 @@ def main():
     #access led options when buttons in config.led_options are pressed for config.led_options_start_time seconds
     if(config.ledOptions_led_buttons):
         led_options = []
+        
         for button in config.ledOptions_led_buttons:
             led_options.append(button.is_pressed)
         
         if all(led_options):
+            init.entering_options_mode = True
             R = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[0]))
             G = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[1]))
             B = int(functions.lerp(init.timer_start,init.timer_target,init.timer_counter, 0, config.ledOptions_color[2]))
@@ -147,11 +156,17 @@ def main():
                 oled.oled.text(str(value) + '%', 54, 53)
                 with init.lock:
                     oled.oled.show()
+                    
 
             if init.timer_counter >= init.timer_target:
                 functions.mode_select(config.brightness_steps)
         else:
             init.timer_lock = False
+            init.entering_options_mode = False
+            if init.oled_active and config.oled_layout == 1:
+                init.oled_splash_drawn = False
+            if config.oled_combo_idle_frame == 0:
+                init.oled_splash_drawn = True
     
     
     #goes into idle mode after seconds defined in the variable 'idle_after' has been exceeded
@@ -273,7 +288,9 @@ def main():
     if init.run_savestats:
         functions.save_stats()
         init.run_savestats = False
+        
     
+
         
 #main loop
 while True:

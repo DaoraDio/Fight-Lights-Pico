@@ -114,6 +114,7 @@ run_savestats = False
 oled_active = False
 oled_splash_drawn = False
 oled_stop_animation = True
+
 lock = _thread.allocate_lock()
 pixel_coordinates = []
 current_frame = ""
@@ -121,3 +122,5 @@ framebuffer = ""
 t1 = 0
 t2 = 0
 hex_bytearrays = []
+combo_triggered = False #flag for OLED Combo trigger
+entering_options_mode = False
