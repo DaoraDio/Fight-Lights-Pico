@@ -139,6 +139,13 @@ function py_tuple_to_rgb_array(tuple) {
 }
 
 function fill_configurator() {
+    //get version
+    var loaded_version = get_value("#Fight Lights Pico ");
+    if (loaded_version != current_version) {
+        showMessage(`Warning: The loaded configuration file version (${loaded_version}) does not match the current configurator version (${current_version}).`, 'warning', 10000);
+    }
+
+
     //get profile name
     var profile_name = get_variable_line("profile_name");
     profile_name = profile_name.substring(profile_name.indexOf('"') + 1, profile_name.lastIndexOf('"'));

@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
 activate_oled = True
 print("\033[32mconfig\033[0m")
-#Fight Lights Pico V2.7.0
+#Fight Lights Pico V2.7.5
 
 from machine import Pin
 from init import random, rainbow, smooth, notSet

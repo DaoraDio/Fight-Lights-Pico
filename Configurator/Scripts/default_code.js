@@ -1,4 +1,14 @@
+const current_version = "V2.7.5";
+
 const codeString = `
+#Fight Lights Pico V2.7.5
+
+from machine import Pin
+from init import random, rainbow, smooth, notSet
+import button
+import functions
+import init
+
 blank = (0,0,0)
 RED = (255,0,0)
 ORANGE = (255,127,0)
@@ -72,7 +82,7 @@ ledOptions_color = (255,0,0)
 ledOptions_profile_color_use_all_LEDs = True
 smooth_brightness_speed = 0.03
 ledOptions_led_buttons = [START_MyButton,SELECT_MyButton]
-ledOptions_start_time = 2
+ledOptions_start_time = 1
 ledOptions_increase_brightness = [UP_MyButton]
 ledOptions_decrease_brightness = [DOWN_MyButton]
 ledOptions_left_button = [LEFT_MyButton]
@@ -119,6 +129,8 @@ i2c_interface = 1
 oled_sda = 26
 oled_scl = 27
 oled_animation_delay = 0
+oled_combo_idle_frame = -1
+user_combos = []
 splash = bytearray([
 0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xEE,0x33,0xFF,0x80,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x03,0xFC,0xC4,0x21,0x9F,0xC0,0x00,0x00,0x00,0x00,0x00,

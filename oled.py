@@ -246,7 +246,7 @@ def play_animation():
     while True:
         y = 0
         if init.oled_stop_animation == False:
-            with open('oled_animation.txt', 'r') as f:
+            with open('oled_animation.flan', 'r') as f:
                 init.t2 = time.ticks_ms()  # Start time
                 while init.oled_stop_animation == False:
                     chars = f.read(characters_to_read)
@@ -357,7 +357,7 @@ def display_single_frame(frame_index):
     CHARS_PER_FRAME = 2048 
     
     try:
-        with open('oled_combo_sprites.txt', 'r') as f:
+        with open('oled_combo_sprites.flan', 'r') as f:
             f.seek(frame_index * CHARS_PER_FRAME)
             hex_data = f.read(CHARS_PER_FRAME)
             

@@ -864,8 +864,8 @@ function convertToBinaryArray(binaryFrame, width, height, i) {
     if (processedFiles === totalFiles) {
         const selectedRadio = document.querySelector('input[name="animation_mode"]:checked');
         const filename = selectedRadio && selectedRadio.value === 'mode1'
-            ? 'oled_animation.txt'
-            : 'oled_combo_sprites.txt';
+            ? 'oled_animation.flan'
+            : 'oled_combo_sprites.flan';
 
         save_animation_code2(filename, "text/plain");
     }

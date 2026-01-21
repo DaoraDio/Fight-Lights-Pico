@@ -53,6 +53,9 @@ function fetchPage(page) {
         case 'home':
           initColorPicker();
           break;
+        case 'general':
+          initProfileValidation();
+          break;
         case 'codeboxes':
           initDropHandler();
           break;

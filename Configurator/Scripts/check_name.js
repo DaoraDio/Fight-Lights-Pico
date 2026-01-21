@@ -22,7 +22,8 @@ function check_name(name)
         "playerLED_brightness","playerLED_PIN_NUM","P1_color","P2_color","P3_color","P4_color", "splash", "bytearray", "oled_always_splash",
         "oled_idle", "oled_buttons", "idlemode_leds", "skip_leds_in_idle", "eight_way_rightdown", "eight_way_leftdown", "eight_way_upright",
         "eight_way_upleft", "eight_way_right", "eight_way_right", "eight_way_left", "eight_way_down", "eight_way_up", "smooth_brightness_speed",
-        "onboard_led_on", "prev_config", "next_config", "overlay"
+        "onboard_led_on", "prev_config", "next_config", "overlay", "oled_layout", "oled_type", "invert_oled", "rotate_oled", "i2c_interface", "oled_sda",
+        "oled_scl", "oled_animation_delay", "oled_combo_idle_frame", "user_combos", "MyButton",
       ];
       
 

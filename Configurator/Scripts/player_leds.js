@@ -1,4 +1,3 @@
-// Player LEDs JavaScript - Complete File
 var player_led = 0;
 
 function player_leds_open_page() {

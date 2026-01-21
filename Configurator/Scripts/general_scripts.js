@@ -1,3 +1,39 @@
+function initProfileValidation() {
+    const nameInput = document.getElementById('profile_name');
+    const saveButton = document.getElementById('save_btn');
+
+    if (!nameInput) return;
+
+    const brightGreen = "#2ecc71"; 
+    const brightRed = "#e74c3c";
+
+    nameInput.addEventListener('input', function() {
+        if (check_name(nameInput.value) === true) {
+            nameInput.style.borderColor = brightGreen;
+            nameInput.style.boxShadow = `0 0 5px ${brightGreen}`; // Adds a subtle glow
+            if (saveButton) saveButton.disabled = false;
+        } else {
+            nameInput.style.borderColor = brightRed;
+            nameInput.style.boxShadow = `0 0 5px ${brightRed}`;
+            if (saveButton) saveButton.disabled = true;
+        }
+    });
+
+    nameInput.addEventListener('blur', function() {
+        const validationResult = check_name(nameInput.value);
+
+        if (validationResult !== true && nameInput.value !== "") {
+            showMessage(validationResult, 'error');
+            nameInput.value = "";
+            
+            //Reset UI after clearing
+            nameInput.style.borderColor = brightRed;
+            nameInput.style.boxShadow = "none";
+            if (saveButton) saveButton.disabled = true;
+        }
+    });
+}
+
 function update_leniency_input() {
   var checkbox = document.getElementById("leniency_cb").checked;
   if (checkbox == true) {

@@ -7,7 +7,7 @@ function add_button() {
 
   if (check_name(name) != true) {
     reset_all();
-    showMessage(check_name(name), 'error');
+    showMessage(check_name(name), 'warning');
     return;
   }
 
@@ -16,7 +16,7 @@ function add_button() {
     col_name = col_name.split("\t");
     if (name == col_name[0]) {
       reset_all();
-      showMessage('Name already exists', 'error');
+      showMessage('Name already exists', 'warning');
       return;
     }
   }
@@ -298,7 +298,7 @@ function update_button() {
 
   if (check_name(name) != true) {
     reset_all();
-    showMessage(check_name(name), 'error');
+    showMessage(check_name(name), 'warning');
     return;
   }
   for (var i = 1, row; row = table.rows[i]; i++) {
@@ -306,7 +306,7 @@ function update_button() {
     col_name = col_name.split("\t");
     if (name == col_name[0]) {
       reset_all();
-      showMessage('Name already exists', 'error');
+      showMessage('Name already exists', 'warning');
       return;
     }
   }
