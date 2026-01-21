@@ -15,47 +15,47 @@ function downloadFilesAsZip() {
     // List of files to download
     const filesToDownload = [
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/animation.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/animation.py',
             name: 'animation.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/button.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/button.py',
             name: 'button.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/config.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/config.py',
             name: 'config.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/functions.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/functions.py',
             name: 'functions.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/init.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/init.py',
             name: 'init.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/main.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/main.py',
             name: 'main.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/oled.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/oled.py',
             name: 'oled.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/playerLED.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/playerLED.py',
             name: 'playerLED.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/sh1106.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/sh1106.py',
             name: 'sh1106.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/ssd1306.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/ssd1306.py',
             name: 'ssd1306.py'
         },
         {
-            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.0/statemachine.py',
+            url: 'https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/refs/tags/v2.7.5/statemachine.py',
             name: 'statemachine.py'
         }
     ];
@@ -98,7 +98,7 @@ You can modify it using the configurator to easily customize your LED setup.
 The 'config.py' file in this ZIP is the default configuration file and will never have your custom settings.
 
 ## Version
-Files are from version 2.7.0 of the project
+Files are from version 2.7.5 of the project
 
 ## Included Files:
 - animation.py
