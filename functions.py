@@ -475,7 +475,7 @@ def no_buttons_pressed():
 
 def oled_animation_exists():
     try:
-        os.stat('oled_animation.txt')
+        os.stat('oled_animation.flan')
         return True
     except OSError:
         return False
