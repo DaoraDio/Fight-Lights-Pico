@@ -14,7 +14,7 @@ function pythonArrayStringSubtractOne(inputString) //subtracts 1 from a python t
 }
 
 function generate_code() {
-    var version = "V2.7.0"
+    var version = "V2.7.5"
     var failsave = "if __name__ == '__main__':\n    import init\n    with open('main.py', 'r') as f:\n        init.code = f.read()\n    exec(init.code)\n\n";
     var header = "print(\"\\033[32mconfig\\033[0m\")\n\#Fight Lights Pico " + version + "\n\nfrom machine import Pin\nfrom init import random, rainbow, smooth, notSet\nimport button\nimport functions\nimport init\n\n";
 
