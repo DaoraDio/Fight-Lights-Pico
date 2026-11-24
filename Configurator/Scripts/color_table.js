@@ -71,16 +71,8 @@ function addColor() {
     return;
   }
 
-  var table = document.getElementById("color_table");
-
-  var row = table.insertRow();
-
-  var cell1 = row.insertCell(0);
-  var cell2 = row.insertCell(1);
-
-
-  cell1.innerHTML = name;
-  cell2.style.backgroundColor = col;
+  const row = Configurator.appendRow("color_table", [name, ""]);
+  row.cells[1].style.backgroundColor = col;
   showMessage('Color ' + name + ' has been added', 'success');
 
   reset();

@@ -69,6 +69,11 @@
 # display.text('Testing 1', 0, 0, 1)
 # display.show()
 
+if __name__ == "__main__":
+    import main
+    main.run()
+
+
 from micropython import const
 import utime as time
 import framebuf

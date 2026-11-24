@@ -1,4 +1,4 @@
-#idle_head_container {
+:is(#idle_head_container, [id^="idle_head_container-"]) {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,7 +12,7 @@
     margin: 0;
 }
 
-#idle_header_helper {
+:is(#idle_header_helper, [id^="idle_header_helper-"]) {
     width: 30px;
     height: 30px;
 }

@@ -1,12 +1,10 @@
-if __name__ == '__main__':
-    import init
-    with open('main.py', 'r') as f:
-        init.code = f.read()
-    exec(init.code)
+if __name__ == "__main__":
+    import main
+    main.run()
 
 activate_oled = True
 print("\033[32mconfig\033[0m")
-#Fight Lights Pico V2.7.5
+#Fight Lights Pico V2.8.0
 
 from machine import Pin
 from init import random, rainbow, smooth, notSet
@@ -45,7 +43,7 @@ idle_after = 30
 idle_mode1_speed = 0.05
 idle_mode1_colors = colors
 skip_leds_in_idle = []
-idlemode_leds = functions.remove_idle_skips()
+idlemode_leds = functions.remove_idle_skips(led_count, skip_leds_in_idle)
 idle_mode3_brightness = 0.5
 UP_MyButton = button.MyButton(1, 'UP', functions.clear_led)
 DOWN_MyButton = button.MyButton(2, 'DOWN', functions.clear_led)

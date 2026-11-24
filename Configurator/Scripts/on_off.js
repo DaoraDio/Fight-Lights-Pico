@@ -18,14 +18,8 @@ function update_onoff_select() {
 }
 
 function onoff_add() {
-    var table = document.getElementById("on_off_table");
-
-    var select_length = document.getElementById("on_off_select").options.length;
-    if (select_length != 0) {
-        var row = table.insertRow();
-        var cell1 = row.insertCell(0);
-        cell1.innerHTML = document.getElementById("on_off_select").value;
-    }
+    const select = document.getElementById("on_off_select");
+    if (select.options.length) Configurator.appendRow("on_off_table", [select.value]);
 }
 
 function select_onoff_table() {

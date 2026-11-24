@@ -21,81 +21,10 @@ function add_button() {
     }
   }
 
-  var row = table.insertRow();
-
-  var cell1 = row.insertCell(0);
-  var cell2 = row.insertCell(1);
-  var cell3 = row.insertCell(2);
-  var cell4 = row.insertCell(3);
-  var cell5 = row.insertCell(4);
-  var cell6 = row.insertCell(5);
-  var cell7 = row.insertCell(6);
-
-
-  var fade = '<input type="checkbox" id="fade_cb" name="fade_cb" onchange="">';
-  var gpio_pins = '<td>\
-                          <select name="gpio_select" id="gpio_select">\
-                            <option value="0">GP0</option>\
-                            <option value="1">GP1</option>\
-                            <option value="2">GP2</option>\
-                            <option value="3">GP3</option>\
-                            <option value="4">GP4</option>\
-                            <option value="5">GP5</option>\
-                            <option value="6">GP6</option>\
-                            <option value="7">GP7</option>\
-                            <option value="8">GP8</option>\
-                            <option value="9">GP9</option>\
-                            <option value="10">GP10</option>\
-                            <option value="11">GP11</option>\
-                            <option value="12">GP12</option>\
-                            <option value="13">GP13</option>\
-                            <option value="14">GP14</option>\
-                            <option value="15">GP15</option>\
-                            <option value="16">GP16</option>\
-                            <option value="17">GP17</option>\
-                            <option value="18">GP18</option>\
-                            <option value="19">GP19</option>\
-                            <option value="20">GP20</option>\
-                            <option value="21">GP21</option>\
-                            <option value="22">GP22</option>\
-                            <option value="23">GP23</option>\
-                            <option value="24">GP24</option>\
-                            <option value="25">GP25</option>\
-                            <option value="26">GP26</option>\
-                            <option value="27">GP27</option>\
-                            <option value="28">GP28</option>\
-                            <option value="29">GP29</option>\
-                            <option value="30">GP30</option>\
-                            <option value="31">GP31</option>\
-                            <option value="32">GP32</option>\
-                            <option value="33">GP33</option>\
-                            <option value="34">GP34</option>\
-                            <option value="35">GP35</option>\
-                            <option value="36">GP36</option>\
-                            <option value="37">GP37</option>\
-                            <option value="38">GP38</option>\
-                            <option value="39">GP39</option>\
-                            <option value="40">GP40</option>\
-                            <option value="41">GP41</option>\
-                            <option value="42">GP42</option>\
-                            <option value="43">GP43</option>\
-                            <option value="44">GP44</option>\
-                            <option value="45">GP45</option>\
-                            <option value="46">GP46</option>\
-                            <option value="47">GP47</option>\
-                            <option value="48">GP48</option>\
-                        </select></td> ';
-
-  cell1.innerHTML = name;
-  cell2.innerHTML = "Not Set";
-  cell3.innerHTML = "random";
-  cell4.innerHTML = fade;
-  cell5.innerHTML = gpio_pins;
-  cell6.innerHTML = 20;
-  cell7.innerHTML = 7;
-
-
-  //update_color_button_table();
+  Configurator.appendButton({
+    name, positions: [0], color: "random", fade: false,
+    pin: 0, fadeIn: 20, fadeOut: 7
+  });
   showMessage("Button: " + name + " has been added", 'success');
   reset_all();
   update_onoff_select();
@@ -372,6 +301,13 @@ function update_button() {
   if (eightway_select_right_old == old_name)
     document.getElementById("eightway_select-right").value = name;
 
+  combo_sprites_available_buttons = combo_sprites_available_buttons.map(value => value === old_name ? name : value);
+  document.querySelectorAll(".combo-row").forEach(row => {
+    row.selectedButtons = row.selectedButtons.map(value => value === old_name ? name : value);
+  });
+  updateAllComboDropdowns();
+  updateAllChips();
+
   // update OLED Button Names
   for (let btn of circles) {
     if (btn.button_activation == old_name) {
@@ -460,4 +396,70 @@ function set_fadeout_for_all() {
   for (var i = 1, row; row = table.rows[i]; i++) {
     table.rows[i].cells[6].innerHTML = fade_out_val;
   }
+}
+
+function bindButtonOrder() {
+  const table = document.getElementById("button_table");
+  let drag = null;
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const slides = new WeakMap();
+
+  function move(row, target) {
+    if (!target || target === row || target.rowIndex < 1) return false;
+    const selected = table.rows[button_row_id];
+    const after = row.rowIndex < target.rowIndex;
+    const affected = Array.from(table.rows).slice(
+      Math.min(row.rowIndex, target.rowIndex), Math.max(row.rowIndex, target.rowIndex) + 1);
+    // Animate the cells so the rows keep stable hit targets during quick direction changes.
+    const starts = affected.map(item => item.cells[0].getBoundingClientRect().top);
+    target.parentNode.insertBefore(row, after ? target.nextSibling : target);
+    affected.forEach((item, index) => {
+      for (const cell of item.cells) slides.get(cell)?.cancel();
+      const distance = starts[index] - item.getBoundingClientRect().top;
+      if (reducedMotion.matches || !distance || !item.animate) return;
+      for (const cell of item.cells) {
+        slides.set(cell, cell.animate([
+          {transform: "translateY(" + distance + "px)"}, {transform: "translateY(0)"}
+        ], {duration: 160, easing: "cubic-bezier(.2,.75,.25,1)"}));
+      }
+    });
+    button_row_id = selected ? selected.rowIndex : -1;
+    return true;
+  }
+
+  table.addEventListener("pointerdown", event => {
+    const grip = event.target.closest(".row-grip");
+    if (!grip || drag || event.button !== 0) return;
+    drag = {id: event.pointerId, row: grip.closest("tr"), moved: false};
+    drag.row.classList.add("reordering");
+    event.preventDefault();
+  });
+  document.addEventListener("pointermove", event => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const bounds = table.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right) return;
+    const target = Array.from(table.rows).find(row => {
+      const rect = row.getBoundingClientRect();
+      return event.clientY >= rect.top && event.clientY < rect.bottom;
+    });
+    if (move(drag.row, target)) drag.moved = true;
+  });
+  function finishDrag(event) {
+    if (!drag || (event.pointerId != null && event.pointerId !== drag.id)) return;
+    drag.row.classList.remove("reordering");
+    if (drag.moved) generate_code();
+    drag = null;
+  }
+  document.addEventListener("pointerup", finishDrag);
+  document.addEventListener("pointercancel", finishDrag);
+  window.addEventListener("blur", finishDrag);
+  table.addEventListener("keydown", event => {
+    if (!event.target.matches(".row-grip") || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
+    event.preventDefault();
+    const row = event.target.closest("tr");
+    if (move(row, table.rows[row.rowIndex + (event.key === "ArrowUp" ? -1 : 1)])) {
+      row.querySelector(".row-grip").focus();
+      generate_code();
+    }
+  });
 }

@@ -7,7 +7,9 @@ function showMessage(text, type = 'info', duration = 3000) {
   const messageBox = document.createElement('div');
   messageBox.id = id;
   messageBox.className = `message-box ${type}`;
-  messageBox.innerHTML = `<span>${text}</span>`;
+  const content = document.createElement('span');
+  content.textContent = text;
+  messageBox.append(content);
   
   container.appendChild(messageBox);
   

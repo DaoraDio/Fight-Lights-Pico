@@ -25,29 +25,220 @@ h1 a:hover {
     color: var(--link-hover);
 }
 
-/* Drop Area Styles */
-#drop-area {
-    display: block;
-    border: 4px dashed var(--border-drop);
-    border-radius: 8px;
-    padding: 30px;
+.home-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.home-config-actions > button {
+    flex: 1 1 10rem;
+    min-height: 42px;
+}
+
+.config-upload-section #load-config-file {
+    width: 100%;
+    min-height: 42px;
+}
+
+.pico-port-option {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.75rem;
+}
+
+.pico-transfer-feedback {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
     text-align: center;
-    font-family: Arial, sans-serif;
-    color: var(--text-drop);
-    cursor: pointer;
-    max-width: 380px;
-    margin: 20px auto;
-    font-size: 1.1rem;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
-#drop-area:hover {
-    border-color: var(--drop-hover);
-    color: var(--drop-hover);
-}
-
-#fileElem {
+.pico-transfer-feedback:has(.pico-progress[hidden] + .pico-status:empty),
+.pico-status:empty {
     display: none;
+}
+
+.pico-status {
+    min-height: 1.4em;
+    max-width: 450px;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.pico-progress {
+    width: 100%;
+    max-width: 450px;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--progress-bg);
+}
+
+.pico-progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--progress-active);
+    transition: width 180ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pico-progress-fill { transition: none; }
+}
+
+.pico-transfer-icon {
+    position: relative;
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    color: inherit;
+    background: linear-gradient(currentColor, currentColor) center 16% / 2px 54% no-repeat;
+}
+
+.pico-transfer-icon::before,
+.pico-transfer-icon::after {
+    content: "";
+    position: absolute;
+}
+
+.pico-transfer-icon::before {
+    left: 50%;
+    top: 26%;
+    width: 0.42em;
+    height: 0.42em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.pico-transfer-icon::after {
+    inset: auto 4% 0;
+    height: 0.34em;
+    border: 2px solid currentColor;
+    border-top: 0;
+    border-radius: 0 0 0.18em 0.18em;
+}
+
+.pico-transfer-icon--save,
+.pico-profile-dialog[data-mode="save"] .pico-transfer-icon {
+    background-position: center 46%;
+}
+
+.pico-transfer-icon--save::before,
+.pico-profile-dialog[data-mode="save"] .pico-transfer-icon::before {
+    top: 12%;
+    transform: translateX(-50%) rotate(225deg);
+}
+
+button > .pico-transfer-icon {
+    margin: 0 0.4em 0 0;
+    vertical-align: -0.14em;
+}
+
+.pico-profile-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    max-height: calc(100% - 2rem);
+    width: min(28rem, calc(100% - 2rem));
+    padding: 0;
+    border: 1px solid var(--led-border);
+    border-radius: 16px;
+    background: var(--bg-general);
+    color: var(--text-general);
+    box-shadow: 0 20px 60px rgb(0 0 0 / 28%);
+}
+
+.pico-profile-dialog::backdrop {
+    background: rgb(0 0 0 / 55%);
+}
+
+.pico-profile-dialog form {
+    margin: 0;
+}
+
+.pico-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--led-border);
+}
+
+.pico-profile-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    text-align: left;
+}
+
+.pico-profile-header .pico-profile-icon {
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    margin: 0;
+    border-radius: 8px;
+    background-color: #31783a;
+    background-size: 2px 32%;
+    background-position: center 25%;
+    color: white;
+    font-weight: 700;
+}
+
+.pico-profile-header .pico-profile-icon::before {
+    top: 33%;
+}
+
+.pico-profile-header .pico-profile-icon::after {
+    inset: auto 23% 20%;
+}
+
+.pico-profile-dialog[data-mode="save"] .pico-profile-icon {
+    background-position: center 45%;
+}
+
+.pico-profile-dialog[data-mode="save"] .pico-profile-icon::before {
+    top: 24%;
+}
+
+.pico-profile-tools:not(:has(button[hidden])) {
+    margin-top: 0.7rem;
+}
+
+.pico-profile-tools:has(button[hidden]) {
+    display: none;
+}
+
+.pico-profile-field {
+    padding: 1.1rem 1.25rem;
+}
+
+.pico-profile-field label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.pico-profile-field select {
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 0.4rem 0 0;
+}
+
+.pico-profile-field #pico-profile-note {
+    margin: 0.65rem 0 0;
+    font-size: 0.85rem;
+}
+
+.pico-profile-actions {
+    padding: 0.9rem 1.25rem;
+    border-top: 1px solid var(--led-border);
+}
+
+.pico-profile-actions button {
+    margin-bottom: 0;
 }
 
 /* Footer Styles */
@@ -142,6 +333,13 @@ h1 a:hover {
     font-size: 1.5rem;
 }
 
+.configurator-release-title,
+#configurator-release-tag,
+#project-release-tag {
+    font: inherit;
+    margin: 0;
+}
+
 /* Logo Styles */
 .logo-link {
     display: inline-block;
@@ -212,12 +410,6 @@ h1 a:hover {
         font-size: 1.4rem;
     }
     
-    #drop-area {
-        padding: 20px;
-        font-size: 1rem;
-        max-width: 320px;
-    }
-    
     .footer-icons img {
         height: 50px;
         width: 50px;
@@ -226,4 +418,9 @@ h1 a:hover {
     .dropdown h1 {
         font-size: 1.3rem;
     }
+}
+.download-box .loaded-profile-status {
+    margin: 0.7rem 0 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
 }

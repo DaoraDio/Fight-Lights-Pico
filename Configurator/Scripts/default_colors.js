@@ -1,28 +1,4 @@
 var bg_row_id = -1;
-function fill_bg_table_from_loaded_box() {
-    if (get_value("background = ")) {
-        var background = get_value("background = ");
-        background = background.substring(1);
-        background = background.slice(0, -1);
-        background = background.split('),(');
-        background[0] = background[0].substring(1);
-        background[background.length - 1] = background[background.length - 1].slice(0, -1);
-
-        var codebox2 = document.getElementById("new_codebox");
-        if (codebox2.value != "") {
-            for (var i = 0; i < document.getElementById("led_count").value; i++) {
-                var row = background_table.rows[i + 1];
-
-                var split_arr = background[i].split(',');
-
-                row.cells[0].innerHTML = parseInt(split_arr[2])
-                row.cells[1].innerHTML = split_arr[1];
-                row.cells[2].innerHTML = parseFloat(split_arr[0]) * 100 + "%";
-            }
-        }
-    }
-}
-
 function set_bg_table() {
     var table = document.getElementById("background_table");
     var desiredCount = parseInt(document.getElementById("led_count").value);
@@ -32,8 +8,8 @@ function set_bg_table() {
     var existingData = [];
     for (var i = 1; i < table.rows.length; i++) { // skip header (i=0)
         var row = table.rows[i];
-        var color = row.cells[1].innerHTML;
-        var brightness = row.cells[2].innerHTML;
+        var color = row.cells[1].textContent;
+        var brightness = row.cells[2].textContent;
         existingData.push({ color: color, brightness: brightness });
     }
 
@@ -44,26 +20,11 @@ function set_bg_table() {
 
     // Rebuild rows
     for (var i = 0; i < desiredCount; i++) {
-        var row = table.insertRow();
-
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3); // Add the color preview cell
-
-        cell1.innerHTML = i + 1;
-
-        if (existingData[i]) {
-            cell2.innerHTML = existingData[i].color;
-            cell3.innerHTML = existingData[i].brightness;
-        } else {
-            cell2.innerHTML = "blank";
-            cell3.innerHTML = "100%";
-        }
-
-        // Set the last cell's background color to black
-        cell4.className = "default-colors_color_row";
-        cell4.style.backgroundColor = "black";
+        const {color, brightness} = existingData[i] ?? {color: "blank", brightness: "100%"};
+        const row = Configurator.appendRow("background_table", [i + 1, color, brightness]);
+        const preview = row.insertCell();
+        preview.className = "default-colors_color_row";
+        preview.style.backgroundColor = "black";
     }
     //fill_bg_table_from_loaded_box();
 }

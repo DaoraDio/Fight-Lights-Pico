@@ -1,126 +1,82 @@
-if __name__ == '__main__':
-    with open('main.py', 'r') as f:
-        code = f.read()
-    exec(code)
+if __name__ == "__main__":
+    import main
+    main.run()
 
 print("\033[32minit\033[0m")
-import machine
-import _thread
-code = "" #hold the code for main.py when launching from config
 
-leniency_counter = 0 #increases every iteration of the main loop, resets when value reaches config.leniency
-string_leniency = 0 #unused currently
-main_cnt = 0 # increases every iteration of the main loop
-i = 0 #increases every time the leniency_counter hits the value defined in config.py leniency
-temp_brightness = 0
+import _thread
+
+from machine import Timer
+
+
+# Kept for older Configurator files that launch main.py with exec().
+code = ""
+
+random = "random"
+rainbow = "rainbow"
+smooth = "smooth"
+notSet = "notSet"
+
+frequency = 60
+setback_value = -10
+timer1 = Timer()
+timer2 = Timer()
+timer3 = Timer()
+timer4 = Timer()
+timer_counter = 0
+idle_counter = 0
+idle_ticks = 0
+string_leniency = 0
+
+leniency_counter = 0
+i = 0
+random_color_id = 0
+start_pos = 0
+button_list_length = 0  # Populated by existing config.py files.
+direction_bits = 0
+saved_RGB = (0, 0, 0)
+last_color_id = 0
 
 timer_lock = False
+timer_start = 0
 timer_target = 0
-timer_start = 1
+options_requested = False
+options_require_release = False
+mode_selector = 0
+profiles = []
+profile_names = []
 
-#variable that keeps track of the position in the array button_list in button.py of the latest button which has been pressed
-start_pos = 0
-
-#global counter that increases at the rate of frequency
-timer_counter = 0
-
-#value to which the timer counter gets reset after a button press,
-#ideally it should be 0, but if the frequency is too high and the setback value is too high as well (aka 0 or >-5)...
-#...the timer interrupt overrides the value too fast for other functions to register properly
-setback_value = -10
-run_buttons = False
-
-#counter for idle mode, gets set to setback_value on button press
-idle_counter = 0
-
-#is set at program start by the function idle_after()
-idle_ticks = 0
-
+temp_brightness = 0
 tmp_brightness = 1
+on_off_cnt = False
+cached_background = None
+background_entries = []
 
-random_color_id = 0
-
-#frequency in hz at which the timer interrups happen
-frequency = 60
-
-no_buttons_pressed = False
-press_cnt = 0
-
-random_color = 0
-
-random = 'random'
-rainbow = 'rainbow'
-smooth = 'smooth'
-notSet = 'notSet'
-
-#initializations for fgc inputs
 current_input = ""
+previous_input = ""
 fgc_strings = []
 copy_strings = []
 animation_num = []
 fgc_strings_length = 0
 
-
-#length of list button.button_list
-button_list_length = 0
-
-#do not change (except you know what you are doing)
-timer1 = machine.Timer() #timer for timer the interrupts
-timer2 = machine.Timer() #debounce timer for brightness
-timer3 = machine.Timer()
-timer4 = machine.Timer() #timer for player LED update
-timer5 = machine.Timer() 
-
-mode_selector = 0 #should not be reset on mode select
-
-##initializations for background color and brightness
-bg_initialized = False
-single_tuple = False
-ranges = []
-colors = []
-brightness_values = []
-background_color = (0,0,0)
-background = 0
-
-
 file_name = "stats.txt"
-seconds_counter = 0 #this counts up every seconds to save to the file file_name
-header_text = "##################This file stores the number of presses for each button#########\n##################and the uptime in seconds######################################\n" #header text for the file file_name
-file_content = "" #stores the files content in memory 
+header_text = (
+    "##################This file stores the number of presses for each button#########\n"
+    "##################and the uptime in seconds######################################\n"
+)
+stats_updated_ms = 0
+run_savestats = False
 
-
-profile_names = []
-####player LED status
 p1_active = False
 p2_active = False
 p3_active = False
 p4_active = False
 
-#quick load variables
-config_names = []
-current_config_index = 0
-
-#onoff button and dynamic profile counter
-on_off_cnt = 0
-prof_next_cnt = 0
-prof_prev_cnt = 0
-
-#8 Way-Joystick random color 
-saved_RGB = (0,0,0)
-last_color_id = 0
-
-run_savestats = False
-
 oled_active = False
 oled_splash_drawn = False
+oled_stick_drawn = False
 oled_stop_animation = True
-
+combo_triggered = False
 lock = _thread.allocate_lock()
 pixel_coordinates = []
-current_frame = ""
-framebuffer = ""
-t1 = 0
-t2 = 0
-hex_bytearrays = []
-combo_triggered = False #flag for OLED Combo trigger
-entering_options_mode = False
+

@@ -79,7 +79,6 @@ function draw_canvas() {
 
 function show_oled_modal() {
     show_hide_i2c_selects();
-    loadImageToCanvas();
 
     /*if (canvas_drawn == false)
         draw_canvas();
@@ -448,98 +447,10 @@ function changeangle(a) {
     }
 }
 
-function loadImageToCanvas() {
-    const imageLoader = document.getElementById('imageLoader');
-    const canvas = document.getElementById('my_splash_canvas');
-    const ctx = canvas.getContext('2d');
-
-    document.getElementById('customButton').addEventListener('click', function () {
-        imageLoader.click();
-    });
-
-    imageLoader.addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-            const img = new Image();
-            img.onload = function () {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-
-                for (let i = 0; i < data.length; i += 4) {
-                    const gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
-                    const binaryColor = gray > 128 ? 255 : 0;
-
-                    data[i] = binaryColor;
-                    data[i + 1] = binaryColor;
-                    data[i + 2] = binaryColor;
-                }
-
-                ctx.putImageData(imageData, 0, 0);
-            }
-            img.src = event.target.result;
-        }
-
-        reader.readAsDataURL(file);
-    });
-}
-
-function handleUploadOverlay() {
-    const imageLoader = document.getElementById('imageLoader2');
-    const canvas = document.getElementById('my_overlay_canvas');
-
-    imageLoader.click();
-
-    imageLoader.onchange = function (event) {
-        const file = event.target.files[0];
-        if (!file) {
-            console.error('No file selected');
-            return;
-        }
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-            const img = new Image();
-            img.onload = function () {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-
-                for (let i = 0; i < data.length; i += 4) {
-                    const gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
-                    const binaryColor = gray > 128 ? 255 : 0;
-
-                    data[i] = binaryColor;
-                    data[i + 1] = binaryColor;
-                    data[i + 2] = binaryColor;
-                }
-
-                ctx.putImageData(imageData, 0, 0);
-            };
-            img.onerror = function () {
-                console.error('Failed to load image');
-            };
-            img.src = event.target.result;
-        };
-
-        reader.onerror = function () {
-            console.error('Failed to read file');
-        };
-
-        reader.readAsDataURL(file);
-    };
-}
-
 document.addEventListener('keydown', function (event) {
     const step = 1;
-    if (selectedCircle) {
+    if (selectedCircle && document.getElementById("oled-page").style.display !== "none" &&
+        !event.target.matches("input, select, textarea, [contenteditable]")) {
         switch (event.key) {
             case 'ArrowUp':
                 selectedCircle.moveBy(0, -step);
@@ -578,74 +489,6 @@ function invertColors() {
     }
 
     ctx.putImageData(imageData, 0, 0);
-}
-
-function createPythonByteArray(pixelArray, string) {
-    const width = 128;
-    const height = 64;
-    const bytesPerRow = width / 8;
-    let hexString = string + ' = bytearray([\n';
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < bytesPerRow; x++) {
-            let byte = 0;
-
-            for (let bit = 0; bit < 8; bit++) {
-                if (pixelArray[y * width + x * 8 + bit] === 255) {
-                    byte |= (1 << (7 - bit));
-                }
-            }
-
-            hexString += '0x' + byte.toString(16).padStart(2, '0').toUpperCase() + ',';
-        }
-        hexString += '\n';
-    }
-
-    hexString = hexString.slice(0, -2) + '\n])';
-    return hexString;
-}
-
-function createPythonByteArray2(pixelArray, string) {
-    const width = 128;
-    const height = 64;
-    const bytesPerRow = width / 8;
-    let hexString = string;
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < bytesPerRow; x++) {
-            let byte = 0;
-
-            for (let bit = 0; bit < 8; bit++) {
-                if (pixelArray[y * width + x * 8 + bit] === 255) {
-                    byte |= (1 << (7 - bit));
-                }
-            }
-
-            hexString += byte.toString(16).padStart(2, '0').toUpperCase();
-        }
-    }
-
-    return hexString;
-}
-
-function getBinaryPixelValuesArray(canvas_id) {
-    const canvas = document.getElementById(canvas_id);
-    const ctx = canvas.getContext('2d');
-
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
-    const binaryArray = [];
-
-    for (let y = 0; y < canvas.height; y++) {
-        for (let x = 0; x < canvas.width; x++) {
-            const index = (y * canvas.width + x) * 4;
-            const value = data[index];
-            binaryArray.push(value === 0 ? 0 : 255);
-        }
-    }
-
-    return binaryArray;
 }
 
 function set_viewlix_layout() {
@@ -764,198 +607,6 @@ function set_layout() {
     updateCanvas();
 }
 
-var animation_string = "";
-var animation_string2 = "";
-var frame_arr = "frames = [";
-var totalFiles = 0;
-var processedFiles = 0;
-
-
-
-
-
-function handlePngUpload(event) {
-    const files = event.target.files;
-    if (files.length === 0) {
-        console.error("No PNG files selected.");
-        return;
-    }
-
-    animation_string = "";
-    animation_string2 = "";
-    frame_arr = "frames = [";
-    totalFiles = files.length;
-    processedFiles = 0;
-
-    const progressBar = document.getElementById('conversionProgress');
-    progressBar.value = 0;
-    progressBar.max = totalFiles;
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type === "image/png") {
-            readAndProcessPng(file, i);
-        } else {
-            console.warn(`Skipping non-PNG file: ${file.name}`);
-        }
-    }
-}
-
-function readAndProcessPng(file, i) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const img = new Image();
-        img.onload = function () {
-            processPngFrame(img, i);
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function processPngFrame(img, i) {
-    const canvas = document.getElementById('pngCanvas');
-    const ctx = canvas.getContext('2d');
-
-    canvas.width = img.width;
-    canvas.height = img.height;
-
-    ctx.drawImage(img, 0, 0, img.width, img.height);
-
-    const frameData = ctx.getImageData(0, 0, img.width, img.height);
-    const binaryFrame = convertToBinaryImage(frameData);
-    convertToBinaryArray(binaryFrame, img.width, img.height, i);
-}
-
-function convertToBinaryImage(frameData) {
-    const binaryImage = new Uint8Array(frameData.width * frameData.height);
-    for (let y = 0; y < frameData.height; y++) {
-        for (let x = 0; x < frameData.width; x++) {
-            const index = (y * frameData.width + x) * 4;
-            const r = frameData.data[index];
-            const g = frameData.data[index + 1];
-            const b = frameData.data[index + 2];
-            const gray = (r + g + b) / 3;
-            binaryImage[y * frameData.width + x] = gray > 127 ? 255 : 0;
-        }
-    }
-    return binaryImage;
-}
-
-function convertToBinaryArray(binaryFrame, width, height, i) {
-    const binaryArray = new Uint8Array(width * height);
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            binaryArray[y * width + x] = binaryFrame[y * width + x] === 255 ? 255 : 0;
-        }
-    }
-
-    let name = 'frame' + i;
-    animation_string += createPythonByteArray(binaryArray, name) + '\n';
-    animation_string2 += createPythonByteArray2(binaryArray, "");
-    frame_arr += name + ",";
-
-    document.getElementById("animation_code_box").value = animation_string + '\n' + frame_arr;
-    document.getElementById("animation_code_box").value = document.getElementById("animation_code_box").value.slice(0, -1) + ']';
-    document.getElementById("animation_code_box2").value = animation_string2;
-
-    processedFiles++;
-    document.getElementById('conversionProgress').value = processedFiles;
-    if (processedFiles === totalFiles) {
-        const selectedRadio = document.querySelector('input[name="animation_mode"]:checked');
-        const filename = selectedRadio && selectedRadio.value === 'mode1'
-            ? 'oled_animation.flan'
-            : 'oled_combo_sprites.flan';
-
-        save_animation_code2(filename, "text/plain");
-    }
-}
-
-function processLines(text) {
-    const lines = text.split('\n');
-    const processedLines = lines
-        .map(line => {
-            const trimmedLine = line.trim().replace(/,\s*$/, '');
-            if (trimmedLine === '0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00')
-                return '0';
-            else if (trimmedLine === '0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF')
-                return '1'
-            return trimmedLine;
-        });
-
-    return processedLines.join('\n');
-}
-
-function exportCanvasAsPNG() {
-    const canvas = document.getElementById('myCanvas');
-    const ctx = canvas.getContext('2d');
-
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    const tempContext = tempCanvas.getContext('2d');
-
-    tempContext.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
-    const dataURL = tempCanvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'layout.png';
-    link.click();
-}
-
-function save_animation_code(filename, type) {
-    var data = document.getElementById("animation_code_box").value;
-    var file = new Blob([data], { type: type });
-    if (window.navigator.msSaveOrOpenBlob)
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else {
-        var a = document.createElement("a"),
-            url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
-}
-
-function save_animation_code2(filename, type) {
-    var data = document.getElementById("animation_code_box2").value;
-    var file = new Blob([data], { type: type });
-    if (window.navigator.msSaveOrOpenBlob)
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else {
-        var a = document.createElement("a"),
-            url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
-}
-
-function check_animation_codebox() {
-    var codebox = document.getElementById("animation_code_box").value;
-    if (codebox == "") {
-        document.getElementById("oled_download_animation").disabled = true;
-        document.getElementById("oled_download_animation").style.opacity = "50%";
-        document.getElementById("oled_download_animation").style.cursor = "default";
-    }
-    else {
-        document.getElementById("oled_download_animation").disabled = false;
-        document.getElementById("oled_download_animation").style.opacity = "100%";
-        document.getElementById("oled_download_animation").style.cursor = "alias";
-    }
-}
-
 function show_hide_i2c_selects() {
     var sda0 = document.getElementById("oled_sda0_select");
     var scl0 = document.getElementById("oled_scl0_select");
@@ -990,18 +641,8 @@ function initOledComponents() {
     if (overlay_canvas_drawn == false)
         draw_overlay_canvas();
 
-    const uploadBtn = document.getElementById('oled_upload_animation_button');
-    const uploadInput = document.getElementById('uploadPngs');
     const radiusInput = document.getElementById('oled_button_radius');
     const angleInput = document.getElementById('oled_key_angle');
-
-    if (uploadBtn && uploadInput) {
-        uploadBtn.addEventListener('click', function () {
-            uploadInput.click();
-        });
-
-        uploadInput.addEventListener('change', handlePngUpload);
-    }
 
     if (radiusInput) {
         radiusInput.addEventListener('input', function () {

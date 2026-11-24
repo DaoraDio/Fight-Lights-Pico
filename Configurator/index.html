@@ -3,7 +3,7 @@
 
 <head>
   <link rel="icon" type="image/png"
-    href="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/Fight%20Lights%20Logo%20big.png">
+    href="assets/Fight%20Lights%20Logo%20big.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fight-Lights Configurator</title>
@@ -33,7 +33,6 @@
   <link rel="stylesheet" href="CSS/ui_element_styles/range.css" />
 
   <link rel="stylesheet" href="CSS/navbar.css" />
-  <link rel="stylesheet" href="CSS/logo.css" />
   <link rel="stylesheet" href="CSS/messagebox.css" />
   <link rel="stylesheet" href="CSS/rightclick_menu.css" />
   <link rel="stylesheet" href="CSS/coloris.css" />
@@ -107,7 +106,7 @@
 
 <div class="logo-overlay">
   <a href="https://fight-lights.com" target="_blank" style="cursor: pointer;">
-    <img src="https://raw.githubusercontent.com/DaoraDio/Fight-Lights-Pico/main/images/Fight%20Lights%20Logo%20big.png"
+    <img src="assets/Fight%20Lights%20Logo%20big.png"
       alt="Logo" />
   </a>
 </div>
@@ -140,11 +139,50 @@
         </span>
       </label>
       <a href="#" onclick="setActiveLink(event); showPage('codeboxes'); generate_code()">Code</a>
-      <button class="dl_code_buttons" id="code_clipboard" onclick="copy_to_clipboard()"
-        title="Copy code to clipboard">&#128203</button>
-      <button class="dl_code_buttons" onclick="save_code('config.py')">Download Code</button>
+      <button type="button" id="read-pico-config" data-pico-action="read" class="dl_code_buttons" title="Choose a profile to load from the Pico."><span class="pico-transfer-icon pico-transfer-icon--load" aria-hidden="true"></span>Load from Pico</button>
+      <button type="button" id="upload-pico-config" data-pico-action="upload" class="dl_code_buttons" title="Save the current configuration to a profile slot on the Pico and restart it."><span class="pico-transfer-icon pico-transfer-icon--save" aria-hidden="true"></span>Save to Pico</button>
     </div>
   </nav>
+  <div class="pico-transfer-feedback">
+    <div id="pico-upload-progress" class="pico-progress" role="progressbar" aria-label="Pico transfer progress"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+        <div id="pico-upload-progress-fill" class="pico-progress-fill"></div>
+    </div>
+    <p id="pico-upload-status" class="pico-status" role="status"></p>
+  </div>
+
+  <dialog id="pico-profile-dialog" class="pico-profile-dialog" aria-labelledby="pico-profile-heading">
+    <form method="dialog">
+      <header class="pico-profile-header">
+        <span class="pico-profile-icon pico-transfer-icon" aria-hidden="true"></span>
+        <h2 id="pico-profile-heading"></h2>
+      </header>
+      <div class="pico-profile-field">
+        <label for="pico-profile-select">Profile file</label>
+        <select id="pico-profile-select" aria-describedby="pico-profile-note" autofocus></select>
+        <p id="pico-profile-note" role="status"></p>
+        <div class="home-actions pico-profile-tools">
+          <button type="button" id="pico-profile-activate" class="action-btn secondary" hidden disabled>Set as active</button>
+          <button type="button" id="pico-profile-delete" class="action-btn danger" hidden disabled>Delete profile</button>
+        </div>
+      </div>
+      <div class="home-actions pico-profile-actions">
+        <button type="submit" value="cancel" class="action-btn secondary">Cancel</button>
+        <button type="submit" value="confirm" id="pico-profile-confirm" class="action-btn primary"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="pico-update-dialog" class="pico-profile-dialog" aria-labelledby="pico-update-heading">
+    <form method="dialog">
+      <header class="pico-profile-header"><h2 id="pico-update-heading">Back up Pico profiles</h2></header>
+      <div class="pico-profile-field"><p id="pico-update-note"></p></div>
+      <div class="home-actions pico-profile-actions">
+        <button type="submit" value="cancel" class="action-btn secondary">Cancel</button>
+        <button type="button" id="pico-update-backup" class="action-btn primary">Download backup</button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog class="modal" id="set_directions_modal">
     <h2>Map Directions</h2>
@@ -170,28 +208,1297 @@
   </dialog>
 
   <!-- Main content area - all pages preloaded but hidden -->
-  <div id="home-page" class="page-content" style="display:none;"></div>
-  <div id="general-page" class="page-content" style="display:none;"></div>
-  <div id="idle-page" class="page-content" style="display:none;"></div>
-  <div id="codeboxes-page" class="page-content" style="display:none;"></div>
-  <div id="led_options-page" class="page-content" style="display:none;"></div>
-  <div id="buttons-page" class="page-content" style="display:none;"></div>
-  <div id="default_colors-page" class="page-content" style="display:none;"></div>
-  <div id="player_leds-page" class="page-content" style="display:none;"></div>
-  <div id="eightway-page" class="page-content" style="display:none;"></div>
-  <div id="oled-page" class="page-content" style="display:none;"></div>
+  <div id="home-page" class="page-content" style="display:none;">
+<div class="logo-container">
+        <a href="https://fight-lights.com" target="_blank" class="logo-link">
+            <img src="assets/Fight%20Lights%20Logo%20big.png"
+                alt="Fight Lights Logo" />
+        </a>
+    </div>
+    
+    <div id="home-container">
+        <h1><a target="_blank" href="https://fight-lights.com">Fight Lights</a></h1>
+        
+        <div class="dropdown">
+            <h1 onclick="toggleDropdown()"><span class="configurator-release-title">Configurator for <span id="configurator-release-tag">v2.8.0</span></span> <span class="dropdown-arrow">▼</span></h1>
+            <div class="dropdown-content">
+                <a href="https://fight-lights.com/Configurator/275/" target="_blank">Version 2.7.5</a>
+                <a href="https://fight-lights.com/Configurator/270/" target="_blank">Version 2.7.0</a>
+                <a href="https://fight-lights.com/Configurator/263/" target="_blank">Version 2.6.3</a>
+                <a href="https://fight-lights.com/Configurator/262/" target="_blank">Version 2.6.2</a>
+                <a href="https://fight-lights.com/Configurator/260/" target="_blank">Version 2.6.0</a>
+                <a href="https://fight-lights.com/Configurator/252/" target="_blank">Version 2.5.2</a>
+                <a href="https://fight-lights.com/Configurator/247/" target="_blank">Version 2.4.7</a>
+                <a href="https://fight-lights.com/Configurator/240/" target="_blank">Version 2.4.0</a>
+                <a href="https://fight-lights.com/Configurator/230/" target="_blank">Version 2.3.0</a>
+                <a href="https://fight-lights.com/Configurator/225/" target="_blank">Version 2.2.5</a>
+                <a href="https://fight-lights.com/Configurator/220/" target="_blank">Version 2.2.0</a>
+                <a href="https://fight-lights.com/Configurator/210/" target="_blank">Version 2.1.0</a>
+                <a href="https://fight-lights.com/Configurator/203/" target="_blank">Version 2.0.3</a>
+            </div>
+        </div>
+
+        <div class="config-upload-section">
+            <section class="download-box">
+                <h3>Configure your Pico</h3>
+                <div class="home-actions home-config-actions">
+                    <button type="button" data-pico-action="read" class="dl_code_buttons" title="Choose a profile to load from the Pico."><span class="pico-transfer-icon pico-transfer-icon--load" aria-hidden="true"></span>Load from Pico</button>
+                    <button type="button" data-pico-action="upload" class="dl_code_buttons" title="Save the current configuration to a profile slot on the Pico and restart it."><span class="pico-transfer-icon pico-transfer-icon--save" aria-hidden="true"></span>Save to Pico</button>
+                </div>
+                <p id="loaded-profile-status" class="loaded-profile-status" role="status" hidden></p>
+                <input type="file" id="fileElem" accept=".py" hidden>
+                <label class="pico-port-option"><input type="checkbox" id="pico-show-all-ports"> Show all serial ports</label>
+                <p>Connect a Pico running MicroPython over USB</p>
+                <button type="button" id="load-config-file" class="action-btn secondary"
+                    title="Open a config.py file from your computer.">Load config.py from file</button>
+            </section>
+
+            <div class="download-box">
+                <h3>Get Project Files</h3>
+                <p>Download or install Fight Lights <span id="project-release-tag">v2.8.0</span> directly from GitHub.</p>
+                <div class="home-actions">
+                    <button id="download-project-files" onclick="downloadFilesAsZip()" class="action-btn secondary"
+                        title="Download the Fight Lights project files as a ZIP.">Download Project Files</button>
+                    <button type="button" id="install-pico-project" data-pico-action="install" class="action-btn primary"
+                        title="Download this configurator’s Fight Lights release from GitHub and install it on your Pico.">Install on Pico</button>
+                </div>
+                <div id="zipStatus" class="status-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-icons">
+        <a href="https://github.com/DaoraDio/Fight-Lights-Pico" target="_blank">
+            <img src="assets/github.png" alt="GitHub"
+                class="github-icon" />
+        </a>
+        <a href="https://discord.gg/QZnwVMuW5T" target="_blank">
+            <img src="assets/discord-bw.png" alt="Discord"
+                class="discord-icon" />
+        </a>
+    </div>
+  </div>
+  <div id="general-page" class="page-content" style="display:none;">
+<h1 class="page-header">General Configurations</h1>
+<div id="general_container">
+  <!-- First Row: Number of LEDs and GPIO Pin -->
+  <div class="config-row">
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>Number of LEDs</div>
+        <div class="helper" title="Total number of LEDs in your LED chain">?</div>
+      </div>
+      <input id="led_count" name="led_count" type="number" value="8" min="1" max="2048"
+       >
+    </div>
+
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>LED Chain GPIO Pin</div>
+        <div class="helper" title="GPIO Pin that the LED chain connects to">?</div>
+      </div>
+      <select name="pin_num" id="pin_num">
+        <option value="0">GP0</option>
+        <option value="1">GP1</option>
+        <option value="2">GP2</option>
+        <option value="3">GP3</option>
+        <option value="4">GP4</option>
+        <option value="5">GP5</option>
+        <option value="6">GP6</option>
+        <option value="7">GP7</option>
+        <option value="8">GP8</option>
+        <option value="9">GP9</option>
+        <option value="10">GP10</option>
+        <option value="11">GP11</option>
+        <option value="12">GP12</option>
+        <option value="13">GP13</option>
+        <option value="14">GP14</option>
+        <option value="15">GP15</option>
+        <option value="16">GP16</option>
+        <option value="17">GP17</option>
+        <option value="18">GP18</option>
+        <option value="19">GP19</option>
+        <option value="20">GP20</option>
+        <option value="21">GP21</option>
+        <option value="22">GP22</option>
+        <option value="23">GP23</option>
+        <option value="24">GP24</option>
+        <option value="25">GP25</option>
+        <option value="26">GP26</option>
+        <option value="27">GP27</option>
+        <option value="28">GP28</option>
+        <option value="29">GP29</option>
+        <option value="30">GP30</option>
+        <option value="31">GP31</option>
+        <option value="32">GP32</option>
+        <option value="33">GP33</option>
+        <option value="34">GP34</option>
+        <option value="35">GP35</option>
+        <option value="36">GP36</option>
+        <option value="37">GP37</option>
+        <option value="38">GP38</option>
+        <option value="39">GP39</option>
+        <option value="40">GP40</option>
+        <option value="41">GP41</option>
+        <option value="42">GP42</option>
+        <option value="43">GP43</option>
+        <option value="44">GP44</option>
+        <option value="45">GP45</option>
+        <option value="46">GP46</option>
+        <option value="47">GP47</option>
+        <option value="48">GP48</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Second Row: Profile Name and Color -->
+  <div class="config-row">
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>Profile Name</div>
+        <div class="helper"
+          title="Name of the Profile&#10;Used to recognize the profile in the configurator and OLED Display">?</div>
+      </div>
+      <input id="profile_name" type="text" placeholder="Set name for this Profile">
+    </div>
+
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div>Profile Color</div>
+        <div class="helper" title="When in LED Options mode&#10;the profile color helps identify the profile to select">
+          ?</div>
+      </div>
+      <div class="input-wrapper">
+        <div class="colpicker full">
+          <input type="text" class="coloris instance2" id="profile_color" value="rgb(255, 0, 0)"
+            oninput="document.querySelector('nav').style.borderBottomColor = this.value">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third Row: Brightness Slider (now pushed to the right) -->
+  <div class="config-row">
+    <div class="brightness-control">
+      <div class="brightness-label">
+        <div>Startup Brightness: </div>
+        <span id="brightness-value">100%</span>
+        <div class="helper" title="This controls with how much brightness the LEDs have when plugged in.">?</div>
+      </div>
+      <input type="range" min="0" max="100" value="100" class="slider" id="startup_brightness"
+        onchange="update_brightness_input()" oninput="update_brightness_input()">
+    </div>
+  </div>
+
+  <!-- Fourth Row: Multipress Leniency and Checkboxes -->
+  <div class="config-row">
+    <div class="config-item">
+      <div class="label-wrapper">
+        <div id="leniency_tx">Multipress leniency</div>
+        <div class="helper"
+          title="Button colors that are set to 'random' have the feature, when pressed together at the same time, will light up with the same color. This controls how lenient the recognition is">
+          ?</div>
+      </div>
+      <div class="label-wrapper">
+        <input id="leniency_tb" name="input" type="number" value="1" min="1">
+        <input type="checkbox" id="leniency_cb" name="leniency_cb" onchange="update_leniency_input()">
+        <label for="leniency_cb">Disable</label>
+      </div>
+    </div>
+
+    <div class="checkboxes-column">
+      <div class="checkbox-item">
+        <input type="checkbox" id="onboard_LED">
+        <label for="onboard_LED">Enable Onboard LED</label>
+        <div class="helper" title="Enable or disable the Onboard LED of the Raspberry Pi Pico&#10;Sets Pin25">?</div>
+      </div>
+
+      <div class="checkbox-item">
+        <input type="checkbox" id="stats_cb" name="stats_cb">
+        <label for="stats_cb">Enable Stat Logging</label>
+        <div class="helper"
+          title="Enabling stat logging will create a log file inside your Pi Pico that logs how long your stick has been used, and how many times each button has been pressed&#10;Warning: Do this only after all your buttons have been set. New buttons will not automatically be added to an existing file, and changing names aswell. New buttons and changed names have to be added and changed manually">
+          ?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fifth Row: LED ON/OFF Buttons -->
+  <div class="config-row">
+    <h3 id="on_off_header">Buttons to Press Together to Turn LEDs ON/OFF</h3>
+
+    <div class="table-controls">
+      <button id="on_off_delete" onclick="delete_onoff_table()" class="action-btn danger" title="Delete"
+        disabled>Delete</button>
+      <button class="action-btn third" id="on_off_add" onclick="onoff_add()">Add</button>
+      <select id="on_off_select"></select>
+      <button id="on_off_reset" onclick="reset_onoff_table()" title="reset inputs"
+        class="action-btn secondary">Reset</button>
+    </div>
+
+    <table id="on_off_table" onmouseover="select_onoff_table()">
+      <thead>
+        <tr>
+          <th>Buttons</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table content will be generated dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-row">
+    <a href="https://fight-lights.com/docs/#general-config" target="_blank" id="oled_guide_link" class="guide-link">Need
+      help? Check out documentation for this page</a>
+  </div>
+</div>
+  </div>
+  <div id="idle-page" class="page-content" style="display:none;">
+<div id="idle_head_container">
+    <h1 class="page-header">Idle Mode Configuration</h1>
+    <div id="idle_header_helper" class="helper"
+        title="Idle mode activates after a certain amount of time, when no inputs have been made.&#10;Disabling Idle Mode will prevent the device from entering idle mode entirely">
+        ?</div>
+</div>
+<div class="idle_checkbox-container">
+    <input type="checkbox" id="idle_cb" name="idle_cb" onchange="toggle_idle_mode()">
+    <label id="idle_cb_label" for="idle_cb">Disable Idle Mode</label>
+</div>
+
+
+<div id="idlemode_container">
+    <div id="idle_general_container">
+        <div class="form-row">
+            <div>Select Idle Mode Animation:</div>
+            <select name="idle_select" id="idle_select" onchange="show_idle_extra_config()">
+                <option value="1">Breathing Lights</option>
+                <option value="2">Rainbow</option>
+                <option value="3">Dim Brightness</option>
+                <option value="4">Rain</option>
+                <option value="5">Color Chaser</option>
+                <option value="6">Do Nothing (for OLED)</option>
+            </select>
+            <div class="helper"
+                title="When no button is pressed for a time, the LEDs will enter a Idle mode where they display certain animationsMode 1 (Breathing) - The LEDs will circle between colors, each color slowly fades in an out.&#10;Mode 2 (Rainbow) - All LEDs will change their colors through the RGB spectrum&#10;Mode 3 (Dim Brightness) - Decrease brightness&#10;Mode 4 (Rain) - credits to Frawsty&#10;Mode 5 (Color Chaser) - snake like effect through all LEDs&#10;Mode 6 (Do Nothing) - The LEDs will not change at all. Used for triggering the OLED Idle mode without affecting the LEDs.">
+                ?</div>
+        </div>
+
+        <div class="form-row">
+            <label for="idle_tb">Enter Idle mode after </label>
+            <input id="idle_tb" name="input" type="number" value="30" min="0">
+            <label for="idle_tb">Seconds</label>
+            <div class="helper"
+                title="This controls how long it takes to enter idle mode after your last action. (in seconds)">?</div>
+        </div>
+    </div>
+
+    <div id="idle_exclude_container">
+        <div class="form-row" style="justify-content: center;">
+            <h3>Exclude LEDs from Idle mode</h3>
+            <div class="helper"
+                title="By default Idle Modes affect all LEDs&#10;Here you can set LEDs to be excluded from Idle Mode">?
+            </div>
+        </div>
+        <div id="idle_exlude_modal_body"></div>
+    </div>
+
+    <div id="idle1_config_container">
+        <h3>Breathing Lights Configuration</h3>
+
+        <div class="form-row">
+            <label for="idle1_speed">Speed:</label>
+            <input id="idle1_speed" type="number" value="0.05" min="0.001" step="0.001" title="Lower values make the lights breathe more slowly.">
+        </div>
+
+        <div class="form-row">
+            <input type="radio" name="idle_conf_radio" id="circle_checkbox" onclick="update_checkbox_hide()" checked>
+            <label for="circle_checkbox">Circle between all defined colors</label>
+        </div>
+        <div class="form-row">
+            <input type="radio" name="idle_conf_radio" id="circle_checkbox2" onclick="update_checkbox_show()">
+            <label for="circle_checkbox2">Set colors to circle between</label>
+        </div>
+
+        <div class="form-row">
+            <button class="action-btn danger" id="delete_idle_table" onclick="delete_idle_color()" title="Delete"
+                disabled>Delete</button>
+            <button class="action-btn third" id="add_idle_table" onclick="add_idle_color()">Add</button>
+            <select id="idle_circle_select" onmouseenter="update_idle_circle_select()">
+                <option>blank</option>
+            </select>
+            <button class="action-btn primary" id="reset_idle_table" onclick="reset_idle_selection()"
+                title="reset inputs">Reset</button>
+        </div>
+
+        <div id="circle_row_id" hidden></div>
+        <table class="tg" id="circle_table" onmouseover="select_circle_table()">
+            <thead>
+                <tr>
+                    <th style="font-weight: bold;">Colors</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="idle1_config_container_dim" hidden>
+        <div class="form-row">
+            <div class="dim-header-wrapper">
+                <h3 id="dim_header">Dim Brightness Configuration</h3>
+                <div class="helper"
+                    title="Sets the Brightness to a specific value.&#10;Set to 0% to turn the LEDs off&#10;Brightness can only be dimmed not increased">
+                    ?</div>
+            </div>
+            <div class="dim-brightness-row">
+                <span>Set Brightness to: <span id="brightness-value_dim">10%</span></span>
+                <input type="range" min="0" max="100" value="10" class="slider" id="dim_brightness_slider"
+                    oninput="update_dim_brightness_input()">
+            </div>
+
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer-row">
+        <a href="https://fight-lights.com/docs/#idle-mode" target="_blank" id="oled_guide_link-2"
+            class="guide-link">Need help? Check out documentation for this page</a>
+    </div>
+</div>
+  </div>
+  <div id="codeboxes-page" class="page-content" style="display:none;">
+    <div class="textarea-container">
+      <div class="textarea-wrapper">
+        <div class="code-pane-header">
+          <label for="new_codebox">Input Config</label>
+        </div>
+        <textarea id="new_codebox" autocomplete="off" readonly></textarea>
+      </div>
+      <div class="textarea-wrapper">
+        <div class="code-pane-header">
+          <label for="code_box">Output Config</label>
+          <div class="code-output-actions">
+            <button type="button" class="dl_code_buttons" id="code_clipboard" onclick="copy_to_clipboard()"
+              title="Copy code to clipboard" aria-label="Copy code to clipboard">&#128203;</button>
+            <button type="button" class="dl_code_buttons" onclick="save_code('config.py')">Download Code</button>
+          </div>
+        </div>
+        <textarea id="code_box" name="code_box" readonly></textarea>
+      </div>
+    </div>
+  </div>
+  <div id="led_options-page" class="page-content" style="display:none;">
+<div id="led_options_container">
+    <div id="idle_head_container-2">
+        <h2 class="page-header" id="led_options_header">Configure LED Options Mode</h2>
+        <div id="idle_header_helper-2" class="helper"
+            title="LED options mode is a menu that you can enter by holding buttons for a certain duration. It allows you to change the brightness and select profiles during play. The Profiles can be identified by their profile color.">
+            ?</div>
+    </div>
+    <!-- Section 1: LED Options Settings - Centered -->
+    <div class="section header-section centered-section">
+
+        <div class="centered-controls">
+            <div class="top-row-controls">
+                <div class="color-control-group">
+                    <div class="label-input-pair">
+                        <div class="label-wrapper">
+                            <span>LED Options Color</span>
+                            <div class="helper" title="Color the LEDs become while entering LED Options Mode">?</div>
+                        </div>
+                        <div class="input-wrapper">
+                            <div class="colpicker full">
+                                <input type="text" class="coloris instance2" id="led_options_color"
+                                    value="rgb(255, 0, 0)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="duration-control">
+                    <label>Hold duration to enter (s):</label>
+                    <input id="led_options_start_time" type="number" min="0" value="3">
+                </div>
+            </div>
+
+            <div class="checkbox-control">
+                <input type="checkbox" id="led_options_color_cb">
+                <label for="led_options_color_cb">Use all LEDs</label>
+                <div class="helper" title="When checked, all LEDs will light up in the profile color">?</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Button Combination Table -->
+    <div class="section table-section">
+        <h3 class="section-title">Button Combination to Enter Options Mode</h3>
+
+        <div class="table-controls">
+            <button class="action-btn danger" id="delete_led_options_table" onclick="delete_led_options_table()"
+                title="Delete" disabled>Delete</button>
+            <button class="action-btn third" id="add_led_options_table" onclick="add_led_option_button()">Add</button>
+            <select id="led_options_select" onmouseenter="">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <button class="action-btn secondary" id="reset_led_options_table" onclick="reset_led_options_table()"
+                title="Reset inputs">Reset</button>
+        </div>
+
+        <div id="led_options_table_row_id" hidden></div>
+        <table id="led_options_table" onmouseover="select_led_option_table()">
+            <thead>
+                <tr>
+                    <th>Buttons</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table content will be generated dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 3: Button Bindings -->
+    <div class="section bindings-section">
+        <h3 class="section-title">Button Bindings for Options Mode</h3>
+
+        <!-- Brightness Steps -->
+        <div class="brightness-steps-control">
+            <div class="steps-wrapper">
+                <label>Brightness Steps:</label>
+                <select id="brightness_steps" onchange="show_smooth_slider()">
+                    <option value="10">10 Steps</option>
+                    <option value="5">5 Steps</option>
+                    <option value="4">4 Steps</option>
+                    <option value="2">2 Steps</option>
+                    <option value="1">Toggle On/Off</option>
+                    <option value="smooth">Smooth</option>
+                </select>
+                <div class="helper"
+                    title="When increasing or decreasing the brightness via LED options mode, the step size controls how much the brightness changes per instance.&#10;10 steps - 10% change per click&#10;5 steps - 20% change per click&#10;4 steps - 25% change per click&#10;2 steps - 50% change per click&#10;Toggle On/Off - 100% change per click&#10;Smooth - The change in brightness is no longer in steps but increases/decreases smoothly as long as the corresponding button is held &#10;&#10;Example: If your startup brightness is set to 50% and step size set to 4 steps, increasing the brightness once will set your LEDs brightness to 75% ">
+                    ?</div>
+            </div>
+
+            <div class="smooth-control" id="smooth_control">
+                <input type="range" id="smooth_speed" min="0.005" max="0.1" step="0.005" oninput="update_smooth_value()"
+                    value="0.01" hidden>
+                <label for="smooth_speed" id="smooth_label" hidden>Speed: 0.010</label>
+
+            </div>
+        </div>
+
+        <!-- Brightness Controls -->
+        <div class="bindings-row">
+            <div class="bindings-group">
+                <label>Increase brightness:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_inc_brightness" class="led_option_selects"></select>
+                    <div class="helper" title="Select which button increases brightness during LED Options mode">?</div>
+                </div>
+            </div>
+
+            <div class="bindings-group">
+                <label>Decrease brightness:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_dec_brightness" class="led_option_selects"></select>
+                    <div class="helper" title="Select which button decreases brightness during LED Options mode">?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Navigation -->
+        <div class="bindings-row">
+            <div class="bindings-group">
+                <label>Profile advance:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_left" class="led_option_selects"></select>
+                    <div class="helper" title="Select which button selects the next profile during LED Options mode">?
+                    </div>
+                </div>
+            </div>
+
+            <div class="bindings-group">
+                <label>Profile back:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_right" class="led_option_selects"></select>
+                    <div class="helper"
+                        title="Select which button selects the previous profile during LED Options mode">?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Button -->
+        <div class="bindings-single centered-confirm">
+            <div class="bindings-group confirm-group">
+                <label>Confirm:</label>
+                <div class="select-wrapper">
+                    <select id="led_options_confirm" class="led_option_selects"></select>
+                    <div class="helper"
+                        title="Select which button serves as the confirmation button to exit LED Options mode. Alternatively pressing the buttons to enter LED Options mode simultaniously can act as the confirm/exit">
+                        ?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer-row">
+        <a href="https://fight-lights.com/docs/#options-mode" target="_blank" id="oled_guide_link-3"
+            class="guide-link">Need help? Check out documentation for this page</a>
+    </div>
+</div>
+  </div>
+  <div id="buttons-page" class="page-content" style="display:none;">
+<body>
+  <div class="button-config-container">
+    <!-- Left sidebar for controls -->
+    <div class="controls-sidebar">
+      <div id="idle_head_container-3">
+        <h2 id="buttons_page_header">Button Configuration</h2>
+        <div id="idle_header_helper-3" class="helper"
+          title="Add Buttons to the table and configure the behaviour of the LEDs on press.">
+          ?
+        </div>
+      </div>
+
+      <!-- Main controls moved to top -->
+      <div class="controls-container">
+        <div style="display: flex; gap: 10px;">
+          <button class="action-btn danger" id="delete_button" onclick="delete_button()" title="Delete"
+            disabled>Delete</button>
+          <button class="action-btn primary" id="update_button" onclick="update_button()" disabled>Update</button>
+          <button class="action-btn third" id="add_button" onclick="add_button()">Add</button>
+        </div>
+
+        <div class="input-container">
+          <input id="button_name" type="text" placeholder="Button Name">
+          <button class="action-btn secondary" id="refresh_button" onclick="reset_all()"
+            title="reset inputs">Reset</button>
+        </div>
+
+        <button id="set_leds_button" disabled onclick="led_open_modal()">Set LEDs</button>
+
+        <div class="button-select-container">
+          <label id="color_label" for="color_select" disabled>Button Color</label>
+          <select id="color_select" onmouseenter="" onchange="set_color_from_select()" disabled>
+            <option>random</option>
+          </select>
+        </div>
+
+        <!--<div class="range-container">
+          <label id="brightness_label" for="button_brightness">Brightness: 100%</label>
+          <input id="button_brightness" type="range" min="0" max="100" value="100" oninput="set_brightness_slider(this)">
+        </div>-->
+      </div>
+
+      <!-- Fade controls moved to bottom -->
+      <div class="fade-controls" id="fade-controls" disabled>
+        <div class="fade-control-group">
+          <span>Fade-in speed:</span>
+          <input type="number" min="0" max="100" id="fade_in" value="20" step="0.1" oninput="update_fadein()">
+          <div class="helper"
+            title="When fade enabled for a button this sets how fast that buttons fades from 0% brightness to full brightness when pressed. Can take floating point numbers as value&#10;Higher values = faster fade">
+            ?
+          </div>
+          <button class="action-btn secondary" onclick="set_fadein_for_all()">Set all</button>
+        </div>
+
+        <div class="fade-control-group">
+          <span>Fade-out speed:</span>
+          <input type="number" min="0" max="100" id="fade_out" value="6" step="0.1" oninput="update_fadeout()">
+          <div class="helper"
+            title="When fade enabled for a button this sets how fast that buttons fades from full brightness to 0% brightness when released. Can take floating point numbers as value&#10;Higher values = faster fade">
+            ?
+          </div>
+          <button class="action-btn secondary" onclick="set_fadeout_for_all()">Set all</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area for table -->
+    <div class="table-container">
+      <table class="button-table" id="button_table" onmouseover="select_button_table()">
+        <thead>
+          <tr>
+            <th title="Name of the button">Button Name</th>
+            <th title="Positions of the LEDs which light up when the button is pressed">LED Positions</th>
+            <th title="Color the LEDs take when the button is pressed">Color</th>
+            <th title="set if fade is enabled or disabled for the Button">Fade</th>
+            <th title="the GPIO pin for the Button">GPIO Pin</th>
+            <th title="Fade-in speed">Fade-in</th>
+            <th title="Fade-out speed">Fade-out</th>
+            <th aria-label="Row order"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table content will be generated dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <dialog class="modal" id="led_conf_modal">
+    <h2 id="modal_headline"></h2>
+    <button class="action-btn primary" onclick="set_all()">Set All</button>
+    <button class="action-btn primary" onclick="unset_all()">Unset All</button>
+    <br>
+    <br>
+    <div id="modal_body">
+    </div>
+    <button class="action-btn danger" id="close_modal" onclick="led_close_modal()">Cancel</button>
+    <button class="action-btn third" id="save_modal" onclick="led_save_modal()">Save</button>
+  </dialog>
+  <script src="Scripts/profile-codec.js" defer></script>
+  <script src="Scripts/preset.js" defer></script>
+  <script src="Scripts/oled-files.js" defer></script>
+  <script src="Scripts/configurator.js" defer></script>
+</body>
+
+</html>
+
+<div class="footer-row" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+  <a href="https://fight-lights.com/docs/#button-config" target="_blank" id="oled_guide_link-4" class="guide-link">
+    Need help? Check out documentation for this page
+  </a>
+</div>
+  </div>
+  <div id="default_colors-page" class="page-content" style="display:none;">
+<div id="default_colors_container">
+    <div id="idle_head_container-4">
+        <h1 class="page-header">Set Default LED Colors</h1>
+        <div id="idle_header_helper-4" class="helper"
+            title="The default color sets what colors the LEDs have when not pressed or not lit up by any other action like Idle mode. ">
+            ?
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="controls-section section-box">
+            <h2 class="section-title">Color Settings</h2>
+
+            <div class="control-group">
+                <label for="bg_color_select">Color:</label>
+                <select id="bg_color_select" onchange="select_set_color()">
+                    <optgroup label="Special option">
+                        <option>rainbow</option>
+                    </optgroup>
+                    <optgroup label="Colors">
+                        <option>blank</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="bg_brightness">Brightness: <span id="brightness_text">100</span>%</label>
+                <input type="range" min="0" max="100" value="100" id="bg_brightness" oninput="set_brightness()">
+            </div>
+
+            <div class="section-separator"></div>
+
+            <div class="control-group horizontal-group">
+                <input type="checkbox" id="clear_bg_on_press">
+                <label for="clear_bg_on_press">Clear default color on button press</label>
+                <div class="helper"
+                    title="When checked, pressing a button will temporarily turn all background colors off until the button is released again. So only the LEDs of the button that is currently pressed are lit">
+                    ?
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="rainbow_speed">Rainbow Speed:</label>
+                <div class="input-with-helper">
+                    <input type="number" id="rainbow_speed" min="0" value="1000"
+                        title="default value = 1000, higher values = slower">
+                    <div class="helper" title="Higher values = slower animation">?</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="bg_set_all()">Set for all</button>
+                <button class="action-btn secondary" onclick="bg_set_color_all()">Set color for all</button>
+                <button class="action-btn secondary" onclick="bg_set_brightness_all()">Set brightness for all</button>
+            </div>
+        </div>
+
+        <div class="table-section section-box">
+            <h2 class="section-title">Unpressed Colors</h2>
+            <div class="table-container">
+                <table id="background_table" onmouseover="select_bg_table()">
+                    <thead>
+                        <tr>
+                            <th>LED Number</th>
+                            <th>Color</th>
+                            <th>Brightness</th>
+                            <th class="color-preview-header"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="cursor: pointer;">
+                            <td>1</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>blank</td>
+                            <td>100%</td>
+                            <td class="default-colors_color_row"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer-row">
+        <a href="https://fight-lights.com/docs/#default-colors" target="_blank" id="oled_guide_link-5"
+            class="guide-link">Need help? Check out documentation for this page</a>
+    </div>
+</div>
+  </div>
+  <div id="player_leds-page" class="page-content" style="display:none;">
+<body>
+    <div id="player_leds_container">
+        <div id="idle_head_container-5">
+            <h1 class="page-header">Player LED Configuration</h1>
+            <div id="idle_header_helper-5" class="helper"
+                title="(WIP)&#10;DISABLED WHEN NOT IN USE&#10;Use the P1,P2,P3,P4 pins of a Brook Board to indipendently light up 4-WS2812 LEDs to indicate your player position.&#10;LED Out can be set in the configurator. The Brook player pins have to be connected to:&#10;P1 = GP21&#10;P2 = GP20&#10;P3 = GP19&#10;P4 = GP18&#10;Disable when not used to free the GPIO pins from being used">
+                ?</div>
+        </div>
+
+        <!-- Added checkbox container similar to idle page -->
+        <div class="player-led-checkbox-container">
+            <input type="checkbox" id="player_led_cb" name="player_led_cb" onchange="enable_disable_cb()" checked>
+            <label id="player_led_cb_label" for="player_led_cb">Disable Player LEDs</label>
+            <div class="helper" title="When checked, all player LED functionality will be disabled">?</div>
+        </div>
+
+        <div class="content-wrapper disabled-container" id="player_led_main_content">
+            <div class="controls-section section-box">
+                <div class="section-title">LED Settings</div>
+
+                <div class="control-group">
+                    <label for="playerLED_pin_num">GPIO PIN:</label>
+                    <select name="playerLED_pin_num" id="playerLED_pin_num" disabled>
+                        <option value="0">GP0</option>
+                        <option value="1">GP1</option>
+                        <option value="2">GP2</option>
+                        <option value="3">GP3</option>
+                        <option value="4">GP4</option>
+                        <option value="5">GP5</option>
+                        <option value="6">GP6</option>
+                        <option value="7">GP7</option>
+                        <option value="8">GP8</option>
+                        <option value="9">GP9</option>
+                        <option value="10">GP10</option>
+                        <option value="11">GP11</option>
+                        <option value="12">GP12</option>
+                        <option value="13">GP13</option>
+                        <option value="14">GP14</option>
+                        <option value="15">GP15</option>
+                        <option value="16">GP16</option>
+                        <option value="17">GP17</option>
+                        <option value="18">GP18</option>
+                        <option value="19">GP19</option>
+                        <option value="20">GP20</option>
+                        <option value="21">GP21</option>
+                        <option value="22">GP22</option>
+                        <option value="23">GP23</option>
+                        <option value="24">GP24</option>
+                        <option value="25">GP25</option>
+                        <option value="26">GP26</option>
+                        <option value="27">GP27</option>
+                        <option value="28">GP28</option>
+                        <option value="29">GP29</option>
+                        <option value="30">GP30</option>
+                        <option value="31">GP31</option>
+                        <option value="32">GP32</option>
+                        <option value="33">GP33</option>
+                        <option value="34">GP34</option>
+                        <option value="35">GP35</option>
+                        <option value="36">GP36</option>
+                        <option value="37">GP37</option>
+                        <option value="38">GP38</option>
+                        <option value="39">GP39</option>
+                        <option value="40">GP40</option>
+                        <option value="41">GP41</option>
+                        <option value="42">GP42</option>
+                        <option value="43">GP43</option>
+                        <option value="44">GP44</option>
+                        <option value="45">GP45</option>
+                        <option value="46">GP46</option>
+                        <option value="47">GP47</option>
+                        <option value="48">GP48</option>
+                    </select>
+                </div>
+
+                <div class="section-separator"></div>
+
+                <div class="control-group">
+                    <label for="playerLED_brightness">Brightness: <span
+                            id="playerLED_brightness_text">100</span>%</label>
+                    <input type="range" min="0" max="100" value="100" id="playerLED_brightness"
+                        oninput="set_playerLED_brightness()" disabled>
+                </div>
+
+                <div class="control-group">
+                    <label for="playerled_color_select">LED Color:</label>
+                    <select value="playerled_color_select" id="playerled_color_select"
+                        onchange="select_playerled_color(this)" disabled>
+                        <optgroup label="Colors">
+                            <option>blank</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <div class="player-section section-box">
+                <div class="section-title">Player Indicators</div>
+
+                <div class="player-leds-container">
+                    <div class="player-led-circle" id="player_led1" title="Player 1" onclick="on_playerled_click(1)"
+                        colorname="blank">
+                        <span>1</span>
+                    </div>
+                    <div class="player-led-circle" id="player_led2" title="Player 2" onclick="on_playerled_click(2)"
+                        colorname="blank">
+                        <span>2</span>
+                    </div>
+                    <div class="player-led-circle" id="player_led3" title="Player 3" onclick="on_playerled_click(3)"
+                        colorname="blank">
+                        <span>3</span>
+                    </div>
+                    <div class="player-led-circle" id="player_led4" title="Player 4" onclick="on_playerled_click(4)"
+                        colorname="blank">
+                        <span>4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="footer-row">
+            <a href="https://fight-lights.com/docs/#player-led" target="_blank" id="oled_guide_link-6"
+                class="guide-link">Need help? Check out documentation for this page</a>
+        </div>
+    </div>
+  <script src="Scripts/profile-codec.js" defer></script>
+  <script src="Scripts/preset.js" defer></script>
+  <script src="Scripts/oled-files.js" defer></script>
+  <script src="Scripts/configurator.js" defer></script>
+</body>
+  </div>
+  <div id="eightway-page" class="page-content" style="display:none;">
+<div id="idle_head_container-6">
+    <h1 class="page-header">8-Way Joystick LED Setup</h1>
+    <div id="idle_header_helper-6" class="helper"
+        title="Map all 8 directions of a 8-way joystick to LEDs.&#10;1.To get started set the directions for UP, DOWN, LEFT and RIGHT.&#10;2.Remove the LED positions for those directions in the 'Button Config' page&#10;3.Select the arrows and set the LED positions and colors.">
+        ?</div>
+</div>
+
+<div id="eightway-container">
+    <div class="eightway_controls-section">
+        <button class="action-btn third" onclick="show_directions_modal()" id="eightway_open_directions_modal">
+            Set Directions
+        </button>
+    </div>
+
+    <h2>Set LEDs and Color</h2>
+
+    <div class="eightway_controls-section">
+        <button class="" id="eighway_set_leds" onclick="eightway_show_led_modal()" disabled>
+            Set LEDs
+        </button>
+        <select id="eightway_color_select" onchange="eightway_set_select_color(this)" disabled>
+            <option>random</option>
+            <option>blank</option>
+        </select>
+        <button class="action-btn secondary" id="eightway_reset" onclick="eightway_reset()">Reset</button>
+    </div>
+
+    <div class="arrow-container">
+        <div class="arrow arrow-up" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-down" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-left" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-right" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-up-left" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)"></div>
+        <div class="arrow arrow-up-right" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)">
+        </div>
+        <div class="arrow arrow-down-left" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)">
+        </div>
+        <div class="arrow arrow-down-right" directioncolor="blank" led_pos="not Set" onclick="click_direction(this)">
+        </div>
+    </div>
+
+    <div class="info-display">
+        <div>Direction: <span id="eightway_direction_text">-</span></div>
+        <div id="eighway_leds_num_container">LEDs: <span id="eightway_leds_nums">-</span></div>
+        <div>Color: <span id="eightway_leds_color">-</span></div>
+    </div>
+</div>
+<div class="footer-row" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+    <a href="https://fight-lights.com/docs/#8-way" target="_blank" id="oled_guide_link-7" class="guide-link">
+        Need help? Check out documentation for this page
+    </a>
+</div>
+
+<dialog class="modal" id="eightway_led_modal">
+    <h2 id="eightway_led_modal_headline">Set LEDs for </h2>
+    <div id="eightway_modal_body">
+    </div>
+    <button class="action-btn danger" onclick="close_eightway_led_modal()">Close</button>
+</dialog>
+  </div>
+  <div id="oled-page" class="page-content" style="display:none;">
+<div id="idle_head_container-7">
+    <h1 class="page-header">Configure OLED</h1>
+    <div id="idle_header_helper-7" class="helper"
+        title="Disable OLED to free up GPIO pins for other uses.&#10;When enabled, you can configure the OLED display settings, layout, and animations.&#10;Make sure to set the correct I2C interface and pins for your OLED type.">
+        ?</div>
+</div>
+<div class="oled_checkbox-container">
+    <input type="checkbox" id="oled_cb" name="oled_cb" onchange="toggle_oled_checkbox()">
+    <label id="oled_cb_label" for="oled_cb">Disable OLED</label>
+</div>
+<div id="oled_modal_body">
+    <!-- Section 1: Hardware Settings (Top) -->
+    <div class="oled-section">
+        <h3 class="section-title">Hardware Settings</h3>
+        <div class="hardware-grid">
+            <div class="form-row vertical-label">
+                <label id="oled_type_label">OLED Type:</label>
+                <select id="oled_type_select" class="form-select">
+                    <option value="0">SH1106</option>
+                    <option value="1">SSD1306</option>
+                </select>
+            </div>
+
+            <div class="i2c-interface">
+                <div class="i2c-radio-group">
+                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad1" onchange="show_hide_i2c_selects()">
+                    <label for="oled_i2c_rad1">I2C0</label>
+                    <input type="radio" name="oled_i2c_interface" id="oled_i2c_rad2" onchange="show_hide_i2c_selects()"
+                        checked>
+                    <label for="oled_i2c_rad2">I2C1</label>
+                </div>
+
+                <div class="i2c-select-group">
+                    <div class="i2c-select-row">
+                        <label id="oled_sda_label">SDA:</label>
+                        <select id="oled_sda0_select" class="form-select">
+                            <option value="0">GP0</option>
+                            <option value="4">GP4</option>
+                            <option value="8">GP8</option>
+                            <option value="12">GP12</option>
+                            <option value="16">GP16</option>
+                            <option value="20">GP20</option>
+                        </select>
+
+                        <select name="" id="oled_sda1_select" onchange="" class="form-select" hidden>
+                            <option value="2">GP2</option>
+                            <option value="6">GP6</option>
+                            <option value="10">GP10</option>
+                            <option value="14">GP14</option>
+                            <option value="18">GP18</option>
+                            <option value="26">GP26</option>
+                        </select>
+                    </div>
+                    <div class="i2c-select-row">
+                        <label id="oled_scl_label">SCL:</label>
+                        <select id="oled_scl0_select" class="form-select">
+                            <option value="1">GP1</option>
+                            <option value="5">GP5</option>
+                            <option value="9">GP9</option>
+                            <option value="13">GP13</option>
+                            <option value="17">GP17</option>
+                            <option value="21">GP21</option>
+                        </select>
+
+                        <select name="" id="oled_scl1_select" onchange="" class="form-select" hidden>
+                            <option value="3">GP3</option>
+                            <option value="7">GP7</option>
+                            <option value="11">GP11</option>
+                            <option value="15">GP15</option>
+                            <option value="19">GP19</option>
+                            <option value="27">GP27</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Layout Configuration -->
+    <div class="oled-section">
+        <h3 class="section-title">Layout Configuration</h3>
+        <div class="layout-grid">
+            <!-- Layout Canvas -->
+            <div class="canvas-container main-layout">
+                <div class="canvas-header">
+                    <span>Layout Preview</span>
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 10px;">
+                    <canvas id="myCanvas" class="oled-display"></canvas>
+                    <button id="exportBtn" class="action-btn secondary" 
+                        title="Export current layout as PNG">&#8595;</button>
+                </div>
+                <div class="canvas-footer">
+                    <div class="form-row">
+                        <select id="oled_set_predef_layout" class="form-select" onchange="set_layout()">
+                            <option value="0" selected disabled>Preset Layouts</option>
+                            <option value="1">Vewlix</option>
+                            <option value="2">Noir</option>
+                            <option value="3">Leverless</option>
+                            <option value="4">WASD</option>
+                            <option value="5">Clear Layout</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Controls -->
+            <div class="layout-controls">
+                <div class="button-group">
+                    <button class="action-btn third" id="oled_add_button" onclick="oled_add_button()">+ Button</button>
+                    <button class="action-btn third" id="oled_add_lever" onclick="oled_add_lever()">+ Lever</button>
+                    <button class="action-btn third" id="oled_add_key" onclick="oled_add_key()">+ Key</button>
+                    <button class="action-btn danger" id="delete_oled_button" onclick="delete_oled_button()"
+                        title="Delete" disabled>Delete</button>
+                </div>
+
+                <div class="form-row">
+                    <div class="control-row">
+                        <label id="oled_radius_label" for="oled_button_radius">Size:</label>
+                        <input id="oled_button_radius" name="oled_button_radius" type="number" value="8" min="1"
+                            max="25" class="form-input">
+                    </div>
+                    <div class="control-row">
+                        <label id="oled_rotation_label" for="oled_key_angle">Rotation:</label>
+                        <input id="oled_key_angle" name="oled_key_angle" type="number" value="0" min="0" max="359"
+                            class="form-input">
+                    </div>
+                </div>
+
+                <!-- Hidden Activation Button Controls -->
+                <div class="form-row" hidden>
+                    <label id="act_button_label" for="oled_select_activation_button" hidden>Activation Button:</label>
+                    <select id="oled_select_activation_button" class="form-select" onchange="set_activation_button()"
+                        hidden>
+                        <option value="0">notSet</option>
+                    </select>
+                </div>
+                <button class="action-btn secondary" id="oled_open_directions" onclick="show_directions_modal()"
+                    hidden>Set
+                    Directions</button>
+            </div>
+        </div>
+
+        <!-- Separator -->
+        <div class="layout-separator"></div>
+
+        <!-- Overlay and Splash Canvases -->
+        <div class="secondary-canvases">
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <div class="label-wrapper">
+                        <span>Overlay</span>
+                        <div id="oled_overlay_helper" class="helper" title="Graphics drawn above layout">?</div>
+                    </div>
+                </div>
+                <canvas id="my_overlay_canvas" class="oled-display"></canvas>
+                <div class="canvas-footer">
+                    <input type="file" id="imageLoader2" accept="image/*" hidden>
+                    <button id="upload_overlay_button" 
+                        class="action-btn primary">Upload</button>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <span>Splash Screen</span>
+                </div>
+                <canvas id="my_splash_canvas" class="oled-display"></canvas>
+                <div class="canvas-footer">
+                    <input type="file" id="imageLoader" accept="image/*" hidden>
+                    <button id="customButton" class="action-btn primary">Upload</button>
+                    <button id="oled_invert_button" class="action-btn secondary"
+                        onclick="invertColors()">Invert</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Display Behavior and Animation (side by side) -->
+    <div class="behavior-animation-grid">
+        <!-- Display Behavior -->
+        <div class="oled-section">
+            <h3 class="section-title">Display Behavior</h3>
+
+            <!-- Checkbox row with forced side-by-side layout -->
+            <div class="form-row" style="display: flex; flex-wrap: nowrap; gap: 20px; margin-bottom: 15px;">
+                <div class="checkbox-control">
+                    <input type="checkbox" id="oled_invert_oled">
+                    <label for="oled_invert_oled">Invert Colors</label>
+                </div>
+                <div class="checkbox-control">
+                    <input type="checkbox" id="oled_rotate_oled">
+                    <label for="oled_rotate_oled">Rotate display</label>
+                    <div id="oled_rotate_helper" class="helper" title="Flip horizontally">?</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="control-row">
+                    <label id="oled_normal_operation_label">During Play:</label>
+                    <select id="oled_layout" class="form-select">
+                        <option value="0">Display Layout</option>
+                        <option value="1">Display Splash</option>
+                        <option value="2">Clear OLED</option>
+                        <option value="3">Display Animation</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label id="oled_idle_label">Idle Mode:</label>
+                    <select id="oled_idle" class="form-select">
+                        <option value="2">Display Layout</option>
+                        <option value="0">Display Splash</option>
+                        <option value="1">Clear OLED</option>
+                        <option value="3">Display Animation</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animation Settings -->
+        <div class="oled-section">
+            <div class="section-header-wrapper">
+                <div class="section-title-container">
+                    <h3 class="section-title">Animation</h3>
+                    <div id="oled_anim_helper" class="helper"
+                        title="Select PNG files for each frame of animation.&#10;For example select: frame1.png, frame2.png, frame3.png, and then Download the code and upload it to your Pico.&#10;(Names don't have to be 'frameX.png' but should all be the same and ordered by number at the end)">
+                        ?</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="animation-controls">
+                    <div class="animation-row">
+                        <label id="oled_animation_delay_label1">Frame Delay:</label>
+                        <input id="oled_animation_delay" type="number" value="0" min="0" class="form-input">
+                        <label id="oled_animation_delay_label2">ms</label>
+                        <div id="oled_anim_delay_helper" class="helper"
+                            title="Delay each frame of the animation by a given amount (in milliseconds)&#10;&#10;Value is stored in the config.py">
+                            ?</div>
+
+                        <div class="animation-radio-group">
+                            <input type="radio" id="radio1" name="animation_mode" value="mode1" checked>
+                            <label for="radio1">File for Animation</label>
+
+                            <input type="radio" id="radio2" name="animation_mode" value="mode2">
+                            <label for="radio2">File for Combo Sprites</label>
+                        </div>
+                    </div>
+
+                    <div class="button-group full-width">
+                        <input type="file" id="uploadPngs" accept="image/png" multiple hidden>
+                        <button id="oled_upload_animation_button" class="action-btn primary">Upload Frames</button>
+                        <progress id="conversionProgress" value="0" max="100"></progress>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="oled-section">
+        <div class="section-header-wrapper">
+            <div class="section-title-container">
+                <h3 class="section-title">Combo Sprites</h3>
+                <div class="helper" title="Add sprites to display on the OLED when buttons are pressed&#10;Select 'File for Combo Sprites' when generating a sprite animation file">?</div>
+            </div>
+        </div>
+        <div class="combo-grid">
+            <div class="canvas-container">
+                <div class="canvas-header"><span>Sprite Preview</span></div>
+                <div id="oled_sprite_index">0/0</div>
+                <div class="canvas-nav-wrapper">
+                    <button class="action-btn secondary nav-btn"
+                        onmousedown="hold = setInterval(() => cycleSprite(-1), 120)" onmouseup="clearInterval(hold)"
+                        onmouseleave="clearInterval(hold)" onclick="cycleSprite(-1)">
+                        &lt;
+                    </button>
+                    <canvas id="my_combo_canvas" class="oled-display"></canvas>
+                    <button class="action-btn secondary nav-btn"
+                        onmousedown="hold = setInterval(() => cycleSprite(1), 120)" onmouseup="clearInterval(hold)"
+                        onmouseleave="clearInterval(hold)" onclick="cycleSprite(1)">
+                        &gt;
+                    </button>
+                </div>
+                <div class="canvas-footer">
+                    <button id="upload_sprite_button"
+                        class="action-btn primary">Upload Sprite file</button>
+                    <input type="file" accept=".flan" id="comboImageLoader" hidden>
+                </div>
+            </div>
+            <div class="combo-controls">
+                <div class="control-row" style="display: flex; align-items: center; gap: 5px;">
+                    <label id="combo-default_label" disabled>Default Frame:</label>
+                    <input id="oled_default_sprite" type="number" min="0" value="0" class="form-input"
+                        style="width: 70px;" disabled>
+                    <input type="checkbox" id="oled_enable_default_sprite" onchange="toggle_combo_sprite_checkbox()"
+                        checked><label for="oled_enable_default_sprite">Disable</label>
+                    <div class="helper" title="Set a frame to display when no buttons are pressed.&#10;THIS WILL OVERRIDE THE 'During Play' BEHAVIOUR OF THE OLED">?</div>
+                </div>
+                <div class="combo-list-header"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <button class="action-btn primary" onclick="addComboRow()">+ Add Combo</button>
+                </div>
+                <div id="combo_rows_container" class="combo-list-container"></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+  </div>
 
   <!-- Scripts -->
-  <script src="Scripts/page_loader.js" defer></script>
-  <script src="Scripts/open_file.js" defer></script>
-  <script src="Scripts/dropHandler.js" defer></script>
   <script src="Scripts/messagebox.js" defer></script>
-  <script src="Scripts/save_code.js" defer></script>
   <script src="Scripts/rightclick_menu.js" defer></script>
   <script src="Scripts/prevent_number_typing.js" defer></script>
   <script src="Scripts/coloris.js" defer></script>
   <script src="Scripts/general_scripts.js" defer></script>
-  <script src="Scripts/create_code.js" defer></script>
   <script src="Scripts/color_slider.js" defer></script>
   <script src="Scripts/color_table.js" defer></script>
   <script src="Scripts/check_name.js" defer></script>
@@ -204,11 +1511,13 @@
   <script src="Scripts/eightway.js" defer></script>
   <script src="Scripts/oled.js" defer></script>
   <script src="Scripts/nightmode_slider.js" defer></script>
-  <script src="Scripts/default_code.js" defer></script>
   <script src="Scripts/home.js" defer></script>
-  <script src="Scripts/download_github_files.js" defer></script>
   <script src="Scripts/button_combos.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="Scripts/profile-codec.js" defer></script>
+  <script src="Scripts/preset.js" defer></script>
+  <script src="Scripts/oled-files.js" defer></script>
+  <script src="Scripts/configurator.js" defer></script>
+  <script src="Scripts/pico-upload.js" defer></script>
 </body>
 
 </html>

@@ -54,13 +54,12 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initInputRestriction({
       elements: {
-        'led_count': { allowNumbers: false },
+        'led_count': { allowNumbers: true },
         'fade_in': { allowNumbers: true },
         'fade_out': { allowNumbers: true },
         'leniency_tb': { allowNumbers: true },
         'rainbow_speed': { allowNumbers: true },
         'idle_tb': { allowNumbers: true },
-        'idle1_speed': { allowNumbers: true },
         'led_options_start_time': { allowNumbers: true },
         'oled_button_radius': { allowNumbers: true },
         'oled_key_angle': { allowNumbers: true },
@@ -72,13 +71,12 @@ if (document.readyState === 'loading') {
   // DOM already loaded
   initInputRestriction({
     elements: {
-      'led_count': { allowNumbers: false },
+      'led_count': { allowNumbers: true },
       'fade_in': { allowNumbers: true },
       'fade_out': { allowNumbers: true },
       'leniency_tb': { allowNumbers: true },
       'rainbow_speed': { allowNumbers: true },
       'idle_tb': { allowNumbers: true },
-      'idle1_speed': { allowNumbers: true },
       'led_options_start_time': { allowNumbers: true },
       'oled_button_radius': { allowNumbers: true },
       'oled_key_angle': { allowNumbers: true },

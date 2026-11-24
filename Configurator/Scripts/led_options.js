@@ -1,15 +1,6 @@
-function add_led_option_button()
-{
-    var table = document.getElementById("led_options_table");
-    
-    var select_length = document.getElementById("led_options_select").options.length;
-    if(select_length != 0)
-    {
-        var row = table.insertRow();
-        var cell1 = row.insertCell(0);
-        cell1.innerHTML = document.getElementById("led_options_select").value;
-    }
-   
+function add_led_option_button() {
+    const select = document.getElementById("led_options_select");
+    if (select.options.length) Configurator.appendRow("led_options_table", [select.value]);
 }
 
 function show_led_options() {

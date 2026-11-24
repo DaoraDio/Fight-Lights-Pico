@@ -1,5 +1,10 @@
 # MicroPython SSD1306 OLED driver, I2C and SPI interfaces
 
+if __name__ == "__main__":
+    import main
+    main.run()
+
+
 from micropython import const
 import framebuf
 

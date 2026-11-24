@@ -1,48 +1,48 @@
-if __name__ == '__main__':
-    import init
-    with open('main.py', 'r') as f:
-        init.code = f.read()
-    exec(init.code)
+if __name__ == "__main__":
+    import main
+    main.run()
 
 print("\033[32mfunctions\033[0m")
-import statemachine
-import config
-import array, time
-import random
+
+import errno
 import io
 import math
-import button
-import init
-import machine
 import os
+import random
+import time
+
+import machine
 import micropython
-import animation
-import sys
-import gc
-if config.activate_oled:
-    try:
-        import oled
-    except IndexError:
-        pass
 
-micropython.alloc_emergency_exception_buf(100)
+import init
 
-#decorator to measure the execution time of a function in ms
+
+def configure(active_config, pixel_driver):
+    global config, statemachine
+    config = active_config
+    statemachine = pixel_driver
+    if not config.colors:
+        config.colors = ((0, 0, 0),)
+
+
+def start_timers():
+    micropython.alloc_emergency_exception_buf(100)
+    init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
+    if config.save_stats:
+        print_stats()
+        init.stats_updated_ms = time.ticks_ms()
+        init.timer3.init(period=30_000, mode=machine.Timer.PERIODIC, callback=request_stats_save)
+
+
 def measure_execution_time(func):
     def wrapper(*args, **kwargs):
-        times = []
-        iterations = 1
-        for i in range(iterations):
-            t1 = time.ticks_us()
-            func(*args, **kwargs)
-            t2 = time.ticks_us()-t1
-            times.append(t2)
-        average = sum(times) / len(times)
-        #print(f'Took {t2/1000:.3f} ms')
-        print(f'Took on average {average/1000:.3f} ms')
+        started = time.ticks_us()
+        result = func(*args, **kwargs)
+        print("Took %.3f ms" % (time.ticks_diff(time.ticks_us(), started) / 1000))
+        return result
     return wrapper
 
-#dummy interrupt, does nothing. Set a button handler to this if you want to do nothing on interrupt
+
 def dummy(pin):
     pass
 
@@ -54,197 +54,137 @@ def tick(timer):
     init.string_leniency += 1
 
 
-#Savestats function (is called every 30sec)
+def read_stats():
+    values = {}
+    try:
+        with open(init.file_name, "r") as stats:
+            for line in stats:
+                if not line.strip() or line.lstrip().startswith("#"):
+                    continue
+                fields = line.split(":", 1)
+                if len(fields) != 2:
+                    continue
+                try:
+                    values[fields[0].strip()] = int(fields[1])
+                except ValueError:
+                    continue
+    except OSError as error:
+        if error.args[0] != errno.ENOENT:
+            raise
+    return values
+
+
 def save_stats():
-    if config.save_stats == False:
+    now = time.ticks_ms()
+    elapsed = time.ticks_diff(now, init.stats_updated_ms) // 1000
+    counts = [(button, button.num_presses) for button in config.button_list]
+    try:
+        values = read_stats()
+        values["uptime"] = values.get("uptime", 0) + elapsed
+        for button, count in counts:
+            values[button.name] = values.get(button.name, 0) + count
+
+        pending_file = init.file_name + ".tmp"
+        with open(pending_file, "w") as stats:
+            stats.write(init.header_text)
+            for name, value in values.items():
+                stats.write("%s: %d\n" % (name, value))
+        os.rename(pending_file, init.file_name)
+    except OSError as error:
+        print("Could not save stats:", error)
         return
-    
-    init.seconds_counter += 30
-    
-    f = open(init.file_name, "r")
-    lines = f.readlines()
-    updated_lines = ""
-            
-    for line in lines:
-        if line[0] == "#":
-            continue
-        var_name = ""
-        value = ""
-                    
-        for i in range(len(line)):
-            if line[i] == ':':
-                i += 2
-                for j in range(i, len(line)):
-                    value += line[j]
-                break
-            var_name += line[i]
-        value = int(value)
-        if var_name == 'uptime':
-            value += init.seconds_counter
-            init.idle_file_counter = 0
-            init.seconds_counter = 0
-                    
-        for but in config.button_list:
-            if but.name == var_name:
-                value += but.num_presses
-                but.num_presses = 0
-        updated_lines += var_name + ": "+ str(value)+"\n"
-                    
-    f = open(init.file_name, "w")
-    f.write(init.header_text + updated_lines)
-    f.close()
+
+    init.stats_updated_ms = time.ticks_add(init.stats_updated_ms, elapsed * 1000)
+    for button, count in counts:
+        button.num_presses -= count
 
 
-#sets the idle_counter to the setback value which wakes the leds up from idle mode
 def clear_led(pin):
     init.idle_counter = init.setback_value
-    
-def activate_save_stats(timer):
+
+
+def request_stats_save(timer):
     init.run_savestats = True
 
-def print_memory_usage(timer):
-    gc.collect()
-    free_memory_kb = gc.mem_free() / 1024
-    allocated_memory_kb = gc.mem_alloc() / 1024
-    print(f"\rFree memory: {free_memory_kb:.2f} KB | Allocated memory: {allocated_memory_kb:.2f} KB", end='')
+
+def service_stats():
+    if init.run_savestats:
+        init.run_savestats = False
+        save_stats()
 
 
-#frequenzy in hz 0.016hz = 60sec, one timer interrupt every 60seconds
-#freq=1 = 1hz = 1 interrupt every second
-#freq=62.5 = 1 interrupt every 0.016 seconds (1 Frame in a 60FPS Fighting Game)
-init.timer1.init(freq=init.frequency, mode=machine.Timer.PERIODIC, callback=tick)
-init.timer3.init(freq=1/30, mode=machine.Timer.PERIODIC, callback=activate_save_stats)
-#init.timer5.init(freq=1, mode=machine.Timer.PERIODIC, callback=print_memory_usage)
-
-#interrupt routine to debounce the brightness button
-#all credits to Kaspars Dambis @ https://kaspars.net/blog/micropython-button-debounce
 def debounce_brightness(pin):
-    # Start or replace a timer for 100ms, and trigger change_brightness.
-    init.timer2.init(mode=machine.Timer.ONE_SHOT, period=100, callback=mode_select)#change_brightness)
-    
-#interrupt routine to debounce buttons, calls the clear_led method
-#def debounce_clear_led(pin):
-#    init.timer3.init(mode=machine.Timer.ONE_SHOT, period=50, callback=clear_led)
+    init.timer2.init(mode=machine.Timer.ONE_SHOT, period=100, callback=open_options)
 
 
-def increase_brightness(steps_size):
-    config.brightness_mod += steps_size
-    pixels_show(config.brightness_mod)
-    if config.brightness_mod > 1:
-            config.brightness_mod = 1
-    return
+def open_options(timer):
+    init.idle_counter = init.setback_value
+    init.options_requested = True
 
-def decrease_brightness(steps_size):
-    config.brightness_mod -= steps_size
-    pixels_show(config.brightness_mod)
-    if config.brightness_mod <= 0:
-            config.brightness_mod = 0
-    return
 
-        
+def increase_brightness(step):
+    config.brightness_mod = min(1, max(0, config.brightness_mod + step))
+
+
+def decrease_brightness(step):
+    increase_brightness(-step)
+
+
 def pixels_show(brightness_input):
-    dimmer_ar = array.array("I", [0] * config.led_count)
-    brightness_scale = int(255 * brightness_input)
-    for ii, cc in enumerate(statemachine.ar):
-        r = (cc >> 8) & 0xFF
-        g = (cc >> 16) & 0xFF
-        b = cc & 0xFF
-        r_scaled = (r * brightness_scale) >> 8
-        g_scaled = (g * brightness_scale) >> 8
-        b_scaled = (b * brightness_scale) >> 8
-        dimmer_ar[ii] = (g_scaled << 16) | (r_scaled << 8) | b_scaled
-    statemachine.sm.put(dimmer_ar, 8)
-
-    statemachine.visible_ar = array.array("I", dimmer_ar) #save for use in pixels_show_idle
+    visible = statemachine.visible_ar
+    scale = int(256 * min(1, max(0, brightness_input)))
+    for index, pixel in enumerate(statemachine.ar):
+        visible[index] = statemachine.scale_pixel(pixel, scale)
+    statemachine.write_pixels(statemachine.sm, visible)
 
 
-#show function for idle mode, skips LEDs
 def pixels_show_idle(brightness_input, active_leds=None):
-    dimmer_ar = array.array("I", [0] * config.led_count)
-
-    for ii in range(config.led_count):
-        base_cc = statemachine.ar[ii]
-        base_r = (base_cc >> 8) & 0xFF
-        base_g = (base_cc >> 16) & 0xFF
-        base_b = base_cc & 0xFF
-
-        if active_leds is not None and ii in active_leds:
-            r_scaled = int(base_r * brightness_input)
-            g_scaled = int(base_g * brightness_input)
-            b_scaled = int(base_b * brightness_input)
-        else:
-            r_scaled = base_r
-            g_scaled = base_g
-            b_scaled = base_b
-
-        r_scaled = min(255, max(0, r_scaled))
-        g_scaled = min(255, max(0, g_scaled))
-        b_scaled = min(255, max(0, b_scaled))
-
-        dimmer_ar[ii] = (g_scaled << 16) | (r_scaled << 8) | b_scaled
-
-    statemachine.visible_ar = array.array("I", dimmer_ar)
-    statemachine.sm.put(dimmer_ar, 8)
+    visible = statemachine.visible_ar
+    scale = int(256 * min(1, max(0, brightness_input)))
+    base_scale = int(256 * min(1, max(0, config.brightness_mod)))
+    for index, pixel in enumerate(statemachine.ar):
+        selected_scale = scale if active_leds is not None and index in active_leds else base_scale
+        visible[index] = statemachine.scale_pixel(pixel, selected_scale)
+    statemachine.write_pixels(statemachine.sm, visible)
 
 
+def pixels_set(index, color):
+    statemachine.ar[index] = statemachine.pack_rgb(color)
 
 
+def pixels_set_range(indices, color):
+    packed = statemachine.pack_rgb(color)
+    for index in indices:
+        statemachine.ar[index] = packed
 
-    
-def pixels_set(i, color):
-    statemachine.ar[i] = (color[1]<<16) + (color[0]<<8) + color[2] # set 24-bit color
-    
-def pixels_set_range(list, color):
-    for i in list:
-        pixels_set(i, color)
 
-#sets a color at pos i, takes HSV color as value
 def pixels_setHSV(i,color):
     rgbcolor = HSVtoRGB(color)
     pixels_set(i, rgbcolor)
-    
+
 #sets all leds to color in RGB
 def pixels_fill(color):
-    for i in range(len(statemachine.ar)):
-        pixels_set(i, color)
-        
-#sets all leds to color in HSV      
+    pixels_set_range(range(len(statemachine.ar)), color)
+
+#sets all leds to color in HSV
 def pixels_fillHSV(colorHSV):
     colorRGB = HSVtoRGB(colorHSV)
     pixels_fill(colorRGB)
 
 
 def print_stats():
-    f = open(init.file_name, "r")
-    lines = f.readlines()
-    values = {}
-    
-    for line in lines:
-        if line[0] == '#':
-            continue
-        
-        var_name = ""
-        value = ""
-        for i in range(len(line)):
-            if line[i] == ':':
-                i += 2
-                for j in range(i, len(line)):
-                    value += line[j]
-                break
-            var_name += line[i]
+    try:
+        values = read_stats()
+    except OSError as error:
+        print("Could not read stats:", error)
+        return
 
-        value = int(value[:-1])
-        values[var_name] = value
-    
-    uptime = values['uptime']
-    del values['uptime']
-    
-    print("-------------------------------")
-    for key, value in sorted(values.items(), key=lambda item: item[1]):
-        print("%s: %s" % (key, value))
-    print('uptime:', seconds_to_time(uptime))
-            
-            
+    uptime = values.pop("uptime", 0)
+    for name, count in sorted(values.items(), key=lambda item: item[1]):
+        print("%s: %d" % (name, count))
+    print("uptime:", seconds_to_time(uptime))
+
+
 def seconds_to_time(seconds):
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
@@ -290,33 +230,28 @@ def shuffle_array(arr):
         arr[last_index] = arr[rand_index]
         arr[rand_index] = temp
         last_index -= 1
- 
+
 #unused
 def inverse_ledlist(ledlist):
     leds = []
     for i in range(config.led_count):
         leds.append(i)
-        
+
     for i in range(len(ledlist)):
         leds.remove(ledlist[i])
-                
-    return leds
-        
 
-#converts the value of the idle_after variable in config.py to ticks of the timer interrupt
-#example: if idle_after = 1 in config.py, then it would take 20 ticks for 1 second to pass, at a frequency of 20hz
+    return leds
+
+
+# Convert the configured idle timeout from seconds to timer ticks.
 def idle_after():
-    if config.idle_after == 0:
-        return 0
-    else:
-        ticks = 1/(1/init.frequency)
-        return ticks * config.idle_after
-    
-def get_seconds(input):
-    ticks = 1/(1/init.frequency)
-    return ticks * input
-    
-    
+    return get_seconds(config.idle_after)
+
+
+def get_seconds(seconds):
+    return init.frequency * seconds
+
+
 #returns the id of a pin
 def get_id(*args, **kwargs):
     output = io.StringIO()
@@ -327,69 +262,30 @@ def get_id(*args, **kwargs):
     return myid
 
 
-    
-#converts HSV to RGB, the RGB values go from 0-255
-#the HSV Values go between:
-#H between 0 and 359 (0° - 359°)
-#S between 0 and 100 (0% - 100%)
-#V between 0 and 100 (0% - 100%)
-#might give error if Hs is undefined
-#takes a HSV color as a tupel as argument (H,S,V)
-#returns RGB as a tupel (R,G,B)
+
+# Convert hue in degrees and saturation/value percentages to RGB bytes.
 def HSVtoRGB(hsvcolor):
-    H = hsvcolor[0]
-    S = hsvcolor[1]
-    V = hsvcolor[2]
-    
-    if H > 359:
-        print("ERROR H can only take values from 0-359")
-    if S > 100:
-        print("ERROR S can only take values from 0-100")
-    if V > 100:
-        print("ERROR V can only take values from 0-100")
-    
-    S = S / 100
-    V = V / 100
-    
-    C = V * S
-    Hs = H / 60
-    det = (Hs%2) - 1
-  
-    if det < 0:
-        det = det * (-1)
-    
-    X = C * (1-det)
-    if Hs >= 0 and Hs < 1:
-        R = C
-        G = X
-        B = 0
-    if Hs >= 1 and Hs < 2:
-        R = X
-        G = C
-        B = 0
-    if Hs >= 2 and Hs < 3:
-        R = 0
-        G = C
-        B = X
-    if Hs >= 3 and Hs < 4:
-        R = 0
-        G = X
-        B = C
-    if Hs >=4 and Hs < 5:
-        R = X
-        G = 0
-        B = C
-    if Hs >= 5 and Hs < 6:
-        R = C
-        G = 0
-        B = X
-    
-    m = V-C
-    
-    R = (R+m)*255
-    G = (G+m)*255
-    B = (B+m)*255
-    return (math.ceil(R), math.ceil(G), math.ceil(B))
+    hue, saturation, value = hsvcolor
+    sector = (hue % 360) / 60
+    value = min(100, max(0, value)) / 100
+    chroma = value * min(100, max(0, saturation)) / 100
+    cross = chroma * (1 - abs(sector % 2 - 1))
+
+    if sector < 1:
+        rgb = chroma, cross, 0
+    elif sector < 2:
+        rgb = cross, chroma, 0
+    elif sector < 3:
+        rgb = 0, chroma, cross
+    elif sector < 4:
+        rgb = 0, cross, chroma
+    elif sector < 5:
+        rgb = cross, 0, chroma
+    else:
+        rgb = chroma, 0, cross
+
+    offset = value - chroma
+    return tuple(math.ceil((channel + offset) * 255) for channel in rgb)
 
 
 #converts RGB Colors in range of 0-255 to HSV colors (0-359,0-100,0-100)
@@ -400,15 +296,15 @@ def RGBtoHSV(rgbcolor):
     B = rgbcolor[2]/255
     Cmax = max(R,G)
     Cmax = max(Cmax, B)
-    
+
     Cmin = min(R,G)
     Cmin = min(Cmin,B)
-    
+
     delta = Cmax-Cmin
-    
-    
+
+
     if delta == 0:
-        H = 0 
+        H = 0
     elif Cmax == R:
         modulus = ((G-B)/delta)
         H = 60*(modulus%6)
@@ -416,26 +312,26 @@ def RGBtoHSV(rgbcolor):
         H = 60*(((B-R)/delta)+2)
     elif Cmax == B:
         H = 60*(((R-G)/delta)+4)
-        
-    
+
+
     if Cmax == 0:
         S = 0
     else:
         S = delta/Cmax
-    
+
     V = Cmax
-    
+
     H = math.ceil(H)
     S = math.ceil(S*100)
     V = math.ceil(V*100)
-    
+
     if H > 359:
         H = 359
     if S > 100:
         S = 100
     if V > 100:
         V = 100
-    
+
     return (H,S,V)
 
 #helper function that helps with LED fade
@@ -466,425 +362,337 @@ def fade_val_inc(color_val, speed):
 #return true if no button is pressed at the moment
 #returns false when a button is currently pressed
 def no_buttons_pressed():
-    for button in config.button_list:
-        if button.is_pressed == True:
-            return False
-    
-    return True
-    
+    return not any(button.is_pressed for button in config.button_list)
+
+
+def buttons_held(buttons):
+    return bool(buttons) and all(button.is_pressed for button in buttons)
+
 
 def oled_animation_exists():
     try:
-        os.stat('oled_animation.flan')
-        return True
+        return os.stat("oled_animation.flan")[6] >= 2048
     except OSError:
         return False
-    
-    
-def set_background(background):
-    if init.bg_initialized == False:
-        #initialize the background colors
-        different_tuple = len(background)
-        
-        #appends all the different tuple into ranges
-        for tupel in background:
-            init.ranges.append(list(tupel))
-        
-        for tupel in init.ranges:
-            init.brightness_values.append(tupel.pop(0))
-        
-        
-        #converts all the different colors into HSV and apppends them into the list init.colors
-        for i in range(different_tuple):
-            if isinstance(init.ranges[i][0], str):
-                init.colors.append(init.ranges[i][0])
-            else:
-                hsv_col = list(RGBtoHSV(init.ranges[i][0]))
-                hsv_col[2] *= init.brightness_values[i]
-                hsv_col = HSVtoRGB(hsv_col)
-                init.colors.append(hsv_col)
-            
-            init.ranges[i].pop(0)
-        init.bg_initialized = True
-        
-    #display the background colors
-    if init.single_tuple == True:
-        for ranges in init.ranges:
-            if init.colors[0] == 'rainbow':
-                hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100*init.brightness_values[0])
-                pixels_setHSV(ranges-1,hsv_col)
-            else:
-                pixels_set(ranges-1, init.background_color)
-    else:
-        for i in range(len(init.ranges)):
-            for j in range(len(init.ranges[i])):
-                if init.colors[i] == 'rainbow':
-                    hsv_col = ((time.ticks_ms()/config.rainbow_speed)%359,100,100*init.brightness_values[i])
-                    pixels_setHSV(init.ranges[i][j]-1,hsv_col)
-                else:
-                    pixels_set(init.ranges[i][j]-1,init.colors[i])
 
+
+def set_background(background):
+    if init.cached_background is not background:
+        init.cached_background = background
+        entries = []
+        # A one-row Configurator export omits the outer tuple's trailing comma.
+        if background and not isinstance(background[0], (tuple, list)):
+            background = (background,)
+        for brightness, color, *positions in background:
+            if color != init.rainbow:
+                hue, saturation, value = RGBtoHSV(color)
+                color = HSVtoRGB((hue, saturation, value * brightness))
+            entries.append((brightness, color, tuple(pos - 1 for pos in positions)))
+        init.background_entries = entries
+        init.cached_background = background
+
+    # Rebuild the base layer so unmapped LEDs cannot retain a previous effect.
+    pixels_fill((0, 0, 0))
+    hue = None
+    for brightness, color, indices in init.background_entries:
+        if color == init.rainbow:
+            if hue is None:
+                hue = (time.ticks_ms() / (config.rainbow_speed or 1)) % 360
+            color = HSVtoRGB((hue, 100, 100 * brightness))
+        pixels_set_range(indices, color)
+
+
+def read_profile(filename):
+    name = filename
+    color_source = ""
+    palette = {}
+    with open(filename, "r") as profile:
+        for line in profile:
+            fields = line.split("=", 1)
+            if len(fields) != 2 or line[:1].isspace():
+                continue
+            key, value = (field.strip() for field in fields)
+            if key == "profile_name" and value[:1] in ('"', "'"):
+                closing_quote = value.rfind(value[0])
+                if closing_quote > 0:
+                    name = value[1:closing_quote]
+            else:
+                value = value.split("#", 1)[0].strip()
+                if key == "profile_color":
+                    color_source = value
+                elif value.startswith("(") and value.endswith(")"):
+                    color = parse_rgb(value)
+                    if color is not None:
+                        palette[key] = color
+            if key == "profile_color" and name != filename:
+                break
+
+    return name, parse_rgb(color_source) or palette.get(color_source, (0, 0, 0))
+
+
+def parse_rgb(value):
+    if not value.startswith("(") or not value.endswith(")"):
+        return None
+    channels = value[1:-1].split(",")
+    if len(channels) == 4 and not channels[-1].strip():
+        channels.pop()
+    if len(channels) != 3:
+        return None
+    try:
+        rgb = tuple(int(channel.strip()) for channel in channels)
+    except ValueError:
+        return None
+    return rgb if all(0 <= channel <= 255 for channel in rgb) else None
 
 
 def get_profile_name(config_name):
-    file = open(config_name, 'r')
-    name = ""
+    return read_profile(config_name)[0]
 
-    while True:
-        line = file.readline()
-        if 'profile_name' in line:
-            line = line.replace('profile_name = ', '')
-            line = line.replace('"', '')
-            line = line.strip()
-            line = line.split('#',1)
-            line = line[0]
-            name = line
-            file.close()
-            break
-        if not line:
-            file.close()
-    return name
-
-def set_profile_list():
-    profile_names = []
-    config_prefix = 'config'
-    
-    try:
-        for file_name in os.listdir('.'):
-            if file_name.startswith(config_prefix):
-                try:
-                    with open(file_name, "r") as f:
-                        profile_names.append(get_profile_name(file_name))
-                except OSError:
-                    # If there's an error opening the file, skip it
-                    continue
-                
-    except OSError as e:
-        print(f"Error: {e}")
-        
-    init.profile_names = profile_names
-    
-    
-    
 
 def get_profile_color(config_name):
-    file = open(config_name, 'r')
-    color = 'blank'
-    value = '(0,0,0)'
-    #get the color name from 'profile_color' and save it in variable 'color'
-    while True:
-        line = file.readline()
-        if 'profile_color' in line:
-            line = line.replace('profile_color = ', '')
-            line = line.strip()
-            line = line.replace(' ', '')
-            line = line.split('#',1)
-            line = line[0]
-            color = line
-            file.close()
-            break
-        if not line:
-            file.close()
-            
-    if color.startswith('('):
-            color = color.replace('(','')
-            color = color.replace(')','')
-            color = eval(color)
-            return color
-        
-    #get the value for 'color'
-    file = open(config_name, 'r')
-    color_def = color + ' = '
-    while True:
-        line = file.readline()
-        if color_def in line:
-            line = line.replace(color_def, '')
-            line = line.strip()
-            line = line.replace(' ', '')
-            line = line.split('#',1)
-            value = line[0]
-            file.close()
-            break
-        if not line:
-            file.close()
-            break
-    
-    value = value.replace('(','')
-    value = value.replace(')','')
-    value = eval(value)
-    return value
+    return read_profile(config_name)[1]
 
 
-def list_to_string(list):
-    my_string = ''
-    
-    for elements in list:
-        my_string = my_string + elements + "+"
-    
-    return my_string[:-1]
-    
+def set_profile_list():
+    profiles = [(0, "config.py", config.profile_name, config.profile_color)]
+    for filename in os.listdir():
+        if filename.startswith("config") and filename.endswith(".py"):
+            number = filename[6:-3]
+            if number.isdigit() and int(number) > 0:
+                try:
+                    name, color = read_profile(filename)
+                    profiles.append((int(number), filename, name, color))
+                except OSError as error:
+                    print("Could not read profile %s:" % filename, error)
 
-def add_fgc_input(str, num):
-    init.fgc_strings.append(str)
-    copy = str[:]
-    init.copy_strings.append(copy)
-    init.animation_num.append(num)
-    init.fgc_strings_length += 1
-    
-def play_animation(num):
-        if num == 1:
-            animation.fireball((7,8,6,9,5,10,4,11,3,12,2,13,1,14,0,15),config.orange) #example for led-chain with 15 leds
-        if num == 2:
-            animation.fireball((15,0,14,1,13,2,12,3,11,4,10,5,9,6,8,7),config.red) #example for led-chain with 15 leds
-        if num == 3:
-            animation.flash_all(config.red)
+    profiles.sort()
+    init.profiles = profiles
+    init.profile_names = [entry[2] for entry in profiles]
+
+
+def recover_profile_swap():
+    names = os.listdir()
+    for pending in names:
+        if not (pending.startswith("config") and pending.endswith(".swap")
+                and pending[6:-5].isdigit()):
+            continue
+
+        original_slot = pending[:-5] + ".py"
+        if "config.py" not in names and original_slot in names:
+            # The former active profile is already safe in its new slot.
+            os.rename(pending, "config.py")
+        elif "config.py" in names and original_slot not in names:
+            # The active profile was never moved. Restore the selected slot.
+            os.rename(pending, original_slot)
         return
 
+
+def activate_profile(filename):
+    pending = filename[:-3] + ".swap"
+    os.rename(filename, pending)
+    try:
+        os.rename("config.py", filename)
+        os.rename(pending, "config.py")
+    except OSError:
+        recover_profile_swap()
+        raise
+    machine.reset()
+
+
+def list_to_string(values):
+    return "+".join(values)
+
+
+def add_fgc_input(sequence, num):
+    if not sequence:
+        return
+    init.fgc_strings.append(list(sequence))
+    init.copy_strings.append(tuple(sequence))
+    init.animation_num.append(num)
+    init.fgc_strings_length += 1
+
+
+def play_animation(num):
+    import animation
+
+    if num == 3:
+        animation.flash_all(config.RED)
+    elif num in (1, 2):
+        order = (7, 8, 6, 9, 5, 10, 4, 11, 3, 12, 2, 13, 1, 14, 0, 15)
+        if num == 2:
+            order = order[::-1]
+        color = config.ORANGE if num == 1 else config.RED
+        animation.fireball(tuple(pos for pos in order if pos < config.led_count), color)
+
+
 def check_fgc_string():
-    for i in range(init.fgc_strings_length):
-        if init.fgc_strings[i][0] == init.current_input or not init.fgc_strings[i]:
-            del init.fgc_strings[i][0]
-        if not init.fgc_strings[i]:
-            play_animation(init.animation_num[i])
-            init.fgc_strings[i] = init.copy_strings[i].copy()
-                
-        if init.string_leniency > config.input_reset_time:
+    if init.string_leniency > config.input_reset_time:
+        init.string_leniency = 0
+        for index, sequence in enumerate(init.copy_strings):
+            init.fgc_strings[index] = list(sequence)
+
+    if init.current_input == init.previous_input:
+        return
+    init.previous_input = init.current_input
+    for index, remaining in enumerate(init.fgc_strings):
+        if remaining[0] == init.current_input:
+            remaining.pop(0)
             init.string_leniency = 0
-            for j in range(init.fgc_strings_length):
-                init.fgc_strings[j] = init.copy_strings[j].copy()
+            if not remaining:
+                play_animation(init.animation_num[index])
+                init.fgc_strings[index] = list(init.copy_strings[index])
 
 
 def mode_select(brightness_steps):
     init.mode_selector = 0
-    config_name = 'config.py'
-    epsilon = 0.00001
-    delay = 25
-    bg_color = config.ledOptions_color
+    init.timer_lock = True
+    use_smooth_steps = brightness_steps == init.smooth
+    step = config.smooth_brightness_speed if use_smooth_steps else brightness_steps
+    brightness_up = first_button(config.ledOptions_increase_brightness)
+    brightness_down = first_button(config.ledOptions_decrease_brightness)
+    left = first_button(config.ledOptions_left_button)
+    right = first_button(config.ledOptions_right_button)
+    confirm = first_button(config.ledOptions_confirm)
+    entry_buttons = config.ledOptions_led_buttons
+    entry_held = buttons_held(entry_buttons)
+    controls = []
+    menu_buttons = (brightness_up, brightness_down, left, right, confirm)
+    for button in menu_buttons + tuple(entry_buttons):
+        if button is not None and button not in controls:
+            controls.append(button)
 
-    #small animation at the beginning
-    time.sleep_ms(delay)
-    pixels_fill((0,0,0))
-    pixels_show(config.brightness_mod)
-    
-    time.sleep_ms(delay)
-    pixels_fill(bg_color)
-    pixels_show(config.brightness_mod)
-    
-    time.sleep_ms(delay)
-    pixels_fill((0,0,0))
-    pixels_show(config.brightness_mod)
-    
-    time.sleep_ms(delay)
-    pixels_fill(bg_color)
-    pixels_show(config.brightness_mod)
-    
+    display = None
+    if init.oled_active:
+        import oled as display
+
+    base_color = config.ledOptions_color
+    for color in ((0, 0, 0), base_color, (0, 0, 0), base_color):
+        time.sleep_ms(25)
+        pixels_fill(color)
+        pixels_show(config.brightness_mod)
+
+    previous_view = None
     while True:
-        if init.oled_active:
-            oled.oled_draw_options_mode(init.mode_selector)
-        pixels_fill(bg_color)
-        profile_color = get_profile_color(config_name)
-        
-        if config.ledOptions_profile_color_use_all_LEDs:
-            bg_color = profile_color
-        else:
-            pixels_set(init.mode_selector, profile_color)
-            
-        if config.brightness_mod > 0:
-            pixels_show(config.brightness_mod)
-        if config.brightness_mod < epsilon:
-            pixels_show(0.01)
-            
-        if config.ledOptions_increase_brightness:
-            config.ledOptions_increase_brightness[0].run(0)
-            
-        if config.ledOptions_decrease_brightness:
-            config.ledOptions_decrease_brightness[0].run(0)
-            
-        if config.ledOptions_confirm and config.ledOptions_confirm[0] not in config.ledOptions_led_buttons:
-            config.ledOptions_confirm[0].run(0)
-            
-        if config.ledOptions_left_button:
-            config.ledOptions_left_button[0].run(0)
-            
-        if config.ledOptions_right_button:
-            config.ledOptions_right_button[0].run(0)
-            
-        #print(config.brightness_steps)
-        if brightness_steps != 'smooth':
-            if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].was_pressed:
-                increase_brightness(config.brightness_steps)
-                print("brightness:", config.brightness_mod)
-            if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].was_pressed:
-                decrease_brightness(config.brightness_steps)
-                print("brightness:", config.brightness_mod)
-        else:
-            if config.ledOptions_increase_brightness and config.ledOptions_increase_brightness[0].is_pressed:
-                increase_brightness(config.smooth_brightness_speed)
-                print("brightness:", config.brightness_mod)
-            if config.ledOptions_decrease_brightness and config.ledOptions_decrease_brightness[0].is_pressed:
-                decrease_brightness(config.smooth_brightness_speed)
-                print("brightness:", config.brightness_mod)
+        for button in controls:
+            button.poll(0)
+        if control_pressed(brightness_up, use_smooth_steps):
+            increase_brightness(step)
+        if control_pressed(brightness_down, use_smooth_steps):
+            decrease_brightness(step)
+        if control_pressed(right):
+            init.mode_selector = max(0, init.mode_selector - 1)
+        if control_pressed(left):
+            init.mode_selector = min(len(init.profiles) - 1, init.mode_selector + 1)
 
-            
-                
-        if config.ledOptions_right_button and config.ledOptions_right_button[0].was_pressed:
-            init.mode_selector -= 1
-            if init.mode_selector <= 0:
-                init.mode_selector = 0
-                config_name = "config.py"
+        _, filename, _, color = init.profiles[init.mode_selector]
+        chord_pressed = buttons_held(entry_buttons)
+        if control_pressed(confirm) or (chord_pressed and not entry_held):
+            if init.mode_selector != 0:
+                activate_profile(filename)
+            init.timer_lock = False
+            init.options_require_release = chord_pressed
+            return
+        entry_held = chord_pressed
+
+        view = (init.mode_selector, config.brightness_mod)
+        if view != previous_view:
+            if config.ledOptions_profile_color_use_all_LEDs:
+                pixels_fill(color)
             else:
-                config_name = "config" + str(init.mode_selector) + ".py"
-                
-            try:
-                f = open(config_name, "r")
-                f.close()
-            except OSError:
-                init.mode_selector -= 1
-                
-        if config.ledOptions_left_button and config.ledOptions_left_button[0].was_pressed:
-            init.mode_selector += 1
-            config_name = "config" + str(init.mode_selector) + ".py"
-            
-            try:
-                f = open(config_name, "r")
-                f.close()
-                
-            except OSError:
-                init.mode_selector -= 1
-                config_name = "config" + str(init.mode_selector) + ".py"
-                if init.mode_selector == 0:
-                    config_name = "config.py"
-        
+                pixels_fill(base_color)
+                if config.led_count:
+                    pixels_set(init.mode_selector % config.led_count, color)
+            pixels_show(max(0.01, config.brightness_mod))
+            if display is not None:
+                display.oled_draw_options_mode(init.mode_selector)
+            previous_view = view
 
-        for button in config.ledOptions_led_buttons:
-            button.run(0)
-        
-        #checks if all options button have been pressed at the same time
-        all_pressed = True
-        for button in config.ledOptions_led_buttons:
-            if not button.was_pressed:
-                all_pressed = False
-                break
- 
-        
-        if config.ledOptions_confirm[0].was_pressed or all_pressed: #confirm button
-            if init.mode_selector == 0:
-                config_name = 'config.py'
-                pixels_fill((0,0,0))
-                init.timer_counter = 0
-                return
-            else:
-                path = os.rename(config_name, 'configtmp.py')
-                path = os.rename('config.py', config_name)
-                path = os.rename('configtmp.py', 'config.py')
-                machine.reset()
+        service_stats()
+        time.sleep_ms(10)
 
-            
 
-                
+def first_button(buttons):
+    return buttons[0] if buttons else None
 
-#return interpolated (r,g,b) tuble between color1 and color2 depending on t (time)
-#c1 and c2 = (r,g,b)
-#t takes values between tstart and tend
+
+def control_pressed(button, held=False):
+    return button is not None and (button.is_pressed if held else button.was_pressed)
+
+
+# Interpolate RGB channels at a progress value from 0 to 100.
 def lerp_rgb(color1, color2, t):
-    tstart = 0
-    tend = 100
-    red = color1[0] + (color2[0] - color1[0]) * ((t-tstart) / (tend - tstart))
-    green = color1[1] + (color2[1] - color1[1]) * ((t-tstart) / (tend - tstart))
-    blue = color1[2] + (color2[2] - color1[2]) * ((t-tstart) / (tend - tstart))
-
-    return (int(red), int(green), int(blue))
+    fraction = t / 100
+    red = color1[0] + (color2[0] - color1[0]) * fraction
+    green = color1[1] + (color2[1] - color1[1]) * fraction
+    blue = color1[2] + (color2[2] - color1[2]) * fraction
+    return int(red), int(green), int(blue)
 
 def reset_background():
-    init.bg_initialized = False
-    init.single_tuple = False
-    init.ranges = []
-    init.colors = []
-    init.brightness_values = []
-    init.background_color_HSV = (0,0,0)
-    init.background = 0
-    
-    
-    
-def lerp(tstart,tend,t, ystart, yend):
-    y = ystart + (yend - ystart) * ((t-tstart)/(tend-tstart))
-    return y
+    init.cached_background = None
+    init.background_entries = []
+
+
+def lerp(tstart, tend, t, ystart, yend):
+    if tend <= tstart:
+        return yend
+    fraction = min(1, max(0, (t - tstart) / (tend - tstart)))
+    return ystart + (yend - ystart) * fraction
+
+
+def direction_button(direction):
+    if len(direction) > 2 and direction[2] != init.notSet:
+        return direction[2]
+    return None
+
+
+def direction_pressed(direction):
+    button = direction_button(direction)
+    return button is not None and button.is_pressed
+
 
 def run_eight_way_joystick():
-    if config.eight_way_up[2] != 'notSet' and (config.eight_way_up[2].released or config.eight_way_up[2].was_pressed):
-        init.saved_RGB = config.colors[init.random_color_id]
-        if init.last_color_id == init.random_color_id:
-            init.saved_RGB = config.colors[(init.random_color_id+1) % len(config.colors)]
-        init.last_color_id = init.random_color_id
-        
-    elif config.eight_way_down[2] != 'notSet' and (config.eight_way_down[2].released or config.eight_way_down[2].was_pressed):
-        init.saved_RGB = config.colors[init.random_color_id]
-        if init.last_color_id == init.random_color_id:
-            init.saved_RGB = config.colors[(init.random_color_id+1) % len(config.colors)]
-        init.last_color_id = init.random_color_id
-        
-    elif config.eight_way_left[2] != 'notSet' and (config.eight_way_left[2].released or config.eight_way_left[2].was_pressed):
-        init.saved_RGB = config.colors[init.random_color_id]
-        if init.last_color_id == init.random_color_id:
-            init.saved_RGB = config.colors[(init.random_color_id+1) % len(config.colors)]
-        init.last_color_id = init.random_color_id
-        
-    elif config.eight_way_right[2] != 'notSet' and (config.eight_way_right[2].released or config.eight_way_right[2].was_pressed):
-        init.saved_RGB = config.colors[init.random_color_id]
-        if init.last_color_id == init.random_color_id:
-            init.saved_RGB = config.colors[(init.random_color_id+1) % len(config.colors)]
-        init.last_color_id = init.random_color_id
+    up = direction_pressed(config.eight_way_up)
+    down = direction_pressed(config.eight_way_down)
+    left = direction_pressed(config.eight_way_left)
+    right = direction_pressed(config.eight_way_right)
 
-            
-    if config.eight_way_up[2] != 'notSet' and config.eight_way_left[2] != 'notSet' and (config.eight_way_up[2].is_pressed and config.eight_way_left[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_upleft[1] == 'random' else config.eight_way_upleft[1]
-        if config.eight_way_upleft[0][0] >= 0:
-            pixels_set_range(config.eight_way_upleft[0],color)
-        
-    elif config.eight_way_up[2] != 'notSet' and config.eight_way_right[2] != 'notSet' and (config.eight_way_up[2].is_pressed and config.eight_way_right[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_upright[1] == 'random' else config.eight_way_upright[1]
-        if config.eight_way_upright[0][0] >= 0:
-            pixels_set_range(config.eight_way_upright[0],color)
-        
-    elif config.eight_way_down[2] != 'notSet' and config.eight_way_left[2] != 'notSet' and (config.eight_way_left[2].is_pressed and config.eight_way_down[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_leftdown[1] == 'random' else config.eight_way_leftdown[1]
-        if config.eight_way_leftdown[0][0] >= 0:
-            pixels_set_range(config.eight_way_leftdown[0],color)
-        
-    elif config.eight_way_down[2] != 'notSet' and config.eight_way_right[2] != 'notSet' and (config.eight_way_right[2].is_pressed and config.eight_way_down[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_rightdown[1] == 'random' else config.eight_way_rightdown[1]
-        if config.eight_way_rightdown[0][0] >= 0:
-            pixels_set_range(config.eight_way_rightdown[0],color)
-        
-    elif config.eight_way_up[2] != 'notSet' and (config.eight_way_up[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_up[1] == 'random' else config.eight_way_up[1]
-        if config.eight_way_up[0][0] >= 0:
-            pixels_set_range(config.eight_way_up[0],color)
-        
-    elif config.eight_way_down[2] != 'notSet' and (config.eight_way_down[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_down[1] == 'random' else config.eight_way_down[1]
-        if config.eight_way_down[0][0] >= 0:
-            pixels_set_range(config.eight_way_down[0],color)
-        
-    elif config.eight_way_left[2] != 'notSet' and (config.eight_way_left[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_left[1] == 'random' else config.eight_way_left[1]
-        if config.eight_way_left[0][0] >= 0:
-            pixels_set_range(config.eight_way_left[0],color)
-        
-    elif config.eight_way_right[2] != 'notSet' and (config.eight_way_right[2].is_pressed):
-        color = init.saved_RGB if config.eight_way_right[1] == 'random' else config.eight_way_right[1]
-        if config.eight_way_right[0][0] >= 0:
-            pixels_set_range(config.eight_way_right[0],color)
+    direction_bits = up | (down << 1) | (left << 2) | (right << 3)
+    if direction_bits != init.direction_bits or not direction_bits:
+        color_id = init.random_color_id
+        if direction_bits and color_id == init.last_color_id:
+            color_id = (color_id + 1) % len(config.colors)
+        init.saved_RGB = config.colors[color_id]
+        init.last_color_id = color_id
+        init.direction_bits = direction_bits
+
+    if up and left:
+        direction = config.eight_way_upleft
+    elif up and right:
+        direction = config.eight_way_upright
+    elif down and left:
+        direction = config.eight_way_leftdown
+    elif down and right:
+        direction = config.eight_way_rightdown
+    elif up:
+        direction = config.eight_way_up
+    elif down:
+        direction = config.eight_way_down
+    elif left:
+        direction = config.eight_way_left
+    elif right:
+        direction = config.eight_way_right
     else:
-        init.saved_RGB = config.colors[init.random_color_id]
-    
+        return
 
-def remove_idle_skips():
-    led_list = []
-    for i in range(config.led_count):
-        led_list.append(i)
-        
-        
-    result_list = [num for num in led_list if num not in config.skip_leds_in_idle]
-    return result_list
-        
+    indices, color = direction[:2]
+    if indices and indices[0] >= 0:
+        pixels_set_range(indices, init.saved_RGB if color == init.random else color)
+
+
+def remove_idle_skips(led_count=None, skipped=None):
+    if led_count is None:
+        # Older Configurator files call this with no arguments during import.
+        import config as active_config
+        led_count = active_config.led_count
+        skipped = active_config.skip_leds_in_idle
+    return [index for index in range(led_count) if index not in skipped]

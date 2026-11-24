@@ -159,12 +159,7 @@ function select_circle_table()
 
 function add_idle_color()
 {
-    var table = document.getElementById("circle_table");
-    var row = table.insertRow();
-
-    var cell1 = row.insertCell(0);
-    
-    cell1.innerHTML = document.getElementById("idle_circle_select").value;
+    Configurator.appendRow("circle_table", [document.getElementById("idle_circle_select").value]);
     reset_idle_selection();
 }
 
